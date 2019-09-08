@@ -1,0 +1,229 @@
+# USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami)"
+---
+
+# # rbenv
+# git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
+# echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
+# echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+# git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+
+# # ruby
+# sudo apt-get install -y build-essential bison ruby-dev rake zlib1g-dev \
+#     libyaml-dev libssl-dev libreadline-dev libncurses5-dev llvm llvm-dev \
+#     libeditline-dev libedit-dev
+# rbenv install 2.2.3
+
+- hosts: localhost
+  environment:
+    NVM_LAZY_LOAD: yes
+  vars:
+    rbenv:
+      env: system
+      version: v1.1.2
+      default_ruby: 2.5.1
+      rubies:
+        - version: 2.5.1
+
+    rbenv_clean_up: false
+
+    rbenv_repo: "https://github.com/rbenv/rbenv.git"
+
+    rbenv_plugins:
+      - { name: "rbenv-vars",         repo: "https://github.com/rbenv/rbenv-vars.git",         version: "master" }
+      - { name: "ruby-build",         repo: "https://github.com/rbenv/ruby-build.git",         version: "master" }
+      - { name: "rbenv-default-gems", repo: "https://github.com/rbenv/rbenv-default-gems.git", version: "master" }
+      - { name: "rbenv-installer",    repo: "https://github.com/rbenv/rbenv-installer.git",    version: "master" }
+      - { name: "rbenv-update",       repo: "https://github.com/rkh/rbenv-update.git",         version: "master" }
+      - { name: "rbenv-whatis",       repo: "https://github.com/rkh/rbenv-whatis.git",         version: "master" }
+      - { name: "rbenv-use",          repo: "https://github.com/rkh/rbenv-use.git",            version: "master" }
+
+    rbenv_root: "{% if rbenv.env == 'system' %}/usr/local/rbenv{% else %}~/.rbenv{% endif %}"
+
+    rbenv_set_vars: true
+
+    rbenv_users: []
+
+    rbenv_extra_depends:
+    - libssl1.0-dev
+    - build-essential
+    - bison
+    - ruby-dev
+    - rake
+    - zlib1g-dev
+    - libyaml-dev
+    - libssl-dev
+    - libreadline-dev
+    - libncurses5-dev
+    - llvm
+    - llvm-dev
+    - libeditline-dev
+    - libedit-dev
+    rbenv_apt_packages:
+    - build-essential
+    - curl
+    - git
+    - libcurl4-openssl-dev
+    - libffi-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - zlib1g-dev
+    rbenv_dnf_packages:
+    - curl
+    - gcc
+    - openssl-devel
+    - libyaml-devel
+    - readline-devel
+    - zlib-devel
+    - libffi-devel
+    - git
+    rbenv_yum_packages:
+    - bzip2
+    - curl
+    - gcc
+    - git
+    - libffi-devel
+    - libyaml-devel
+    - openssl-devel
+    - readline-devel
+    - zlib-devel
+    rbenv_user_profile: true
+
+    bossjones__oh__my__zsh__change_default_shell: yes
+    bossjones__oh__my__zsh__path_to_shell: /bin/zsh
+    bossjones__oh__my__zsh__antigen_bundles_extras:
+      - joel-porquet/zsh-dircolors-solarized
+      - mollifier/anyframe
+      - zdharma/fast-syntax-highlighting
+      - wfxr/forgit
+      - { name: davidparsson/zsh-pyenv-lazy, command: pyenv }
+      - { name: eventi/noreallyjustfuckingstopalready, command: killall }
+      # https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins
+      - { name: vscode, command: code }
+      - { name: gpg-agent, command: gpg-agent }
+      - history
+      - { name: autopep8, command: autopep8 }
+      - { name: pipenv, command: pipenv }
+      - { name: pylint, command: pylint }
+      - { name: lukechilds/zsh-nvm, command: nvm }
+      - { name: Sparragus/zsh-auto-nvm-use, command: nvm }
+      - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
+      # - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
+      - { name: colored-man-pages, command: man }
+      - { name: srijanshetty/node.plugin.zsh, command: node }
+      - osx
+      - gmatheu/zsh-explain-shell
+      - hacker-quotes
+      - { name: bossjones/boss-git-zsh-plugin, command: git }
+      # SOURCE: https://github.com/droctothorpe/kubecolor
+      # - droctothorpe/kubecolor
+      - amstrad/oh-my-matrix
+      #############################################################################################################################
+      # SOURCE: https://github.com/luismayta/dotfiles/blob/597ddc09e1bfccc43076ca21cb679299b83912e4/conf/shell/zshrc
+      #############################################################################################################################
+      # A zsh plugin to sync git repositories and clean them up.
+      - caarlos0/zsh-git-sync
+
+      # Because your terminal should be able to perform tasks asynchronously without external tools!
+      - mafredri/zsh-async
+      # Desktop notifications for long-running commands in zsh.
+      - marzocchi/zsh-notify
+      # Add zsh's missing hooks, and support for user-defined hooks
+      - willghatch/zsh-hooks
+
+      # A collection of git utilities and useful extra git scripts I've discovered or written, packaged for ease of use with shell frameworks.
+      - unixorn/git-extra-commands
+
+      # alias for docker aliases
+      - { name: luismayta/zsh-docker-aliases, command: docker }
+      # servers functions for shell
+      - luismayta/zsh-servers-functions
+      # Search ssh connect with peco
+      - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+
+      - luismayta/zsh-gvm
+      # - luismayta/zsh-nvm
+      # - luismayta/zsh-rvm
+      # - luismayta/zsh-rust
+      # - luismayta/zsh-pyenv
+      # - igoradamenko/jira.plugin.zsh
+
+
+      # Plugin for lazy-loading pyenv in zsh.
+      - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
+
+      # A zsh plugin for lazy loading of pyenv-virtualenv. The initial eval "$(pyenv virtualenv-init -)" is executed the first time pyenv-virtualenv is called.
+      - { name: kadaan/zsh-pyenv-virtualenv-lazy, command: pyenv }
+
+      # - luismayta/zsh-transfer
+      # - luismayta/zsh-flutter
+
+      # This ZSH plugin enhances the terminal environment with 256 colors. It looks at the chosen TERM environment variable and sees if there is respective (n-)curses' termcap/terminfo descriptors for 256 colors available. The result is a multicolor terminal, if available.
+      - chrissicool/zsh-256color
+      # - wbinglee/zsh-wakatime
+
+      # # Additional completion definitions for Zsh.
+      # - zsh-users/zsh-completions
+      # # - wwilsman/zsh-clean-project
+
+      # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
+      - sindresorhus/pretty-time-zsh
+
+      # Search shell history with peco when pressing ctrl+r.
+      # - jimeh/zsh-peco-history
+      # ZSH port of Fish history search (up arrow)
+      - zsh-users/zsh-history-substring-search
+
+      # Pretty, minimal and fast ZSH prompt
+      # - sindresorhus/pure
+
+    # bossjones__oh__my__zsh__hotkeys_extras:
+    # - { hotkey: '^[[3~', action: delete-char }
+    # - { hotkey: '^[3;5~', action: delete-char }
+
+    bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
+    bossjones__oh__my__zsh__path:
+      - $HOME/bin
+      - $HOME/.local/bin
+      - $HOME/.pyenv/bin
+      - $HOME/.rbenv/bin
+      # - /usr/local/opt/coreutils/libexec/gnubin
+      - /usr/local/sbin
+      - /usr/local/bin
+      - /usr/sbin
+      - /usr/bin
+      - /sbin
+      - /bin
+      - /usr/games
+      - /usr/local/games
+
+    bossjones__oh__my__zsh__zshrc_local: |-
+      export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
+      export VIRTUAL_ENV_DISABLE_PROMPT=1
+      export bossjones__oh__my__zsh__PYENV_LAZY_VIRTUALENV=1
+
+      # Larger bash history (allow 32³ entries; default is 500)
+
+      export HISTFILE="$HOME/.bossjones__oh__my__zsh__history"
+      export HISTSIZE=100000
+      export HISTCONTROL=ignoredups
+      export SAVEHIST=$HISTSIZE
+
+      # Prefer US English and use UTF-8
+      export LANG=en_US.UTF-8
+      export LC_ALL=en_US.UTF-8
+
+      # SOURCE: https://github.com/luismayta/dotfiles/blob/597ddc09e1bfccc43076ca21cb679299b83912e4/conf/shell/zshrc
+      # don't put duplicate lines in the history. See bash(1) for more options
+      # ... or force ignoredups and ignorespace
+      HISTCONTROL=ignoredups:ignorespace
+
+      # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+      HISTSIZE=100000
+      HISTFILESIZE=2000
+
+      alias reload!='exec "$SHELL" -l'
+
+  roles:
+    - ../ansible-role-zsh

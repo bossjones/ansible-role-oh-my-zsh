@@ -1,0 +1,176 @@
+# {{ ansible_managed }}
+# zsh version: {{ bossjones__oh__my__zsh__version }}
+# antigen version: {{ bossjones__oh__my__zsh__antigen_installed_version }}
+
+export TERM="{{ bossjones__oh__my__zsh__term }}"
+export EDITOR="{{ bossjones__oh__my__zsh__editor }}"
+export PATH="{{ bossjones__oh__my__zsh__path | join(":") }}"
+
+HIST_STAMPS="{{ bossjones__oh__my__zsh__hist_stamps }}"
+UPDATE_bossjones__oh__my__zsh__DAYS="{{ bossjones__oh__my__zsh__update_interval }}"
+COMPLETION_WAITING_DOTS="true"
+
+{% if bossjones__oh__my__zsh__disable_correction %}
+# DISABLE AUTOCORRECTION
+DISABLE_CORRECTION="true"
+{% endif %}
+
+# ADOTDIR="{{ bossjones__oh__my__zsh__antigen_path_compat }}"
+{% if bossjones__oh__my__zsh__shared %}
+ANTIGEN_AUTO_CONFIG=false # disable updates
+_ANTIGEN_THEME_COMPAT=false # disable theme cache
+{% endif %}
+
+ANTIGEN_BUNDLES="{{ bossjones__oh__my__zsh__antigen_path_compat }}/bundles"
+ANTIGEN_PLUGIN_UPDATE_DAYS="{{ bossjones__oh__my__zsh__update_interval }}"
+ANTIGEN_SYSTEM_UPDATE_DAYS="{{ bossjones__oh__my__zsh__update_interval }}"
+
+{% if bossjones__oh__my__zsh__mc_solarized_skin %}export MC_SKIN="$HOME/.mc/lib/mc-solarized/solarized.ini"{% endif %}
+
+source "{{ bossjones__oh__my__zsh__antigen_path_compat }}/antigen/antigen.zsh"
+
+antigen use oh-my-zsh
+
+{% set bundles_enabled = [] %}
+
+{% for bundle in bossjones__oh__my__zsh__antigen_bundles -%}
+    {%- if bundle is mapping -%}
+        {% set valid = true -%}
+        {% set command_not_exists = [] -%}
+
+        {%- if bundle.when is defined and not bundle.when -%}
+            {% set valid = false -%}
+        {% endif -%}
+
+        {% if bundle.command is defined -%}
+            {% for cmd in bossjones__oh__my__zsh__register_commands_exists.results -%}
+                {% if cmd.cmd is defined and cmd.rc != 0 and cmd.item.command == bundle.command -%}
+                    {% if command_not_exists.append(1) %}{% endif -%}
+                {% endif -%}
+            {% endfor -%}
+        {% endif -%}
+
+        {% if valid and not command_not_exists %}
+            {%- if 'zsh-syntax-highlighting' in bundle.name or 'fast-syntax-highlighting' in bundle.name -%}
+# will fixed in zsh-autosuggestion v0.4 - https://github.com/zsh-users/zsh-autosuggestions/pull/218
+if (( ZSHRC_LOAD_ONCE++ == 0 )); then
+    antigen bundle {{ bundle.name }}
+fi
+{% else -%}
+{% if bundles_enabled.append(bundle.name) %}{% endif -%}
+antigen bundle {{ bundle.name }}
+{% endif -%}
+        {% endif -%}
+    {%- else -%}
+{% if bundles_enabled.append(bundle) %}{% endif -%}
+antigen bundle {{ bundle }}
+{% endif %}
+{% endfor %}
+
+{% if bossjones__oh__my__zsh__antigen_installed_version >=2.0 %}
+POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k/powerlevel9k.zsh-theme
+{% elif bossjones__oh__my__zsh__version < 5.0.8 %}
+POWERLEVEL9K_INSTALLATION_PATH={{ bossjones__oh__my__zsh__antigen_path_compat }}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-bhilburn-SLASH-powerlevel9k.git
+{% endif %}
+
+antigen theme {{ bossjones__oh__my__zsh__antigen_theme }}
+
+antigen apply
+
+###
+
+{% if not bossjones__oh__my__zsh__share_history %}
+unsetopt share_history
+{% endif %}
+
+
+autoload -Uz copy-earlier-word
+zle -N copy-earlier-word
+
+# hotkeys
+{% for hotkey in bossjones__oh__my__zsh__hotkeys %}
+{% if hotkey.hotkey != '' and (hotkey.bundle is not defined or hotkey.bundle in bundles_enabled) %}
+bindkey '{{ hotkey.hotkey }}' {{ hotkey.action }}
+{% endif %}
+{% endfor %}
+
+# aliases
+{% for alias in bossjones__oh__my__zsh__aliases %}
+{% if alias.alias != '' and (alias.bundle is not defined or alias.bundle in bundles_enabled) %}
+alias '{{ alias.alias }}'="{{ alias.action }}"
+{% endif %}
+{% endfor %}
+
+# fzf
+export FZF_TMUX=0
+export FZF_DEFAULT_OPTS="{{ bossjones__oh__my__zsh__fzf_default_opts }}"
+
+# fzf-widgets: fzf-change-reset-dir
+{% if bossjones__oh__my__zsh__version | version_compare('5.0', '>=') -%}
+autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+add-zsh-hook chpwd chpwd_recent_dirs
+{% endif %}
+declare -p FZF_WIDGETS_OPTS > /dev/null 2>&1 && FZF_WIDGETS_OPTS[insert-history]="{{ bossjones__oh__my__zsh__fzf_ctrl_r_opts }}"
+declare -p FZF_WIDGET_OPTS > /dev/null 2>&1 && FZF_WIDGET_OPTS[insert-history]="{{ bossjones__oh__my__zsh__fzf_ctrl_r_opts }}"
+
+# zsh-autosuggestions
+bossjones__oh__my__zsh__AUTOSUGGEST_BUFFER_MAX_SIZE={{ bossjones__oh__my__zsh__autosuggestions_max_length }}
+bossjones__oh__my__zsh__AUTOSUGGEST_HIGHLIGHT_STYLE="fg=240" # gray highlight
+
+# powerlevel9k
+POWERLEVEL9K_SHORTEN_DIR_LENGTH={{ bossjones__oh__my__zsh__powerlevel9k_shorten_dir_length }}
+POWERLEVEL9K_STATUS_VERBOSE={{ bossjones__oh__my__zsh__powerlevel9k_status_verbose }}
+
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=({{ bossjones__oh__my__zsh__powerlevel9k_left_prompt | join(" ") }})
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=({{ bossjones__oh__my__zsh__powerlevel9k_right_prompt | join(" ") }})
+{% if bossjones__oh__my__zsh__powerlevel9k_hide_host_on_local and bossjones__oh__my__zsh__user != 'root' %}DEFAULT_USER=$USER{% endif %}
+
+POWERLEVEL9K_ALWAYS_SHOW_CONTEXT={{ bossjones__oh__my__zsh__powerlevel9k_always_show_context_bool }}
+POWERLEVEL9K_ALWAYS_SHOW_USER={{ bossjones__oh__my__zsh__powerlevel9k_always_show_user_bool }}
+
+{% if bossjones__oh__my__zsh__powerlevel_custom_elements is defined and bossjones__oh__my__zsh__powerlevel_custom_elements %}
+{% for element in bossjones__oh__my__zsh__powerlevel_custom_elements %}
+{% set prefix = "POWERLEVEL9K_CUSTOM_" + element.name | upper %}
+{{ prefix }}="{{ element.command }}"
+{{ prefix }}_BACKGROUND="{{ element.background }}"
+{{ prefix }}_FOREGROUND="{{ element.foreground }}"
+{% endfor %}
+{% endif %}
+
+# https://github.com/bhilburn/powerlevel9k#command_execution_time
+POWERLEVEL9K_COMMAND_EXECUTION_TIME_THRESHOLD="{{ bossjones__oh__my__zsh__command_time_min_seconds }}"
+
+POWERLEVEL9K_PROMPT_ON_NEWLINE={{ bossjones__oh__my__zsh__powerlevel9k_prompt_on_newline_bool }}
+POWERLEVEL9K_RPROMPT_ON_NEWLINE=false
+POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
+
+POWERLEVEL9K_CONTEXT_DEFAULT_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_context_default_foreground }}"
+POWERLEVEL9K_CONTEXT_DEFAULT_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_context_default_background }}"
+POWERLEVEL9K_CONTEXT_REMOTE_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_context_default_foreground }}"
+POWERLEVEL9K_CONTEXT_REMOTE_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_context_default_background }}"
+POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_context_root_foreground }}"
+POWERLEVEL9K_CONTEXT_ROOT_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_context_root_background }}"
+
+POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_dir_foreground }}"
+POWERLEVEL9K_DIR_DEFAULT_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_dir_background }}"
+POWERLEVEL9K_DIR_HOME_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_dir_foreground }}"
+POWERLEVEL9K_DIR_HOME_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_dir_background }}"
+POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_dir_foreground }}"
+POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_dir_background }}"
+
+POWERLEVEL9K_VCS_CLEAN_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_vcs_clean_background }}"
+POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_vcs_modified_background }}"
+POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_vcs_untracked_background }}"
+POWERLEVEL9K_VCS_CLEAN_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_vcs_foreground }}"
+POWERLEVEL9K_VCS_MODIFIED_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_vcs_foreground }}"
+POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_vcs_foreground }}"
+
+POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_command_execution_time_foreground }}"
+POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND="{{ bossjones__oh__my__zsh__powerlevel9k_command_execution_time_background }}"
+
+# Aliases
+alias suser='su -'
+
+# user configs
+[[ -r /etc/zsh/zshrc.local ]] && source /etc/zsh/zshrc.local
+[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

@@ -1,0 +1,17 @@
+# -*- coding: utf-8 -*-
+# vars for  ansible-role-oh-my-zsh
+---
+bossjones__oh__my__zsh__user_group: "{% if ansible_os_family == 'Darwin' %}staff{% else %}{{ bossjones__oh__my__zsh__user }}{% endif %}"
+bossjones__oh__my__zsh__antigen_path: "{% if bossjones__oh__my__zsh__shared %}/usr/share/zsh-config{% else %}~{{ bossjones__oh__my__zsh__user }}/.antigen{% endif %}"
+bossjones__oh__my__zsh__config: "{% if bossjones__oh__my__zsh__shared %}/usr/share/zsh-config/.zshrc{% else %}~{{ bossjones__oh__my__zsh__user }}/.zshrc{% endif %}"
+bossjones__oh__my__zsh__antigen_path_compat: "{{ bossjones__oh__my__zsh__antigen_path | replace('~' + bossjones__oh__my__zsh__user, '$HOME') }}"
+
+bossjones__oh__my__zsh__fzf_os: linux
+bossjones__oh__my__zsh__fzf_arch: "{% if '64' in ansible_architecture %}amd64{% else %}386{% endif %}"
+bossjones__oh__my__zsh__fzf_url: "https://github.com/junegunn/fzf-bin/releases/download/{{ bossjones__oh__my__zsh__fzf_version }}/fzf-{{ bossjones__oh__my__zsh__fzf_version }}-{{ bossjones__oh__my__zsh__fzf_os }}_{{ bossjones__oh__my__zsh__fzf_arch }}.tgz"
+bossjones__oh__my__zsh__antigen_fzf_path: "{{ bossjones__oh__my__zsh__antigen_path }}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-junegunn-SLASH-fzf.git"
+bossjones__oh__my__zsh__fzf_default_opts: "--height {{ bossjones__oh__my__zsh__fzf_height }}{% if bossjones__oh__my__zsh__fzf_reverse %} --reverse{% endif %}{% if bossjones__oh__my__zsh__fzf_border %} --border{% endif %}"
+
+bossjones__oh__my__zsh__powerlevel9k_prompt_on_newline_bool: "{% if bossjones__oh__my__zsh__powerlevel9k_prompt_on_newline %}true{% else %}false{% endif %}"
+bossjones__oh__my__zsh__powerlevel9k_always_show_context_bool: "{% if bossjones__oh__my__zsh__powerlevel9k_always_show_context %}true{% else %}false{% endif %}"
+bossjones__oh__my__zsh__powerlevel9k_always_show_user_bool: "{% if bossjones__oh__my__zsh__powerlevel9k_always_show_user %}true{% else %}false{% endif %}"

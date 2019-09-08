@@ -1,0 +1,85 @@
+---
+
+- name: Check zsh version
+  shell: "{{bossjones__oh__my__zsh__path_to_shell}} --version | cut -d ' ' -f2"
+  register: bossjones__oh__my__zsh__register_version
+  check_mode: no
+  changed_when: false
+  tags: configure
+
+- name: Set bossjones__oh__my__zsh__version variable
+  set_fact:
+    bossjones__oh__my__zsh__version: "{{ bossjones__oh__my__zsh__register_version.stdout }}"
+
+- name: Merge bundles lists
+  set_fact:
+    bossjones__oh__my__zsh__antigen_bundles: "{{ bossjones__oh__my__zsh__antigen_bundles }} + {{ bossjones__oh__my__zsh__antigen_bundles_extras }}"
+
+- name: Disable autoupdate if bossjones__oh__my__zsh__shared install
+  set_fact:
+    bossjones__oh__my__zsh__update_interval: 0
+  when: bossjones__oh__my__zsh__shared
+
+- name: Check commands exists
+  shell: "command -v {{ item.command }} || which {{ item.command }}"
+  with_items: "{{ bossjones__oh__my__zsh__antigen_bundles }}"
+  failed_when: false
+  changed_when: false
+  check_mode: no
+  when: item.command is defined
+  register: bossjones__oh__my__zsh__register_commands_exists
+
+- name: Merge hotkeys lists
+  set_fact:
+    bossjones__oh__my__zsh__hotkeys: "{{ bossjones__oh__my__zsh__hotkeys }} + {{ bossjones__oh__my__zsh__hotkeys_extras }}"
+
+- name: Check antigen version
+  shell: "{{bossjones__oh__my__zsh__path_to_cat}} {{ bossjones__oh__my__zsh__antigen_path }}/antigen/VERSION | tr -d 'v'"
+  register: bossjones__oh__my__zsh__register_antigen_version
+  changed_when: false
+  become: true
+  check_mode: no
+  tags: configure
+
+- name: Set bossjones__oh__my__zsh__antigen_installed_version variable
+  set_fact:
+    bossjones__oh__my__zsh__antigen_installed_version: "{{ bossjones__oh__my__zsh__register_antigen_version.stdout }}"
+
+- name: Write .zshrc config
+  template:
+    src: zshrc.j2
+    dest: "{{ bossjones__oh__my__zsh__config }}"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    backup: yes
+
+- name: Write .zshrc.local config
+  template:
+    src: zshrc.local.j2
+    dest: "~/.zshrc.local"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    backup: yes
+
+- name: "Ensure {{bossjones__oh__my__zsh__path_to_shell}} is in /etc/shells"
+  lineinfile:
+    path: /etc/shells
+    regexp: '^{{bossjones__oh__my__zsh__path_to_shell}}$'
+    line: '{{bossjones__oh__my__zsh__path_to_shell}}'
+  become: true
+  when: bossjones__oh__my__zsh__change_default_shell
+
+- name: Set zsh as default shell
+  user:
+    name: "{{ bossjones__oh__my__zsh__user }}"
+    shell: "{{ bossjones__oh__my__zsh__path_to_shell }}"
+  become: true
+  when: not bossjones__oh__my__zsh__shared and bossjones__oh__my__zsh__change_default_shell
+
+- name: Add skip_global_compinit for disable early compinit call in Ubuntu
+  lineinfile:
+    regexp: "skip_global_compinit=1"
+    line: "skip_global_compinit=1"
+    dest: /etc/zsh/zshenv
+    state: present
+  when: ansible_distribution == 'Ubuntu'

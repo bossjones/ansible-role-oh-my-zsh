@@ -1,0 +1,8 @@
+---
+- name: Converge Centos
+  hosts: "{{cluster|d('centos')}}"
+  # gather_facts: True
+  # become: true
+  # strategy: free
+  roles:
+    - role: ansible-role-oh-my-zsh
