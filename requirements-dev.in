@@ -19,4 +19,4 @@ MonkeyType
 mypy
 bumplus
 bumpversion
-ansible
+ansible<2.8
