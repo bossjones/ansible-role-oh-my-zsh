@@ -1,21 +1,6 @@
-# USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami)"
 ---
-
-# # rbenv
-# git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
-# echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
-# echo 'eval "$(rbenv init -)"' >> ~/.zshrc
-# git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-
-# # ruby
-# sudo apt-get install -y build-essential bison ruby-dev rake zlib1g-dev \
-#     libyaml-dev libssl-dev libreadline-dev libncurses5-dev llvm llvm-dev \
-#     libeditline-dev libedit-dev
-# rbenv install 2.2.3
-
-- hosts: localhost
-  become: yes
-  become_method: sudo
+- name: Converge Centos
+  hosts: "{{cluster|d('all')}}"
   environment:
     NVM_LAZY_LOAD: yes
   vars:
@@ -92,7 +77,7 @@
     - zlib-devel
     rbenv_user_profile: true
     bossjones__oh__my__zsh__change_default_shell: no
-    bossjones__oh__my__zsh__path_to_shell: /usr/bin/zsh
+    bossjones__oh__my__zsh__path_to_shell: /usr/local/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
       - nvm
       - joel-porquet/zsh-dircolors-solarized
@@ -114,7 +99,9 @@
       # - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
       - { name: colored-man-pages, command: man }
       - { name: srijanshetty/node.plugin.zsh, command: node }
-
+      # - osx
+      # - gmatheu/zsh-explain-shell
+      # - hacker-quotes
       - { name: bossjones/boss-git-zsh-plugin, command: git }
       - { name: bossjones/boss-docker-zsh-plugin, command: docker }
       # SOURCE: https://github.com/droctothorpe/kubecolor
@@ -143,14 +130,45 @@
       # Search ssh connect with peco
       - { name: luismayta/zsh-peco-ssh-connect, command: peco }
 
+      # - luismayta/zsh-gvm
+      # - luismayta/zsh-nvm
+      # - luismayta/zsh-rvm
+      # - luismayta/zsh-rust
+      # - luismayta/zsh-pyenv
+      # - igoradamenko/jira.plugin.zsh
+
+
       # Plugin for lazy-loading pyenv in zsh.
       - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
 
+      # A zsh plugin for lazy loading of pyenv-virtualenv. The initial eval "$(pyenv virtualenv-init -)" is executed the first time pyenv-virtualenv is called.
+      # - { name: kadaan/zsh-pyenv-virtualenv-lazy, command: pyenv }
+
+      # - luismayta/zsh-transfer
+      # - luismayta/zsh-flutter
+
       # This ZSH plugin enhances the terminal environment with 256 colors. It looks at the chosen TERM environment variable and sees if there is respective (n-)curses' termcap/terminfo descriptors for 256 colors available. The result is a multicolor terminal, if available.
       - chrissicool/zsh-256color
+      # - wbinglee/zsh-wakatime
+
+      # # Additional completion definitions for Zsh.
+      # - zsh-users/zsh-completions
+      # # - wwilsman/zsh-clean-project
 
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
       - sindresorhus/pretty-time-zsh
+
+      # Search shell history with peco when pressing ctrl+r.
+      # - jimeh/zsh-peco-history
+      # ZSH port of Fish history search (up arrow)
+      # - zsh-users/zsh-history-substring-search
+
+      # Pretty, minimal and fast ZSH prompt
+      # - sindresorhus/pure
+
+    # bossjones__oh__my__zsh__hotkeys_extras:
+    # - { hotkey: '^[[3~', action: delete-char }
+    # - { hotkey: '^[3;5~', action: delete-char }
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:
@@ -203,6 +221,3 @@
 
       setopt HIST_FIND_NO_DUPS
       # setopt HIST_IGNORE_ALL_DUPS
-
-  roles:
-    - ../ansible-role-zsh

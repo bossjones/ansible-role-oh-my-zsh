@@ -270,3 +270,6 @@ run-ubuntu:
 .PHONY: gpr
 gpr:
 	git pull --rebase
+
+rbenv:
+	bash scripts/rbenv.sh
