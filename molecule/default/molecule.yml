@@ -1,0 +1,125 @@
+---
+dependency:
+  name: galaxy
+  options:
+    ignore-certs: True
+    ignore-errors: False
+    role-file: requirements.yml
+scenario:
+  name: default
+driver:
+  name: docker
+platforms:
+  - name: ansible-role-zsh-debian-7
+    image: debian:7
+
+  - name: ansible-role-zsh-debian-8
+    image: debian:8
+
+  - name: ansible-role-zsh-ubuntu-1404
+    image: ubuntu:14.04
+
+  - name: ansible-role-zsh-ubuntu-1604
+    image: ubuntu:16.04
+
+  - name: ansible-role-zsh-centos-7
+    image: centos:7
+
+#driver:
+#  name: vagrant
+#vagrant:
+#  platforms:
+#    - name: xenial64
+#      box: bento/ubuntu-16.04
+#  providers:
+#    - name: virtualbox
+#      type: virtualbox
+#  instances:
+#    - name: vagrant-01
+
+lint:
+  name: yamllint
+  options:
+    config-file: .yamllint
+
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: actionable, profile_tasks, profile_roles, skippy, debug, unixy, actionable, custom
+      pipelining: True
+      poll_interval: 5
+      stdout_callback: yaml
+    # ssh_connection:
+    #   scp_if_ssh: True
+    #   retries: 10
+    #   pipelining: True
+    #   forks: 10
+  log: true
+  options:
+    vvv: True
+  playbooks:
+    create: ../resources/create.yml
+    prepare: ../resources/prepare.yml
+    converge: ../resources/playbook.yml
+    destroy: ../resources/destroy.yml
+  lint:
+    name: ansible-lint
+    options:
+      x: ["ANSIBLE0006,ANSIBLE0007,ANSIBLE0010,ANSIBLE0013"]
+      c: .ansible-lint
+      force-color: True
+  verifier:
+    name: testinfra
+    options:
+      verbose: True
+    lint:
+      name: flake8
+      enabled: True
+  inventory:
+    group_vars:
+      all:
+        bossjones__oh__my__zsh__user: root
+        bossjones__oh__my__zsh__mc_solarized_skin: yes
+        bossjones__oh__my__zsh__antigen_bundles_extras:
+          - { name: test/in-list, when: true }
+          - { name: test/not-in-list, when: false }
+          - { name: test/command-exists, command: zsh }
+          - { name: test/command-not-exists, command: not-exists-commanddd }
+
+# scenario:
+#   name: default  # optional
+#   create_sequence:
+#     - create
+#     - prepare
+#   check_sequence:
+#     - destroy
+#     - dependency
+#     - syntax
+#     - lint
+#     - create
+#     - prepare
+#     - converge
+#     - check
+#     - destroy
+#   converge_sequence:
+#     - dependency
+#     # - syntax
+#     # - lint
+#     - create
+#     - prepare
+#     - converge
+#   destroy_sequence:
+#     - cleanup
+#     - destroy
+#   test_sequence:
+#     - destroy
+#     - dependency
+#     - syntax
+#     - lint
+#     - create
+#     - prepare
+#     - converge
+#     - side_effect
+#     - verify
+#     - destroy

@@ -1,0 +1,255 @@
+# -*- coding: utf-8 -*-
+# default vars for  ansible-role-oh-my-zsh
+---
+# Suggested ansible variable namespace: behance__oh__my__bossjones__oh__my__zsh___
+bossjones__oh__my__zsh__user: "{{ ansible_user_id }}"
+
+bossjones__oh__my__zsh__path_to_shell: /usr/local/bin/zsh
+bossjones__oh__my__zsh__path_to_cat: /bin/cat
+bossjones__oh__my__zsh__disable_correction: no
+bossjones__oh__my__zsh__change_default_shell: no
+
+bossjones__oh__my__zsh__zshrc_local: |-
+  alias gcl='git clone'
+  alias gpr='git pull --rebase'
+
+  alias __git_find_subcommand='__git_find_on_cmdline'
+  alias g='git'
+  alias ga='git add'
+  alias gall='git add .'
+  alias gb='git branch'
+  alias gba='git branch -a'
+  alias gc='git commit -v'
+  alias gca='git commit -v -a'
+  alias gci='git commit --interactive'
+  alias gcl='git clone'
+  alias gcm='git commit -v -m'
+  alias gco='git checkout'
+  alias gcount='git shortlog -sn'
+  alias gcp='git cherry-pick'
+  alias gd='git diff | /usr/local/bin/mvim -f'
+  alias gdel='git branch -D'
+  alias get='git'
+  alias gexport='git archive --format zip --output'
+  alias gg='git log --graph --pretty=format:'\''%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset'\'' --abbrev-commit --date=relative'
+  alias gl='git pull'
+  alias gll='git log --graph --pretty=oneline --abbrev-commit'
+  alias gm='git merge'
+  alias gmu='git fetch origin -v; git fetch upstream -v; git merge upstream/master'
+  alias gp='git push'
+  alias gpo='git push origin'
+  alias gpp='git pull && git push'
+  alias gpr='git pull --rebase'
+  alias gs='git status'
+  alias gsl='git shortlog -sn'
+  alias gss='git status -s'
+  alias gst='git status'
+  alias gup='git fetch && git rebase'
+  alias gus='git reset HEAD'
+  alias gw='git whatchanged'
+
+  # SOURCE: https://github.com/luismayta/dotfiles/blob/597ddc09e1bfccc43076ca21cb679299b83912e4/conf/shell/zshrc
+  # don't put duplicate lines in the history. See bash(1) for more options
+  # ... or force ignoredups and ignorespace
+  HISTCONTROL=ignoredups:ignorespace
+
+  # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+  HISTSIZE=1000
+  HISTFILESIZE=2000
+
+  alias reload!='exec "$SHELL" -l'
+
+
+# .zshrc config
+bossjones__oh__my__zsh__hist_stamps: yyyy-mm-dd
+bossjones__oh__my__zsh__share_history: no
+bossjones__oh__my__zsh__update_interval: 30 # set 0 for disable autoupdates
+bossjones__oh__my__zsh__editor: vim
+bossjones__oh__my__zsh__term: xterm-256color
+bossjones__oh__my__zsh__mc_solarized_skin: no
+
+bossjones__oh__my__zsh__path:
+  - $HOME/bin
+  - $HOME/.local/bin
+  - $HOME/.pyenv/bin
+  - $HOME/.rbenv/bin
+  - /usr/local/opt/coreutils/libexec/gnubin
+  - /usr/local/sbin
+  - /usr/local/bin
+  - /usr/sbin
+  - /usr/bin
+  - /sbin
+  - /bin
+  - /usr/games
+  - /usr/local/games
+
+fzf_widgets: ytet5uy4/fzf-widgets
+
+bossjones__oh__my__zsh__antigen_version: master
+bossjones__oh__my__zsh__fzf_version: 0.17.4
+
+bossjones__oh__my__zsh__antigen_bundles:
+  - { name: command-not-found, when: "{{ ansible_os_family != 'Darwin' }}" } # too slow on OSX
+  - { name: brew, command: brew }
+  - { name: docker, command: docker }
+  - { name: docker-compose, command: docker-compose }
+  - { name: docker-machine, command: docker-machine }
+  - fancy-ctrl-z
+  - git-extras
+  - gnu-utils
+  - { name: httpie, command: http }
+  - { name: go, command: go }
+  - { name: gulp, command: gulp }
+  - { name: pip, command: pip }
+  - { name: rake, command: rake }
+  - { name: symfony2, command: symfony }
+  - { name: systemd, command: systemctl }
+  - { name: pyenv, command: pyenv }
+  - python
+  - rbenv
+  - { name: tmux, command: tmux }
+  - { name: vagrant, command: vagrant }
+  - { name: viasite/drall, command: drall }
+  - { name: viasite/drupal-scripts, command: drs }
+  - { name: viasite/server-scripts, command: dbdump }
+  - { name: viasite-ansible/zsh-ansible-server, command: ansible-deploy }
+  - bossjones__oh__my__zsh__reload
+  - tmux
+  - tmuxinator
+  - golang
+  - ssh-agent
+  - fd
+
+  # on zsh 4.3.10 autosuggestions breaks multiline commands with \
+  - zsh-users/zsh-autosuggestions
+  - popstas/zsh-command-time
+  - unixorn/autoupdate-antigen.zshplugin
+  - urbainvaes/fzf-marks # replaces jump plugin, mark, jump and Ctrl+G
+  - "{{ fzf_widgets }}"
+  # must be last, don't work on zsh < 4.3.17
+  #- { name: zsh-users/zsh-syntax-highlighting, when: "{{ bossjones__oh__my__zsh__version | default(false) | version_compare('4.3.17', '>=') }}" }
+  # bug with text paste in fast-syntax-highlighting v1.21, see https://github.com/zdharma/fast-syntax-highlighting/issues/30
+  - zdharma/fast-syntax-highlighting
+
+bossjones__oh__my__zsh__antigen_bundles_extras: []
+
+# useful for deploy many zsh users at host, without duplicate and without write access
+bossjones__oh__my__zsh__shared: no
+
+bossjones__oh__my__zsh__antigen_theme: "bhilburn/powerlevel9k powerlevel9k"
+
+bossjones__oh__my__zsh__hotkeys:
+  # home & end keys work
+  - { hotkey: '\e[1~', action: beginning-of-line }
+  - { hotkey: '\e[4~', action: end-of-line }
+
+  # fzf-widgets
+  - { hotkey: '^@' ,   action: fzf-select-widget,            bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@.' ,  action: fzf-edit-dotfiles,            bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@c',   action: fzf-change-directory,         bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@f',   action: fzf-edit-files,               bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@k',   action: fzf-kill-processes,           bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@s',   action: fzf-exec-ssh,                 bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^\' ,   action: fzf-change-recent-directory,  bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^r',    action: fzf-insert-history,           bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^xf',   action: fzf-insert-files,             bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^xd',   action: fzf-insert-directory,         bundle: "{{ fzf_widgets }}" }
+
+  # fzf-widgets: Git
+  - { hotkey: '^@g',   action: fzf-select-git-widget,        bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@ga',  action: fzf-git-add-files,            bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@gc',  action: fzf-git-change-repository,    bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@gco', action: fzf-git-checkout-branch,      bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@gd',  action: fzf-git-delete-branches,      bundle: "{{ fzf_widgets }}" }
+
+  # fzf-widgets: GitHub
+  - { hotkey: '^@gh',   action: fzf-select-github-widget,    bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@ghi',  action: fzf-github-show-issue,       bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@ghe',  action: fzf-github-edit-issue,       bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@gho',  action: fzf-github-open-issue,       bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@ghc',  action: fzf-github-close-issue,      bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@ghco', action: fzf-github-comment-issue,    bundle: "{{ fzf_widgets }}" }
+
+  # fzf-widgets: Docker
+  - { hotkey: '^@d',   action: fzf-select-docker-widget,     bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@dk',  action: fzf-docker-kill-containers,   bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@dl',  action: fzf-docker-logs-container,    bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@dr',  action: fzf-docker-remove-containers, bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@dri', action: fzf-docker-remove-images,     bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@drv', action: fzf-docker-remove-volumes,    bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@dsa', action: fzf-docker-start-containers,  bundle: "{{ fzf_widgets }}" }
+  - { hotkey: '^@dso', action: fzf-docker-stop-containers,   bundle: "{{ fzf_widgets }}" }
+
+  # autosuggestions
+  - { hotkey: '{{ bossjones__oh__my__zsh__autosuggestions_bind_key }}',   action: autosuggest-accept, bundle: zsh-users/zsh-autosuggestions }
+  - { hotkey: '{{ bossjones__oh__my__zsh__autosuggestions_bind_key_2 }}', action: autosuggest-accept, bundle: zsh-users/zsh-autosuggestions }
+
+bossjones__oh__my__zsh__hotkeys_extras: []
+
+# only single quotes allowed in action
+bossjones__oh__my__zsh__aliases:
+  - { alias: 'apt-update-list-upgrade', action: 'apt update && apt upgrade --dry-run | grep Inst | sort | fzf && apt upgrade' }
+  - { alias: 'dfh',                     action: 'df -h | grep -v docker' }
+  - { alias: 'ubuntu-release',          action: 'lsb_release -a' }
+  - { alias: '', action: '' }
+
+
+# zsh-autosuggestions
+bossjones__oh__my__zsh__autosuggestions_max_length: 15
+bossjones__oh__my__zsh__autosuggestions_bind_key: ""
+bossjones__oh__my__zsh__autosuggestions_bind_key_2: ""
+
+# fzf
+bossjones__oh__my__zsh__fzf_height: "100%"
+bossjones__oh__my__zsh__fzf_reverse: yes
+bossjones__oh__my__zsh__fzf_border: no
+bossjones__oh__my__zsh__fzf_ctrl_r_opts: '--exact'
+
+# command-time
+bossjones__oh__my__zsh__command_time_min_seconds: 3
+bossjones__oh__my__zsh__command_time_echo: ""
+
+# powerlevel9k
+bossjones__oh__my__zsh__powerlevel9k_left_prompt:
+  - context
+  - dir
+
+bossjones__oh__my__zsh__powerlevel9k_right_prompt:
+  - status
+  - background_jobs
+  - vcs
+  - command_execution_time
+  - time
+  - pyenv
+  - virtualenv
+
+bossjones__oh__my__zsh__powerlevel_custom_elements:
+  - name: command_time
+    command: "bossjones__oh__my__zsh__command_time"
+    background: "248"
+    foreground: "000"
+
+bossjones__oh__my__zsh__powerlevel9k_hide_host_on_local: yes
+bossjones__oh__my__zsh__powerlevel9k_always_show_context: no # hide hostname and username from prompt on local machine
+bossjones__oh__my__zsh__powerlevel9k_always_show_user: no # hide username from prompt on local machine
+bossjones__oh__my__zsh__powerlevel9k_prompt_on_newline: no
+bossjones__oh__my__zsh__powerlevel9k_shorten_dir_length: 3
+bossjones__oh__my__zsh__powerlevel9k_status_verbose: 0
+
+# dir (context) colors
+bossjones__oh__my__zsh__powerlevel9k_context_default_foreground: "255" # white
+bossjones__oh__my__zsh__powerlevel9k_context_default_background: "024" # blue
+bossjones__oh__my__zsh__powerlevel9k_context_root_foreground: "255" # white
+bossjones__oh__my__zsh__powerlevel9k_context_root_background: "124" # red
+bossjones__oh__my__zsh__powerlevel9k_dir_foreground: "255" # white
+bossjones__oh__my__zsh__powerlevel9k_dir_background: "240" # gray
+
+# vcs colors
+bossjones__oh__my__zsh__powerlevel9k_vcs_foreground: "232" # about black on any palette
+bossjones__oh__my__zsh__powerlevel9k_vcs_clean_background: "100" # dirty green
+bossjones__oh__my__zsh__powerlevel9k_vcs_modified_background: "094" # orange
+bossjones__oh__my__zsh__powerlevel9k_vcs_untracked_background: "094" # orange
+
+# command execution time
+bossjones__oh__my__zsh__powerlevel9k_command_execution_time_foreground: "000"
+bossjones__oh__my__zsh__powerlevel9k_command_execution_time_background: "248"

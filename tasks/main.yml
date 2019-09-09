@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*-
+# tasks for  ansible-role-oh-my-zsh
+---
+
+- include: install.yml
+  tags: [ zsh, install ]
+
+- include: configure.yml
+  tags: [ zsh, configure ]
+
+- include: post-install.yml
+  tags: [ zsh, install, post_install ]
+
+- name: Reset antigen cache
+  command: "{{ bossjones__oh__my__zsh__path_to_shell }} -c 'source {{ bossjones__oh__my__zsh__config }}; antigen reset'"
+  become: yes
+  become_user: "{{ bossjones__oh__my__zsh__user }}"
+  changed_when: false
+  failed_when: false
+  tags: always
