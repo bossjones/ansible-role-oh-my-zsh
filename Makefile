@@ -198,6 +198,7 @@ endif
 .PHONY: pip-compile-upgrade-all
 pip-compile-upgrade-all: pip-tools ## Install pip-tools,upgrade all dependencies
 	pip-compile --output-file requirements.txt requirements.in --upgrade
+	pip-compile --output-file requirements-dev.txt requirements-dev.in --upgrade
 
 .PHONY: pip-compile
 pip-compile: pip-tools ## pip-compile requirements.txt file
