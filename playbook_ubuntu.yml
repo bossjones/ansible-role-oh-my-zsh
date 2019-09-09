@@ -205,4 +205,4 @@
       # setopt HIST_IGNORE_ALL_DUPS
 
   roles:
-    - ../ansible-role-zsh
+    - ../ansible-role-oh-my-zsh
