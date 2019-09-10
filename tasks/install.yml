@@ -8,6 +8,7 @@
     - zsh
     - git
     - wget
+    - fonts-powerline
   # brew don't work from root user on macOS
   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
@@ -38,13 +39,13 @@
   check_mode: no
   register: bossjones__oh__my__zsh__register_fzf_command
 
-# - name: Download fzf
-#   unarchive:
-#     src: "{{ bossjones__oh__my__zsh__fzf_url }}"
-#     dest: /usr/local/bin
-#     remote_src: yes
-#     creates: /usr/local/bin/fzf
-#   when: bossjones__oh__my__zsh__register_fzf_command.rc == 1
+- name: Download fzf
+  unarchive:
+    src: "{{ bossjones__oh__my__zsh__fzf_url }}"
+    dest: /usr/local/bin
+    remote_src: yes
+    creates: /usr/local/bin/fzf
+  when: bossjones__oh__my__zsh__register_fzf_command.rc == 1 and bossjones__oh__my__zsh__install_fzf == "yes"
 
 - name: Set directory permissions
   file:

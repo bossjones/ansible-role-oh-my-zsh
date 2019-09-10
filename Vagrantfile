@@ -144,11 +144,21 @@ EOF
     # sudo systemctl enable gdm
     # sudo systemctl start gdm
 
+    sudo fallocate -l 4G /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    echo "/swapfile swap swap defaults 0 0" | sudo tee -a /etc/fstab
+    sudo swapon --show
+    sudo free -h
+
 SCRIPT
 
 Vagrant.configure(2) do |config|
   # set auto update to false if you do NOT want to check the correct additions version when booting this machine
   # config.vbguest.auto_update = true
+
+  config.vm.synced_folder ".", "/srv/ansible-role-oh-my-zsh", disabled: false
 
   config_yml[:vms].each do |name, settings|
     # use the config key as the vm identifier
@@ -176,7 +186,7 @@ Vagrant.configure(2) do |config|
         v.name = settings[:hostname]
         # v.vm.forward_port 5901, 6901
 
-        v.gui = false
+        v.gui = true
         v.customize ['modifyvm', :id, '--memory', settings[:mem]]
         v.customize ['modifyvm', :id, '--cpus', settings[:cpu]]
       end

@@ -91,7 +91,12 @@
     - readline-devel
     - zlib-devel
     rbenv_user_profile: true
-    bossjones__oh__my__zsh__change_default_shell: no
+    bossjones__oh__my__zsh__enable_zlogin: "yes"
+    bossjones__oh__my__zsh__enable_zlogout: "yes"
+    bossjones__oh__my__zsh__enable_zprofile: "no"
+    bossjones__oh__my__zsh__enable_zshenv: "yes"
+    bossjones__oh__my__zsh__install_fzf: "yes"
+    bossjones__oh__my__zsh__change_default_shell: yes
     bossjones__oh__my__zsh__path_to_shell: /usr/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
       - nvm
@@ -168,6 +173,39 @@
       - /usr/games
       - /usr/local/games
 
+    bossjones__oh__my__zsh__zlogin: |-
+      # https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
+      #
+      # Executes commands at login post-zshrc.
+      #
+      # Authors:
+      #   Sorin Ionescu <sorin.ionescu@gmail.com>
+      #
+
+      # Execute code that does not affect the current session in the background.
+      {
+        # Compile the completion dump to increase startup speed.
+        dump_file="$HOME/.zcompdump"
+        if [[ "$dump_file" -nt "${dump_file}.zwc" || ! -s "${dump_file}.zwc" ]]; then
+          zcompile "$dump_file"
+        fi
+
+        # Set environment variables for launchd processes.
+        if [[ "$OSTYPE" == darwin* ]]; then
+          for env_var in PATH MANPATH; do
+            launchctl setenv "$env_var" "${(P)env_var}"
+          done
+        fi
+      } &!
+
+      # Print a random, hopefully interesting, adage.
+      if (( $+commands[fortune] )); then
+        fortune -a
+        print
+      fi
+
+      source ~/.zshrc
+
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
       export RBENV_ROOT=~/.rbenv
@@ -206,3 +244,21 @@
 
   roles:
     - ../ansible-role-oh-my-zsh
+
+  # tasks:
+
+  #   # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
+  #   - name: Cloning fonts
+  #     git:
+  #       repo=https://github.com/powerline/fonts
+  #       dest="/home/vagrant/powerlinefonts"
+  #       accept_hostkey=yes
+  #     register: fontCloned
+  #     become: yes
+  #     become_user: vagrant
+
+  #   - name: Install Fonts
+  #     shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
+  #     when: fontCloned|success
+  #     become: yes
+  #     become_user: vagrant
