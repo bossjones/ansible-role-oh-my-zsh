@@ -33,28 +33,37 @@ bossjones__oh__my__zsh__zlogin: |-
   # Authors:
   #   Sorin Ionescu <sorin.ionescu@gmail.com>
   #
+  # /etc/zsh/zlogin: system-wide .zlogin file for zsh(1).
+  #
+  # This file is sourced only for login shells. It
+  # should contain commands that should be executed only
+  # in login shells. It should be used to set the terminal
+  # type and run a series of external commands (fortune,
+  # msgs, from, etc.)
+  #
+  # Global Order: zshenv, zprofile, zshrc, zlogin
 
-  # Execute code that does not affect the current session in the background.
-  {
-    # Compile the completion dump to increase startup speed.
-    dump_file="$HOME/.zcompdump"
-    if [[ "$dump_file" -nt "${dump_file}.zwc" || ! -s "${dump_file}.zwc" ]]; then
-      zcompile "$dump_file"
-    fi
+  # # Execute code that does not affect the current session in the background.
+  # {
+  #   # Compile the completion dump to increase startup speed.
+  #   dump_file="$HOME/.zcompdump"
+  #   if [[ "$dump_file" -nt "${dump_file}.zwc" || ! -s "${dump_file}.zwc" ]]; then
+  #     zcompile "$dump_file"
+  #   fi
 
-    # Set environment variables for launchd processes.
-    if [[ "$OSTYPE" == darwin* ]]; then
-      for env_var in PATH MANPATH; do
-        launchctl setenv "$env_var" "${(P)env_var}"
-      done
-    fi
-  } &!
+  #   # Set environment variables for launchd processes.
+  #   if [[ "$OSTYPE" == darwin* ]]; then
+  #     for env_var in PATH MANPATH; do
+  #       launchctl setenv "$env_var" "${(P)env_var}"
+  #     done
+  #   fi
+  # } &!
 
-  # Print a random, hopefully interesting, adage.
-  if (( $+commands[fortune] )); then
-    fortune -a
-    print
-  fi
+  # # Print a random, hopefully interesting, adage.
+  # if (( $+commands[fortune] )); then
+  #   fortune -a
+  #   print
+  # fi
 
 bossjones__oh__my__zsh__zlogout: |-
   # https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
@@ -83,83 +92,103 @@ bossjones__oh__my__zsh__zprofile: |-
 
 bossjones__oh__my__zsh__zshenv: |-
   # Since .zshenv is always sourced, it often contains exported variables that should be available to other programs. For example, $PATH, $EDITOR, and $PAGER are often set in .zshenv. Also, you can set $ZDOTDIR in .zshenv to specify an alternative location for the rest of your zsh configuration.
+  # ~/.zshenv: system-wide .zshenv file for zsh(1).
   #
-  # Defines environment variables.
+  # This file is sourced on all invocations of the shell.
+  # If the -f flag is present or if the NO_RCS option is
+  # set within this file, all other initialization files
+  # are skipped.
   #
-  # Authors:
-  #   Sorin Ionescu <sorin.ionescu@gmail.com>
+  # This file should contain commands to set the command
+  # search path, plus other important environment variables.
+  # This file should not contain commands that produce
+  # output or assume the shell is attached to a tty.
   #
+  # Global Order: zshenv, zprofile, zshrc, zlogin
 
-  # Set the path to Oh My Zsh.
-  export OMZ="$HOME/.oh-my-zsh"
+  if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
+  then
+    export PATH="/usr/local/bin:/usr/bin:/bin:/usr/games"
+  fi
+  skip_global_compinit=1
+  # # ----------------------------------------------------------------
+  # #
+  # # Defines environment variables.
+  # #
+  # # Authors:
+  # #   Sorin Ionescu <sorin.ionescu@gmail.com>
+  # #
 
-  # Paths
-  typeset -gU cdpath fpath mailpath manpath path
-  typeset -gUT INFOPATH infopath
+  # # Set the path to Oh My Zsh.
+  # export OMZ="$HOME/.oh-my-zsh"
 
-  # Set the the list of directories that cd searches.
-  # cdpath=(
-  #   $cdpath
+  # # Paths
+  # typeset -gU cdpath fpath mailpath manpath path
+  # typeset -gUT INFOPATH infopath
+
+  # # Set the the list of directories that cd searches.
+  # # cdpath=(
+  # #   $cdpath
+  # # )
+
+  # # Set the list of directories that info searches for manuals.
+  # infopath=(
+  #   /usr/local/share/info
+  #   /usr/share/info
+  #   $infopath
   # )
 
-  # Set the list of directories that info searches for manuals.
-  infopath=(
-    /usr/local/share/info
-    /usr/share/info
-    $infopath
-  )
+  # # Set the list of directories that man searches for manuals.
+  # manpath=(
+  #   /usr/local/share/man
+  #   /usr/share/man
+  #   $manpath
+  # )
 
-  # Set the list of directories that man searches for manuals.
-  manpath=(
-    /usr/local/share/man
-    /usr/share/man
-    $manpath
-  )
+  # for path_file in /etc/manpaths.d/*(.N); do
+  #   manpath+=($(<$path_file))
+  # done
+  # unset path_file
 
-  for path_file in /etc/manpaths.d/*(.N); do
-    manpath+=($(<$path_file))
-  done
-  unset path_file
+  # # Set the list of directories that Zsh searches for programs.
+  # path=(
+  #   /usr/local/{bin,sbin}
+  #   /usr/{bin,sbin}
+  #   /{bin,sbin}
+  #   $path
+  # )
 
-  # Set the list of directories that Zsh searches for programs.
-  path=(
-    /usr/local/{bin,sbin}
-    /usr/{bin,sbin}
-    /{bin,sbin}
-    $path
-  )
+  # for path_file in /etc/paths.d/*(.N); do
+  #   path+=($(<$path_file))
+  # done
+  # unset path_file
 
-  for path_file in /etc/paths.d/*(.N); do
-    path+=($(<$path_file))
-  done
-  unset path_file
+  # # Language
+  # if [[ -z "$LANG" ]]; then
+  #   eval "$(locale)"
+  # fi
 
-  # Language
-  if [[ -z "$LANG" ]]; then
-    eval "$(locale)"
-  fi
+  # # Editors
+  # export EDITOR='vim'
+  # export VISUAL='vim'
+  # export PAGER='less'
 
-  # Editors
-  export EDITOR='vim'
-  export VISUAL='vim'
-  export PAGER='less'
+  # # Browser (Default)
+  # if [[ "$OSTYPE" == darwin* ]]; then
+  #   export BROWSER='open'
+  # fi
 
-  # Browser (Default)
-  if [[ "$OSTYPE" == darwin* ]]; then
-    export BROWSER='open'
-  fi
+  # # Less
 
-  # Less
+  # # Set the default Less options.
+  # # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+  # # Remove -X and -F (exit if the content fits on one screen) to enable it.
+  # export LESS='-F -g -i -M -R -S -w -X -z-4'
 
-  # Set the default Less options.
-  # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
-  # Remove -X and -F (exit if the content fits on one screen) to enable it.
-  export LESS='-F -g -i -M -R -S -w -X -z-4'
-
-  # Set the Less input preprocessor.
-  if (( $+commands[lesspipe.sh] )); then
-    export LESSOPEN='| /usr/bin/env lesspipe.sh %s 2>&-'
-  fi
+  # # Set the Less input preprocessor.
+  # if (( $+commands[lesspipe.sh] )); then
+  #   export LESSOPEN='| /usr/bin/env lesspipe.sh %s 2>&-'
+  # fi
 
 
 
@@ -457,6 +486,71 @@ bossjones__oh__my__zsh__after_scripts:
       if [[ -x $(which -p rbenv) ]]; then
         eval "$(rbenv init -)"
       fi
+  # - name: osx_common.zsh
+  #   content: |-
+  #     # SOURCE: https://github.com/balakrishnanc/dotfiles/blob/bff74304808b68ffbc571b2d13d3b8077ce65c4e/zsh/common-macos.sh
+  #     #,--------------------------------------------------
+  #     #| ---[ Common MacOS Environment Settings ]---
+  #     #'--------------------------------------------------
+
+  #     # ---[ Zsh ]---
+  #     # Which plugins would you like to load?
+  #     # (plugins can be found in ~/.oh-my-zsh/plugins/*)
+  #     # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+  #     # Example format: plugins=(rails git textmate ruby lighthouse)
+  #     # Add wisely, as too many plugins slow down shell startup.
+  #     plugins+=()
+
+
+  #     # ---[ General Path Settings ]---
+
+  #     # NOTE: Include contents of `/etc/paths`.
+  #     export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH"
+  #     # Custom applications.
+  #     path+=(/Applications/Racket/bin
+  #            /Applications/Wireshark.app/Contents/MacOS
+  #            /Library/TeX/texbin
+  #            /usr/local/MacGPG2/bin)
+
+
+  #     # ---[ direnv; environment switcher for shells ]---
+  #     eval "$(direnv hook zsh)"
+
+
+  #     # ---[ Homebrew ]---
+  #     export CELLAR="$(brew --cellar)"
+  #     autoload brew-clean
+
+
+  #     # ---[ Vagrant ]---
+  #     export VAGRANT_HOME="/Volumes/Yggdrasil/Sandboxes/.vagrant.d"
+  #     export VAGRANT_DOTFILE_PATH=".vagrant-${HOST}"
+  #     export SANDBOXES_HOME="/Volumes/Yggdrasil/Sandboxes"
+
+
+  #     # --- [ Python ]---
+  #     autoload pyenv-init
+
+
+  #     # ---[ Ruby ]---
+  #     # Force gems to load everytime.
+  #     export RUBYOPT=rubygems
+
+
+  #     # ---[ Haskell ]---
+  #     CABAL_HOME="${HOME}/.cabal"
+  #     HASKELL_LIB="${HOME}/Library/Haskell"
+  #     path+=(${HASKELL_LIB}/bin)
+
+
+  #     # ---[ OPAM configuration ]---
+  #     export OPAM_HOME="${HOME}/.opam"
+  #     path+=(${OPAM_HOME}/system/bin)
+  #     autoload opam-init
+
+
+  #     # ---[ Fsharp ]---
+  #     export MONO_GAC_PREFIX='/usr/local'
   - name: pyenv.zsh
     content: |-
       if [ -e ~/.pyenv ]; then
@@ -466,9 +560,51 @@ bossjones__oh__my__zsh__after_scripts:
       fi
   - name: history.zsh
     content: |-
-      # see `man zshoptions`
-      setopt EXTENDED_HISTORY
-      setopt HIST_IGNORE_ALL_DUPS
-      unsetopt INC_APPEND_HISTORY
-      setopt INC_APPEND_HISTORY_TIME
+      # # see `man zshoptions`
+      # # SOURCE: https://linux.die.net/man/1/zshoptions
+      # # SOURCE: http://zsh.sourceforge.net/Doc/Release/Options.html
+      # # Save each command's beginning timestamp (in seconds since the epoch) and the duration (in seconds) to the history file. The format of this prefixed data is:
+      # # ':<beginning time>:<elapsed seconds>:<command>'.
+      # setopt EXTENDED_HISTORY
+
+      # # If a new command line being added to the history list duplicates an older one, the older command is removed from the list (even if it is not the previous event).
+      # setopt HIST_IGNORE_ALL_DUPS
+
+      # # APPEND_HISTORY <D>
+      # # If this is set, zsh sessions will append their history list to the history file, rather than replace it. Thus, multiple parallel zsh sessions will all have the new entries from their history lists added to the history file, in the order that they exit. The file will still be periodically re-written to trim it when the number of lines grows 20% beyond the value specified by $SAVEHIST (see also the HIST_SAVE_BY_COPY option).
+      # # --------------------------------------------------
+      # # This options works like APPEND_HISTORY except that new history lines are added to the $HISTFILE incrementally (as soon as they are entered), rather than waiting until the shell exits. The file will still be periodically re-written to trim it when the number of lines grows 20% beyond the value specified by $SAVEHIST (see also the HIST_SAVE_BY_COPY option).
+      # setopt INC_APPEND_HISTORY
+
+      # setopt INC_APPEND_HISTORY_TIME
+      # setopt SHARE_HISTORY
+
+      # SOURCE: https://github.com/balakrishnanc/dotfiles/blob/bff74304808b68ffbc571b2d13d3b8077ce65c4e/zsh/zshenv.template
+      # Remove superfluous blanks from each command line being added
+      #  to the history list.
+      setopt HIST_REDUCE_BLANKS
+
+      # When writing out the history file, older commands that duplicate newer ones
+      #  are omitted.
+      setopt HIST_SAVE_NO_DUPS
+
+      # If you find that you want more control over when commands get imported,
+      #  you may wish to turn SHARE_HISTORY off,
+      #  INC_APPEND_HISTORY or INC_APPEND_HISTORY_TIME on, and then manually import
+      #  commands whenever you need them using ‘fc -RI’.
       unsetopt SHARE_HISTORY
+
+      # This option is a variant of INC_APPEND_HISTORY in which, where possible,
+      #  the history entry is written out to the file after the command is finished,
+      #  so that the time taken by the command is recorded correctly in the
+      #  history file in EXTENDED_HISTORY format. This means that the history entry
+      #  will not be available immediately from other instances of the shell that are
+      #  using the same history file.
+      # This option is only useful if INC_APPEND_HISTORY and SHARE_HISTORY are
+      #  turned off. The three options should be considered mutually exclusive.
+      setopt INC_APPEND_HISTORY_TIME
+
+      # This options works like APPEND_HISTORY except that new history lines are
+      #  added to the $HISTFILE incrementally (as soon as they are entered),
+      #  rather than waiting until the shell exits.
+      unsetopt INC_APPEND_HISTORY
