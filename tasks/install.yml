@@ -54,3 +54,23 @@
     group: "{{ bossjones__oh__my__zsh__user_group }}"
     recurse: yes
   changed_when: false
+
+- name: "create directory ~{{ bossjones__oh__my__zsh__user }}/.zsh.d/before"
+  file:
+    name: "~{{ bossjones__oh__my__zsh__user }}/.zsh.d/before"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    state: "directory"
+    mode: "0600"
+    recurse: yes
+  changed_when: false
+
+- name: "create directory ~{{ bossjones__oh__my__zsh__user }}/.zsh.d/after"
+  file:
+    name: "~{{ bossjones__oh__my__zsh__user }}/.zsh.d/after"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    state: "directory"
+    mode: "0600"
+    recurse: yes
+  changed_when: false
