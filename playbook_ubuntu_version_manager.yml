@@ -1,0 +1,661 @@
+# USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami)"
+---
+
+# - hosts: localhost
+#   tags:
+#     - rbenv
+#   become: yes
+#   become_method: sudo
+#   # SOURCE: https://docs.ansible.com/ansible/latest/playbooks_environment.html
+#   environment:
+#     SHELL: /bin/bash
+#   vars:
+#     bossjones__user: vagrant
+#     bossjones__group: vagrant
+#   pre_tasks:
+#     - name: "create /tmp/default-gems"
+#       copy:
+#         content: |-
+#           pry
+#           bundler
+#           ruby-debug-ide 0.6.0
+#           debase 0.2.2.beta10
+#           rcodetools
+#           rubocop
+#           fastri
+#           htmlbeautifier
+#           hirb
+#           gem-ctags
+#           travis
+#           excon
+#           pry-doc
+#           tmuxinator
+#           solargraph
+#         dest: "/tmp/default-gems"
+#         owner: "vagrant"
+#         group: "vagrant"
+#         mode: 0644
+#   roles:
+#     - role: zzet.rbenv
+#       default_gems_file: "/tmp/default-gems"
+#       rbenv_extra_depends:
+#       - libjemalloc1
+#       - libjemalloc-dev
+#       - ctags
+#       rbenv:
+#         env: user
+#         version: v1.1.1
+#         default_ruby: 2.4.2
+#         rubies:
+#         - version: 2.4.2
+#       rbenv_users:
+#       - "{{ bossjones__user }}"
+#       rbenv_repo: "https://github.com/rbenv/rbenv.git"
+#       rbenv_plugins:
+#         - { name: "rbenv-vars",         repo: "https://github.com/rbenv/rbenv-vars.git",         version: "master" }
+#         - { name: "ruby-build",         repo: "https://github.com/rbenv/ruby-build.git",         version: "master" }
+#         - { name: "rbenv-default-gems", repo: "https://github.com/rbenv/rbenv-default-gems.git", version: "master" }
+#         - { name: "rbenv-installer",    repo: "https://github.com/rbenv/rbenv-installer.git",    version: "master" }
+#         - { name: "rbenv-update",       repo: "https://github.com/rkh/rbenv-update.git",         version: "master" }
+#         - { name: "rbenv-whatis",       repo: "https://github.com/rkh/rbenv-whatis.git",         version: "master" }
+#         - { name: "rbenv-use",          repo: "https://github.com/rkh/rbenv-use.git",            version: "master" }
+#         - { name: "rbenv-ctags",        repo: "https://github.com/tpope/rbenv-ctags.git",        version: "master" }
+#         - { name: "rbenv-each",         repo: "https://github.com/rbenv/rbenv-each.git",         version: "master" }
+#         - { name: "rbenv-aliases",      repo: "https://github.com/tpope/rbenv-aliases.git",      version: "master" }
+
+#       rbenv_root: "{% if rbenv.env == 'system' %}/usr/local/rbenv{% else %}~/.rbenv{% endif %}"
+
+
+# - hosts: localhost
+#   gather_facts: True
+#   vars_prompt:
+#     - name: "bossjones__user"
+#       prompt: "User we want to run as."
+#       private: no
+#     - name: "bossjones__group"
+#       prompt: "Group we want to run as."
+#       private: no
+#   tags:
+#     - nvm
+#   become: yes
+#   become_method: sudo
+#   vars:
+#     bossjones__user: "{{boss__user}}"
+#     bossjones__group: "{{boss__group}}"
+#   # SOURCE: https://docs.ansible.com/ansible/latest/playbooks_environment.html
+#   environment:
+#     SHELL: /bin/bash
+#   roles:
+#     - role: pablocrivella.nvm
+#       nvm_repo: "git://github.com/creationix/nvm.git"
+#       nvm_root: "/home/{{ bossjones__user }}/.nvm"
+#       nvm_env: user
+#       nvm_version: v0.33.1
+#       nvm_default_node_version: stable
+#       nvm_node_versions:
+#         - stable
+#       nvm_global_packages:
+#         - vtop
+#         - npm
+#         - diff-so-fancy
+#         - docker-enter
+#         - jsonlint
+#       nvm_users:
+#         - "{{ bossjones__user }}"
+
+# - hosts: localhost
+#   gather_facts: True
+#   vars_prompt:
+#     - name: "bossjones__user"
+#       prompt: "User we want to run as."
+#       private: no
+#     - name: "bossjones__group"
+#       prompt: "Group we want to run as."
+#       private: no
+#   tags:
+#     - pyenv
+#   # become: yes
+#   # become_method: sudo
+#   # SOURCE: https://docs.ansible.com/ansible/latest/playbooks_environment.html
+#   become: yes
+#   # become_user: "{{bossjones__user}}"
+#   environment:
+#     SHELL: /bin/bash
+#     PYENV_ROOT: "$HOME/.pyenv"
+#     PYTHON_CONFIGURE_OPTS: "--enable-shared --enable-optimizations --enable-ipv6"
+#     PROFILE_TASK: "-m test.regrtest --pgo test_array test_base64 test_binascii test_binhex test_binop test_bytes test_c_locale_coercion test_class test_cmath test_codecs test_compile test_complex test_csv test_decimal test_dict test_float test_fstring test_hashlib test_io test_iter test_json test_long test_math test_memoryview test_pickle test_re test_set test_slice test_struct test_threading test_time test_traceback test_unicode"
+#     WORKON_HOME: "~/.virtualenvs"
+#     PROJECT_HOME: "~/dev"
+#   roles:
+#     - role: avanov.pyenv
+#       pyenv_redhat_packages:
+#       - git
+#       - gcc
+#       - libselinux-python
+#       - zlib-devel
+#       pyenv_path: "/home/{{ bossjones__user }}/.pyenv"
+#       pyenv_owner: "{{ bossjones__user }}"
+#       pyenv_update_git_install: no
+#       pyenv_enable_autocompletion: yes
+#       pyenv_python_versions:
+#         - "3.7.4"
+#       pyenv_virtualenvs:
+#         - venv_name: "jupyter3"
+#           py_version: "3.7.4"
+#         - venv_name: "tools3"
+#           py_version: "3.7.4"
+
+# - hosts: localhost
+#   gather_facts: True
+#   vars_prompt:
+#     - name: "bossjones__user"
+#       prompt: "User we want to run as."
+#       private: no
+#     - name: "bossjones__group"
+#       prompt: "Group we want to run as."
+#       private: no
+#   tags:
+#     - pyenv
+#   # become: yes
+#   # become_method: sudo
+#   # SOURCE: https://docs.ansible.com/ansible/latest/playbooks_environment.html
+#   become: yes
+#   # become_user: "{{bossjones__user}}"
+#   environment:
+#     SHELL: /bin/bash
+#     PYENV_ROOT: "$HOME/.pyenv"
+#     PYTHON_CONFIGURE_OPTS: "--enable-shared"
+#     WORKON_HOME: "~/.virtualenvs"
+#     PROJECT_HOME: "~/dev"
+#   roles:
+#     - role: avanov.pyenv
+#       pyenv_redhat_packages:
+#       - git
+#       - gcc
+#       - libselinux-python
+#       - zlib-devel
+#       pyenv_path: "/home/{{ bossjones__user }}/.pyenv"
+#       pyenv_owner: "{{ bossjones__user }}"
+#       pyenv_update_git_install: no
+#       pyenv_enable_autocompletion: yes
+#       pyenv_python_versions:
+#         - "2.7.15"
+#       pyenv_virtualenvs:
+#         - venv_name: "ipython2"
+#           py_version: "2.7.15"
+#         - venv_name: "tools2"
+#           py_version: "2.7.15"
+#   post_tasks:
+
+#     # Install plugins for pyenv
+#     - name: Clone pyenv-virtualenvwrapper
+#       git:
+#         repo: https://github.com/pyenv/pyenv-virtualenvwrapper
+#         dest: "/home/{{ bossjones__user }}/.pyenv/plugins/pyenv-virtualenvwrapper"
+#         version: "master"
+#         update: "{{ pyenv_update_git_install }}"
+#       become: yes
+#       become_user: "{{bossjones__user}}"
+
+#     - name: Clone pyenv-pip-rehash
+#       git:
+#         repo: https://github.com/pyenv/pyenv-pip-rehash
+#         dest: "/home/{{ bossjones__user }}/.pyenv/plugins/pyenv-pip-rehash"
+#         version: "master"
+#         update: "{{ pyenv_update_git_install }}"
+#       become: yes
+#       become_user: "{{bossjones__user}}"
+
+#     - name: Clone pyenv-pip-migrate
+#       git:
+#         repo: https://github.com/pyenv/pyenv-pip-migrate
+#         dest: "/home/{{ bossjones__user }}/.pyenv/plugins/pyenv-pip-migrate"
+#         version: "master"
+#         update: "{{ pyenv_update_git_install }}"
+#       become: yes
+#       become_user: "{{bossjones__user}}"
+
+#     - name: Clone pyenv-update
+#       git:
+#         repo: https://github.com/pyenv/pyenv-update
+#         dest: "/home/{{ bossjones__user }}/.pyenv/plugins/pyenv-update"
+#         version: "master"
+#         update: "{{ pyenv_update_git_install }}"
+#       become: yes
+#       become_user: "{{bossjones__user}}"
+
+#     - name: Clone pyenv-update
+#       git:
+#         repo: https://github.com/massongit/pyenv-pip-update
+#         dest: "/home/{{ bossjones__user }}/.pyenv/plugins/pyenv-pip-update"
+#         version: "master"
+#         update: "{{ pyenv_update_git_install }}"
+#       become: yes
+#       become_user: "{{bossjones__user}}"
+
+#     - name: Clone pyenv-doctor
+#       git:
+#         repo: https://github.com/pyenv/pyenv-doctor
+#         dest: "/home/{{ bossjones__user }}/.pyenv/plugins/pyenv-doctor"
+#         version: "master"
+#         update: "{{ pyenv_update_git_install }}"
+#       become: yes
+#       become_user: "{{bossjones__user}}"
+
+#     - name: Clone pyenv-default-packages
+#       git:
+#         repo: https://github.com/jawshooah/pyenv-default-packages
+#         dest: "/home/{{ bossjones__user }}/.pyenv/plugins/pyenv-default-packages"
+#         version: "master"
+#         update: "{{ pyenv_update_git_install }}"
+#       become: yes
+#       become_user: "{{bossjones__user}}"
+
+# # Install pyenv module so we can use it
+# - hosts: localhost
+#   gather_facts: True
+#   vars_prompt:
+#     - name: "bossjones__user"
+#       prompt: "User we want to run as."
+#       private: no
+#     - name: "bossjones__group"
+#       prompt: "Group we want to run as."
+#       private: no
+#   tags:
+#     - pyenv_module
+#   vars:
+#     pyenv_root: "~/.pyenv"
+#   become: yes
+#   become_user: "{{bossjones__user}}"
+#   environment:
+#     SHELL: /bin/bash
+#     PYENV_ROOT: "$HOME/.pyenv"
+#     WORKON_HOME: "~/.virtualenvs"
+#     PROJECT_HOME: "~/dev"
+#     # NOTE: To get virtualenvwrapper to create a virtual environment using pyvenv instead of virtualenv, set the PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV environment variable.
+#     PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV: true
+#   roles:
+#     - role: suzuki-shunsuke.pyenv-module
+
+#   tasks:
+#     - name: install virtualenvwrapper module in venv 3.7.4
+#       pip:
+#         name: "{{item}}"
+#         executable: "{{pyenv_root}}/versions/3.7.4/bin/pip"
+#       with_items:
+#         - virtualenvwrapper
+
+#     - name: install virtualenvwrapper module in venv 2.7.15
+#       pip:
+#         name: "{{item}}"
+#         executable: "{{pyenv_root}}/versions/2.7.15/bin/pip"
+#       with_items:
+#         - virtualenvwrapper
+
+#     # -------------------------------------------
+#     # venv: jupyter3
+#     # -------------------------------------------
+
+#     # use pip module with executable option
+#     - name: install jupyter module in venv jupyter3
+#       pip:
+#         name: "{{item}}"
+#         executable: "{{pyenv_root}}/versions/jupyter3/bin/pip"
+#       with_items:
+#         - jupyter
+
+#     - name: install jupyter3 ipykernel
+#       shell: "{{pyenv_root}}/versions/jupyter3/bin/python -m ipykernel install --user"
+#       become: yes
+#       become_user: "{{bossjones__user}}"
+
+#     # -------------------------------------------
+#       # venv: ipython2
+#     # -------------------------------------------
+
+#     - name: install ipykernel module in venv ipython2
+#       pip:
+#         name: "{{item}}"
+#         executable: "{{pyenv_root}}/versions/ipython2/bin/pip"
+#       with_items:
+#         - ipykernel
+
+#     - name: install ipython2 ipykernel
+#       shell: "{{pyenv_root}}/versions/ipython2/bin/python -m ipykernel install --user"
+#       become: yes
+#       become_user: "{{bossjones__user}}"
+
+#     # -------------------------------------------
+#     # venv: tools3
+#     # -------------------------------------------
+
+#     - name: install common modules in venv tools3
+#       pip:
+#         name: "{{item}}"
+#         executable: "{{pyenv_root}}/versions/tools3/bin/pip"
+#       with_items:
+#         - youtube-dl
+#         - gnucash-to-beancount
+#         - rows
+#         - awscli
+#         - pdbpp
+#         - pylint
+#         - ptpython
+#         - glances
+#         - isort
+#         - autopep8
+#         - pydocstyle
+#         - flake8
+#         - yamllint
+#         - mypy
+#         - graphviz
+
+#     # -------------------------------------------
+#     # venv: tools2
+#     # -------------------------------------------
+
+#     - name: install common modules in venv tools2
+#       pip:
+#         name: "{{item}}"
+#         executable: "{{pyenv_root}}/versions/tools2/bin/pip"
+#       with_items:
+#         - rename
+#         - s3cmd
+#         - fabric
+#         - mercurial
+#         - restructuredtext_lint
+#         - pdbpp
+#         - pylint
+#         - ptpython
+#         - isort
+#         - autopep8
+#         - pydocstyle
+#         - flake8
+#         - yamllint
+
+#     - name: install common modules in venv 3.7.4
+#       pip:
+#         name: "{{item}}"
+#         executable: "{{pyenv_root}}/versions/3.7.4/bin/pip"
+#       with_items:
+#         - setuptools
+#         - wheel
+#         - libtmux
+#         - tmuxp
+
+#       # Finally, it's time to make all Python versions and special virtualenvs work with each other.
+#       # The above command establishes the PATH priority so scripts can be accessed in the right order without activating any virtualenv.
+#       # pyenv global 3.6.0 2.7.13 jupyter3 ipython2 tools3 tools2
+#     - name: pyenv global 3.7.4 2.7.15 jupyter3 ipython2 tools3 tools2
+#       pyenv:
+#         subcommand: global
+#         versions:
+#         - 3.7.4
+#         - 2.7.15
+#         - jupyter3
+#         - ipython2
+#         - tools3
+#         - tools2
+#         pyenv_root: "~/.pyenv"
+
+# # # rbenv
+# # git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
+# # echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
+# # echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+# # git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+
+# # # ruby
+# # sudo apt-get install -y build-essential bison ruby-dev rake zlib1g-dev \
+# #     libyaml-dev libssl-dev libreadline-dev libncurses5-dev llvm llvm-dev \
+# #     libeditline-dev libedit-dev
+# # rbenv install 2.2.3
+
+- hosts: localhost
+  become: yes
+  become_method: sudo
+  environment:
+    NVM_LAZY_LOAD: yes
+  vars:
+    rbenv:
+      env: system
+      version: v1.1.2
+      default_ruby: 2.5.1
+      rubies:
+        - version: 2.5.1
+
+    rbenv_clean_up: false
+
+    rbenv_repo: "https://github.com/rbenv/rbenv.git"
+
+    rbenv_plugins:
+      - { name: "rbenv-vars",         repo: "https://github.com/rbenv/rbenv-vars.git",         version: "master" }
+      - { name: "ruby-build",         repo: "https://github.com/rbenv/ruby-build.git",         version: "master" }
+      - { name: "rbenv-default-gems", repo: "https://github.com/rbenv/rbenv-default-gems.git", version: "master" }
+      - { name: "rbenv-installer",    repo: "https://github.com/rbenv/rbenv-installer.git",    version: "master" }
+      - { name: "rbenv-update",       repo: "https://github.com/rkh/rbenv-update.git",         version: "master" }
+      - { name: "rbenv-whatis",       repo: "https://github.com/rkh/rbenv-whatis.git",         version: "master" }
+      - { name: "rbenv-use",          repo: "https://github.com/rkh/rbenv-use.git",            version: "master" }
+
+    rbenv_root: "{% if rbenv.env == 'system' %}/usr/local/rbenv{% else %}~/.rbenv{% endif %}"
+
+    rbenv_set_vars: true
+
+    rbenv_users: []
+
+    rbenv_extra_depends:
+    - libssl1.0-dev
+    - build-essential
+    - bison
+    - ruby-dev
+    - rake
+    - zlib1g-dev
+    - libyaml-dev
+    - libssl-dev
+    - libreadline-dev
+    - libncurses5-dev
+    - llvm
+    - llvm-dev
+    - libeditline-dev
+    - libedit-dev
+    rbenv_apt_packages:
+    - build-essential
+    - curl
+    - git
+    - libcurl4-openssl-dev
+    - libffi-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - zlib1g-dev
+    rbenv_dnf_packages:
+    - curl
+    - gcc
+    - openssl-devel
+    - libyaml-devel
+    - readline-devel
+    - zlib-devel
+    - libffi-devel
+    - git
+    rbenv_yum_packages:
+    - bzip2
+    - curl
+    - gcc
+    - git
+    - libffi-devel
+    - libyaml-devel
+    - openssl-devel
+    - readline-devel
+    - zlib-devel
+    rbenv_user_profile: true
+    bossjones__oh__my__zsh__enable_zlogin: "yes"
+    bossjones__oh__my__zsh__enable_zlogout: "yes"
+    bossjones__oh__my__zsh__enable_zprofile: "no"
+    bossjones__oh__my__zsh__enable_zshenv: "yes"
+    bossjones__oh__my__zsh__install_fzf: "yes"
+    bossjones__oh__my__zsh__change_default_shell: yes
+    bossjones__oh__my__zsh__path_to_shell: /usr/bin/zsh
+    bossjones__oh__my__zsh__antigen_bundles_extras:
+      - nvm
+      - joel-porquet/zsh-dircolors-solarized
+      - mollifier/anyframe
+      - zdharma/fast-syntax-highlighting
+      - wfxr/forgit
+      # - { name: davidparsson/zsh-pyenv-lazy, command: pyenv }
+      - { name: eventi/noreallyjustfuckingstopalready, command: killall }
+      # https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins
+      - { name: vscode, command: code }
+      - { name: gpg-agent, command: gpg-agent }
+      - history
+      - { name: autopep8, command: autopep8 }
+      - { name: pipenv, command: pipenv }
+      - { name: pylint, command: pylint }
+      - { name: lukechilds/zsh-nvm, command: nvm }
+      - { name: Sparragus/zsh-auto-nvm-use, command: nvm }
+      - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
+      # - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
+      - { name: colored-man-pages, command: man }
+      - { name: srijanshetty/node.plugin.zsh, command: node }
+
+      - { name: bossjones/boss-git-zsh-plugin, command: git }
+      - { name: bossjones/boss-docker-zsh-plugin, command: docker }
+      # SOURCE: https://github.com/droctothorpe/kubecolor
+      # - droctothorpe/kubecolor
+      # - amstrad/oh-my-matrix
+      #############################################################################################################################
+      # SOURCE: https://github.com/luismayta/dotfiles/blob/597ddc09e1bfccc43076ca21cb679299b83912e4/conf/shell/zshrc
+      #############################################################################################################################
+      # A zsh plugin to sync git repositories and clean them up.
+      - caarlos0/zsh-git-sync
+
+      # Because your terminal should be able to perform tasks asynchronously without external tools!
+      - mafredri/zsh-async
+      # Desktop notifications for long-running commands in zsh.
+      - marzocchi/zsh-notify
+      # Add zsh's missing hooks, and support for user-defined hooks
+      - willghatch/zsh-hooks
+
+      # A collection of git utilities and useful extra git scripts I've discovered or written, packaged for ease of use with shell frameworks.
+      - unixorn/git-extra-commands
+
+      # alias for docker aliases
+      - { name: luismayta/zsh-docker-aliases, command: docker }
+      # servers functions for shell
+      - luismayta/zsh-servers-functions
+      # Search ssh connect with peco
+      - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+
+      # Plugin for lazy-loading pyenv in zsh.
+      - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
+
+      # This ZSH plugin enhances the terminal environment with 256 colors. It looks at the chosen TERM environment variable and sees if there is respective (n-)curses' termcap/terminfo descriptors for 256 colors available. The result is a multicolor terminal, if available.
+      - chrissicool/zsh-256color
+
+      # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
+      - sindresorhus/pretty-time-zsh
+
+    bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
+    bossjones__oh__my__zsh__path:
+      - $HOME/bin
+      - $HOME/.local/bin
+      - $HOME/.pyenv/bin
+      - $HOME/.rbenv/bin
+      # - /usr/local/opt/coreutils/libexec/gnubin
+      - /usr/local/sbin
+      - /usr/local/bin
+      - /usr/sbin
+      - /usr/bin
+      - /sbin
+      - /bin
+      - /usr/games
+      - /usr/local/games
+
+    # SOURCE: https://github.com/sorin-ionescu/prezto/blob/4f19700919c8ebbaf75755fc0d03716d13183f49/runcoms/zshenv
+    # #
+    # # Defines environment variables.
+    # #
+    # # Authors:
+    # #   Sorin Ionescu <sorin.ionescu@gmail.com>
+    # #
+
+    # # Ensure that a non-login, non-interactive shell has a defined environment.
+    # if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+    #   source "${ZDOTDIR:-$HOME}/.zprofile"
+    # fi
+
+    bossjones__oh__my__zsh__zlogin: |-
+      # https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
+      #
+      # Executes commands at login post-zshrc.
+      #
+      # Authors:
+      #   Sorin Ionescu <sorin.ionescu@gmail.com>
+      #
+      # /etc/zsh/zlogin: system-wide .zlogin file for zsh(1).
+      #
+      # This file is sourced only for login shells. It
+      # should contain commands that should be executed only
+      # in login shells. It should be used to set the terminal
+      # type and run a series of external commands (fortune,
+      # msgs, from, etc.)
+      #
+      # Global Order: zshenv, zprofile, zshrc, zlogin
+
+      source ~/.zshrc
+
+    bossjones__oh__my__zsh__zshrc_local: |-
+      export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
+      export RBENV_ROOT=~/.rbenv
+      export RBENV_VERSION=2.5.1
+      export VIRTUAL_ENV_DISABLE_PROMPT=1
+      export bossjones__oh__my__zsh__PYENV_LAZY_VIRTUALENV=1
+      # OS X nvm load
+      [ -s "/usr/local/opt/nvm/nvm.sh" ] && . /usr/local/opt/nvm/nvm.sh # This loads nvm
+      export NVM_LAZY_LOAD=true
+      export NVM_AUTO_USE=true
+
+      # Larger bash history (allow 32³ entries; default is 500)
+
+      export HISTFILE="$HOME/.bossjones__oh__my__zsh__history"
+      export HISTSIZE=100000
+      export HISTCONTROL=ignoredups
+      export SAVEHIST=$HISTSIZE
+
+      # Prefer US English and use UTF-8
+      export LANG=en_US.UTF-8
+      export LC_ALL=en_US.UTF-8
+
+      # SOURCE: https://github.com/luismayta/dotfiles/blob/597ddc09e1bfccc43076ca21cb679299b83912e4/conf/shell/zshrc
+      # don't put duplicate lines in the history. See bash(1) for more options
+      # ... or force ignoredups and ignorespace
+      HISTCONTROL=ignoredups:ignorespace
+
+      # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+      HISTSIZE=100000
+      HISTFILESIZE=2000
+
+      alias reload!='exec "$SHELL" -l'
+
+      setopt HIST_FIND_NO_DUPS
+      # setopt HIST_IGNORE_ALL_DUPS
+
+  roles:
+    - ../ansible-role-oh-my-zsh
+
+  # tasks:
+
+  #   # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
+  #   - name: Cloning fonts
+  #     git:
+  #       repo=https://github.com/powerline/fonts
+  #       dest="/home/vagrant/powerlinefonts"
+  #       accept_hostkey=yes
+  #     register: fontCloned
+  #     become: yes
+  #     become_user: vagrant
+
+  #   - name: Install Fonts
+  #     shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
+  #     when: fontCloned|success
+  #     become: yes
+  #     become_user: vagrant

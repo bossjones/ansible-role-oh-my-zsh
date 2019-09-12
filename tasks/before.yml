@@ -5,6 +5,6 @@
     dest: "~{{ bossjones__oh__my__zsh__user }}/.zsh.d/before/{{item.name}}"
     owner: "{{ bossjones__oh__my__zsh__user }}"
     group: "{{ bossjones__oh__my__zsh__user_group }}"
-    mode: 0644
+    mode: 0755
   with_items: "{{bossjones__oh__my__zsh__before_scripts}}"
 

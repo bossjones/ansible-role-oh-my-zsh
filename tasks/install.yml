@@ -61,7 +61,7 @@
     owner: "{{ bossjones__oh__my__zsh__user }}"
     group: "{{ bossjones__oh__my__zsh__user_group }}"
     state: "directory"
-    mode: "0600"
+    mode: "0755"
     recurse: yes
   changed_when: false
 
@@ -71,6 +71,6 @@
     owner: "{{ bossjones__oh__my__zsh__user }}"
     group: "{{ bossjones__oh__my__zsh__user_group }}"
     state: "directory"
-    mode: "0600"
+    mode: "0755"
     recurse: yes
   changed_when: false

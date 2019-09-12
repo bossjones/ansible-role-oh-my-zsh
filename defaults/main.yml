@@ -409,7 +409,7 @@ bossjones__oh__my__zsh__powerlevel9k_right_prompt:
 
 bossjones__oh__my__zsh__powerlevel_custom_elements:
   - name: command_time
-    command: "bossjones__oh__my__zsh__command_time"
+    command: "zsh_command_time"
     background: "248"
     foreground: "000"
 
@@ -557,6 +557,7 @@ bossjones__oh__my__zsh__after_scripts:
         export PYENV_ROOT=~/.pyenv
         export PATH="$PYENV_ROOT/bin:$PATH"
         eval "$(pyenv init -)"
+        pyenv virtualenvwrapper_lazy
       fi
   - name: history.zsh
     content: |-
@@ -591,7 +592,7 @@ bossjones__oh__my__zsh__after_scripts:
       # If you find that you want more control over when commands get imported,
       #  you may wish to turn SHARE_HISTORY off,
       #  INC_APPEND_HISTORY or INC_APPEND_HISTORY_TIME on, and then manually import
-      #  commands whenever you need them using ‘fc -RI’.
+      #  commands whenever you need them using 'fc -RI'.
       unsetopt SHARE_HISTORY
 
       # This option is a variant of INC_APPEND_HISTORY in which, where possible,

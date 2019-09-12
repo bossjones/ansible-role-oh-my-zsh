@@ -140,7 +140,7 @@ EOF
     # tigervnc
     # https://www.cyberciti.biz/faq/install-and-configure-tigervnc-server-on-ubuntu-18-04/
     sudo apt-get install tigervnc-standalone-server tigervnc-xorg-extension tigervnc-viewer -y
-    # sudo apt install ubuntu-gnome-desktop
+    sudo apt-get install -y ubuntu-gnome-desktop
     # sudo systemctl enable gdm
     # sudo systemctl start gdm
 
