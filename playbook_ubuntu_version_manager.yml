@@ -45,9 +45,9 @@
 #       rbenv:
 #         env: user
 #         version: v1.1.1
-#         default_ruby: 2.4.2
+#         default_ruby: 2.5.1
 #         rubies:
-#         - version: 2.4.2
+#         - version: 2.5.1
 #       rbenv_users:
 #       - "{{ bossjones__user }}"
 #       rbenv_repo: "https://github.com/rbenv/rbenv.git"
@@ -397,6 +397,31 @@
 #         - tools3
 #         - tools2
 #         pyenv_root: "~/.pyenv"
+# Install pyenv module so we can use it
+- hosts: localhost
+  gather_facts: True
+  vars_prompt:
+    - name: "bossjones__user"
+      prompt: "User we want to run as."
+      private: no
+    - name: "bossjones__group"
+      prompt: "Group we want to run as."
+      private: no
+  tags:
+    - gvm_module
+  vars:
+    pyenv_root: "~/.pyenv"
+    gvm_root: "~/.gvm"
+    gvm_is_dependencies_installed: no
+    gvm_rc_path: "~/.bashrc"
+    gvm_version: 1.0.22
+    gvm_update: no
+  become: yes
+  become_user: "{{bossjones__user}}"
+  environment:
+    SHELL: /bin/bash
+  roles:
+    - role: suzuki-shunsuke.gvm
 
 # # # rbenv
 # # git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
@@ -642,7 +667,23 @@
   roles:
     - ../ansible-role-oh-my-zsh
 
-  # tasks:
+  tasks:
+    - name: Clone fzf
+      git:
+        repo: https://github.com/junegunn/fzf.git
+        dest: "~{{bossjones__oh__my__zsh__user}}/.fzf"
+        version: "0.18.0"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_fzf
+
+    - name: Install fzf
+      shell: ./install --all chdir=/home/vagrant/.fzf
+      become: yes
+      become_user: vagrant
+
+  # # ./install --all
 
   #   # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
   #   - name: Cloning fonts
