@@ -203,6 +203,7 @@ pip-compile-upgrade-all: pip-tools ## Install pip-tools,upgrade all dependencies
 .PHONY: pip-compile
 pip-compile: pip-tools ## pip-compile requirements.txt file
 	pip-compile --output-file requirements.txt requirements.in
+	pip-compile --output-file requirements-dev.txt requirements-dev.in
 
 .PHONY: pip-compile-rebuild
 pip-compile-rebuild: pip-tools ## rebuild pip-compile requirements.txt file

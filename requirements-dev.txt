@@ -9,7 +9,7 @@ ansible-lint==4.1.0
 ansible==2.7.13
 anyconfig==0.9.7          # via molecule
 appdirs==1.4.3            # via black
-arrow==0.15.0             # via jinja2-time
+arrow==0.15.1             # via jinja2-time
 asn1crypto==0.24.0        # via cryptography
 aspy.yaml==1.3.0          # via pre-commit
 astroid==2.2.5            # via pylint
@@ -19,13 +19,13 @@ autopep8==1.4.4
 bcrypt==3.1.7             # via paramiko
 binaryornot==0.4.4        # via cookiecutter
 black==19.3b0
-boto3==1.9.224            # via molecule
+boto3==1.9.227            # via molecule
 boto==2.49.0              # via molecule
-botocore==1.12.224        # via boto3, s3transfer
+botocore==1.12.227        # via boto3, s3transfer
 bumplus==0.1.6
 bumpversion==0.5.3
 cerberus==1.3.1           # via molecule
-certifi==2019.6.16        # via requests
+certifi==2019.9.11        # via requests
 cffi==1.12.3              # via bcrypt, cryptography, pynacl
 cfgv==2.0.1               # via pre-commit
 chardet==3.0.4            # via binaryornot, requests
@@ -43,8 +43,7 @@ future==0.17.1            # via cookiecutter
 git-url-parse==1.2.2      # via python-gilt
 identify==1.4.7           # via pre-commit
 idna==2.8                 # via requests
-importlib-metadata==0.20  # via pluggy, pre-commit, pytest
-importlib-resources==1.0.2  # via pre-commit
+importlib-metadata==0.22  # via pluggy, pre-commit, pytest
 isort==4.3.21
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.10.1            # via ansible, bumplus, click-completion, cookiecutter, jinja2-time, molecule
@@ -65,7 +64,7 @@ pathspec==0.5.9           # via yamllint
 pbr==5.4.3                # via git-url-parse, python-gilt
 pdbpp==0.10.0
 pexpect==4.7.0            # via molecule
-pluggy==0.12.0            # via pytest
+pluggy==0.13.0            # via pytest
 poyo==0.5.0               # via cookiecutter
 pre-commit==1.18.3
 psutil==5.6.3             # via molecule
