@@ -349,6 +349,7 @@
 #         - yamllint
 #         - mypy
 #         - graphviz
+#         - pipenv
 
 #     # -------------------------------------------
 #     # venv: tools2
@@ -398,30 +399,29 @@
 #         - tools2
 #         pyenv_root: "~/.pyenv"
 # Install pyenv module so we can use it
-- hosts: localhost
-  gather_facts: True
-  vars_prompt:
-    - name: "bossjones__user"
-      prompt: "User we want to run as."
-      private: no
-    - name: "bossjones__group"
-      prompt: "Group we want to run as."
-      private: no
-  tags:
-    - gvm_module
-  vars:
-    pyenv_root: "~/.pyenv"
-    gvm_root: "~/.gvm"
-    gvm_is_dependencies_installed: no
-    gvm_rc_path: "~/.bashrc"
-    gvm_version: 1.0.22
-    gvm_update: no
-  become: yes
-  become_user: "{{bossjones__user}}"
-  environment:
-    SHELL: /bin/bash
-  roles:
-    - role: suzuki-shunsuke.gvm
+# - hosts: localhost
+#   gather_facts: True
+#   vars_prompt:
+#     - name: "bossjones__user"
+#       prompt: "User we want to run as."
+#       private: no
+#     - name: "bossjones__group"
+#       prompt: "Group we want to run as."
+#       private: no
+#   tags:
+#     - gvm_module
+#   vars:
+#     gvm_root: "~/.gvm"
+#     gvm_is_dependencies_installed: no
+#     gvm_rc_path: "~/.bashrc"
+#     gvm_version: 1.0.22
+#     gvm_update: no
+#   become: yes
+#   become_user: "{{bossjones__user}}"
+#   environment:
+#     SHELL: /bin/bash
+#   roles:
+#     - role: suzuki-shunsuke.gvm
 
 # # # rbenv
 # # git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
@@ -535,6 +535,8 @@
       - { name: autopep8, command: autopep8 }
       - { name: pipenv, command: pipenv }
       - { name: pylint, command: pylint }
+      - { name: httpie, command: httpie }
+      - { name: pass, command: pass }
       - { name: lukechilds/zsh-nvm, command: nvm }
       - { name: Sparragus/zsh-auto-nvm-use, command: nvm }
       - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
@@ -553,6 +555,7 @@
       # A zsh plugin to sync git repositories and clean them up.
       - caarlos0/zsh-git-sync
 
+      - jsontools
       # Because your terminal should be able to perform tasks asynchronously without external tools!
       - mafredri/zsh-async
       # Desktop notifications for long-running commands in zsh.

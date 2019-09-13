@@ -297,7 +297,7 @@ bossjones__oh__my__zsh__antigen_bundles:
   - { name: viasite/drupal-scripts, command: drs }
   - { name: viasite/server-scripts, command: dbdump }
   - { name: viasite-ansible/zsh-ansible-server, command: ansible-deploy }
-  - bossjones__oh__my__zsh__reload
+  - zsh_reload
   - tmux
   - tmuxinator
   - golang
@@ -468,6 +468,7 @@ bossjones__oh__my__zsh__after_scripts:
 
       if [ -d "$HOME/.nvm" ]; then
         export NVM_DIR="$HOME/.nvm"
+        . "$HOME/.nvm/nvm.sh"
       fi
       if [ -f "/usr/local/opt/nvm/nvm.sh" ]; then
         . "/usr/local/opt/nvm/nvm.sh"
