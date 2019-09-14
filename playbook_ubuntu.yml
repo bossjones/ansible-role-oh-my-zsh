@@ -211,7 +211,7 @@
       export RBENV_ROOT=~/.rbenv
       export RBENV_VERSION=2.5.1
       export VIRTUAL_ENV_DISABLE_PROMPT=1
-      export bossjones__oh__my__zsh__PYENV_LAZY_VIRTUALENV=1
+      export ZSH_PYENV_LAZY_VIRTUALENV=1
       # OS X nvm load
       [ -s "/usr/local/opt/nvm/nvm.sh" ] && . /usr/local/opt/nvm/nvm.sh # This loads nvm
       export NVM_LAZY_LOAD=true

@@ -8,7 +8,7 @@
     - zsh
     - git
     - wget
-    - fonts-powerline
+    # - fonts-powerline
   # brew don't work from root user on macOS
   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
