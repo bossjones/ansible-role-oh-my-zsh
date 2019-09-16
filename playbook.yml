@@ -224,6 +224,17 @@
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
       source ~/.zshrc
+
+    bossjones__oh__my__zsh__before_scripts:
+      - name: rust.zsh
+        content: |-
+          if [ -d "$HOME/.cargo/bin" ]; then
+            export PATH=$HOME/.cargo/bin:$PATH
+          fi
+      - name: fzf.zsh
+        content: |-
+          [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
       export RBENV_ROOT=~/.rbenv
