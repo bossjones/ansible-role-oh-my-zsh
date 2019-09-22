@@ -631,6 +631,46 @@
 
       source ~/.zshrc
 
+    bossjones__oh__my__zsh__before_scripts:
+      - name: rust.zsh
+        content: |-
+          if [ -d "$HOME/.cargo/bin" ]; then
+            export PATH=$HOME/.cargo/bin:$PATH
+          fi
+      - name: fzf.zsh
+        content: |-
+          [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+      - name: workon.zsh
+        content: |-
+          export WORKON_HOME="$HOME/.pyenv/versions"
+          export PROJECT_HOME=$HOME/dev
+
+      - name: ghrelease.zsh
+        content: |-
+          # SOURCE: https://gist.github.com/steinwaywhw/a4cd19cda655b8249d908261a62687f8#gistcomment-2989645
+          # Gets the download url for the latest release of a package provided via GitHub Releases
+          # Usage: ghrelease USER REPO [PATTERN]
+          ghrelease() {
+            curl -s "https://api.github.com/repos/$1/$2/releases/latest" | grep -o "http.*${3:-deb}"
+          }
+
+          # Installs a local or remote(http/https) deb package and removes it after installation
+          installdeb() {
+            set -e
+            loc="/tmp/install.deb"
+            case $1 in
+            http*) sudo wget -O "$loc" $1;;
+            *) loc="$1"
+            esac
+            sudo dpkg -i "$loc"
+            sudo apt -f install
+            sudo rm -f "$loc"
+          }
+
+          # Example usage: installdeb $(ghrelease sharkdp bat "bat_.*_amd64.deb")
+
+
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
       export RBENV_ROOT=~/.rbenv
@@ -670,7 +710,7 @@
   roles:
     - ../ansible-role-oh-my-zsh
 
-  tasks:
+  pre_tasks:
     - name: Clone fzf
       git:
         repo: https://github.com/junegunn/fzf.git

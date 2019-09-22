@@ -231,9 +231,20 @@
           if [ -d "$HOME/.cargo/bin" ]; then
             export PATH=$HOME/.cargo/bin:$PATH
           fi
+
       - name: fzf.zsh
         content: |-
           [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+      - name: workon.zsh
+        content: |-
+          export WORKON_HOME="$HOME/.pyenv/versions"
+          export PROJECT_HOME=$HOME/dev
+
+    bossjones__oh__my__zsh__after_scripts:
+      - name: gnubin.zsh
+        content: |-
+          alias ls="gls --color=always"
 
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
