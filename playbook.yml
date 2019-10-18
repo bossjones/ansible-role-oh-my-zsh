@@ -146,6 +146,7 @@
 
       # Plugin for lazy-loading pyenv in zsh.
       - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
+      - { name: vagrant, command: vagrant }
 
       # A zsh plugin for lazy loading of pyenv-virtualenv. The initial eval "$(pyenv virtualenv-init -)" is executed the first time pyenv-virtualenv is called.
       # - { name: kadaan/zsh-pyenv-virtualenv-lazy, command: pyenv }
@@ -232,10 +233,6 @@
             export PATH=$HOME/.cargo/bin:$PATH
           fi
 
-      - name: fzf.zsh
-        content: |-
-          [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
       - name: workon.zsh
         content: |-
           export WORKON_HOME="$HOME/.pyenv/versions"
@@ -245,6 +242,10 @@
       - name: gnubin.zsh
         content: |-
           alias ls="gls --color=always"
+
+      - name: fzf.zsh
+        content: |-
+          [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
@@ -281,6 +282,12 @@
 
       setopt HIST_FIND_NO_DUPS
       # setopt HIST_IGNORE_ALL_DUPS
+
+      if [ -n "$(which direnv)" ]; then
+          eval "$(direnv hook zsh)"
+      fi
+
+      [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
   roles:
     - ../ansible-role-oh-my-zsh
