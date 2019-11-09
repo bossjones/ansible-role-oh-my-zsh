@@ -244,11 +244,11 @@
           alias ls="gls --color=always"
 
       - name: fzf.zsh
-        content: |-
-          [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+        content: |
+          [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
+
 
     bossjones__oh__my__zsh__zshrc_local: |-
-      export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
       export RBENV_ROOT=~/.rbenv
       export RBENV_VERSION=2.5.1
       export VIRTUAL_ENV_DISABLE_PROMPT=1
@@ -260,7 +260,7 @@
 
       # Larger bash history (allow 32³ entries; default is 500)
 
-      export HISTFILE="$HOME/.bossjones__oh__my__zsh__history"
+      export HISTFILE="$HOME/.zsh_history"
       export HISTSIZE=100000
       export HISTCONTROL=ignoredups
       export SAVEHIST=$HISTSIZE

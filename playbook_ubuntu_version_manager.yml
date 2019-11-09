@@ -684,7 +684,7 @@
 
       # Larger bash history (allow 32³ entries; default is 500)
 
-      export HISTFILE="$HOME/.bossjones__oh__my__zsh__history"
+      export HISTFILE="$HOME/.zsh_history"
       export HISTSIZE=100000
       export HISTCONTROL=ignoredups
       export SAVEHIST=$HISTSIZE

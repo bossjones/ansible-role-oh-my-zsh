@@ -172,6 +172,7 @@
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:
+      - /usr/local/opt/fzf/bin
       - $HOME/bin
       - $HOME/.local/bin
       - $HOME/.pyenv/bin
