@@ -1,22 +1,10 @@
-# docker-py
-# molecule>=2.21.dev49
 molecule[ec2]
-# PyYAML
-# awscli
-pdbpp
-# ptpython
 pylint
 yamllint
 ansible-lint
 autopep8
 isort
-black
-# ipython
 pre-commit
-mccabe
-2to3
-MonkeyType
-mypy
 bumplus
 bumpversion
-ansible<2.8
+
