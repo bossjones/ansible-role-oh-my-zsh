@@ -198,10 +198,12 @@ endif
 .PHONY: pip-compile-upgrade-all
 pip-compile-upgrade-all: pip-tools ## Install pip-tools,upgrade all dependencies
 	pip-compile --output-file requirements.txt requirements.in --upgrade
+	pip-compile --output-file requirements-dev.txt requirements-dev.in --upgrade
 
 .PHONY: pip-compile
 pip-compile: pip-tools ## pip-compile requirements.txt file
 	pip-compile --output-file requirements.txt requirements.in
+	pip-compile --output-file requirements-dev.txt requirements-dev.in
 
 .PHONY: pip-compile-rebuild
 pip-compile-rebuild: pip-tools ## rebuild pip-compile requirements.txt file
@@ -266,6 +268,10 @@ run:
 .PHONY: run-ubuntu
 run-ubuntu:
 	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu.yml --extra-vars="bossjones__oh__my__zsh__user=$(WHOAMI)"
+
+.PHONY: run-ubuntu-version-manager
+run-ubuntu-version-manager:
+	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu_version_manager.yml --extra-vars="bossjones__oh__my__zsh__user=$(WHOAMI) boss__user=$(WHOAMI) boss__group=$(WHOAMI)"
 
 .PHONY: gpr
 gpr:

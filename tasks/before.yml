@@ -1,0 +1,10 @@
+---
+- name: "create ~{{ bossjones__oh__my__zsh__user }}/.zsh.d/before/{{item.name}}"
+  copy:
+    content: "{{item.content}}"
+    dest: "~{{ bossjones__oh__my__zsh__user }}/.zsh.d/before/{{item.name}}"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    mode: 0755
+  with_items: "{{bossjones__oh__my__zsh__before_scripts}}"
+

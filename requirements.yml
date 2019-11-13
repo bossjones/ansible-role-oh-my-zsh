@@ -1,3 +1,11 @@
 ---
 - src: geerlingguy.pip
 - src: https://github.com/bossjones/boss-ansible-role-debug
+- src: zzet.rbenv
+- src: pablocrivella.nvm
+- src: avanov.pyenv
+- src: suzuki-shunsuke.pyenv-module
+# https://github.com/suzuki-shunsuke/ansible-gvm
+- src: suzuki-shunsuke.gvm
+# https://github.com/suzuki-shunsuke/ansible-gvm-module
+- src: suzuki-shunsuke.gvm-module

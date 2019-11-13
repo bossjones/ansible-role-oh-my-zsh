@@ -56,10 +56,46 @@
 - name: Write .zshrc.local config
   template:
     src: zshrc.local.j2
-    dest: "~/.zshrc.local"
+    dest: "~{{bossjones__oh__my__zsh__user}}/.zshrc.local"
     owner: "{{ bossjones__oh__my__zsh__user }}"
     group: "{{ bossjones__oh__my__zsh__user_group }}"
     backup: yes
+
+- name: Write .zlogin config
+  template:
+    src: zlogin.j2
+    dest: "~{{bossjones__oh__my__zsh__user}}/.zlogin"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    backup: yes
+  when: bossjones__oh__my__zsh__enable_zlogin == "yes"
+
+- name: Write .zlogout config
+  template:
+    src: zlogout.j2
+    dest: "~{{bossjones__oh__my__zsh__user}}/.zlogout"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    backup: yes
+  when: bossjones__oh__my__zsh__enable_zlogout == "yes"
+
+- name: Write .zprofile config
+  template:
+    src: zprofile.j2
+    dest: "~{{bossjones__oh__my__zsh__user}}/.zprofile"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    backup: yes
+  when: bossjones__oh__my__zsh__enable_zprofile == "yes"
+
+- name: Write .zshenv config
+  template:
+    src: zshenv.j2
+    dest: "~{{bossjones__oh__my__zsh__user}}/.zshenv"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    backup: yes
+  when: bossjones__oh__my__zsh__enable_zprofile == "yes"
 
 - name: "Ensure {{bossjones__oh__my__zsh__path_to_shell}} is in /etc/shells"
   lineinfile:
@@ -83,3 +119,15 @@
     dest: /etc/zsh/zshenv
     state: present
   when: ansible_distribution == 'Ubuntu'
+
+# - name: Clone pyenv-virtualenvwrapper
+#   git:
+#     repo: https://github.com/junegunn/fzf.git
+#     dest: "~{{bossjones__oh__my__zsh__user}}/.fzf"
+#     version: "0.18.0"
+#     force: yes
+#   become: yes
+#   become_user: "{{ bossjones__oh__my__zsh__user }}"
+#   register: bossjones__oh__my__zsh__register_fzf
+
+# # ./install --all

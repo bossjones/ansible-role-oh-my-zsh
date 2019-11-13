@@ -3,11 +3,195 @@
 ---
 # Suggested ansible variable namespace: behance__oh__my__bossjones__oh__my__zsh___
 bossjones__oh__my__zsh__user: "{{ ansible_user_id }}"
+bossjones__oh__my__zsh__enable_zlogin: "no"
+bossjones__oh__my__zsh__enable_zlogout: "yes"
+bossjones__oh__my__zsh__enable_zprofile: "no"
+bossjones__oh__my__zsh__enable_zshenv: "yes"
 
 bossjones__oh__my__zsh__path_to_shell: /usr/local/bin/zsh
 bossjones__oh__my__zsh__path_to_cat: /bin/cat
 bossjones__oh__my__zsh__disable_correction: no
 bossjones__oh__my__zsh__change_default_shell: no
+
+bossjones__oh__my__zsh__before_block: |-
+  # source "before' config files
+  if [ -d "$HOME/.zsh.d/before" ]; then
+    for z in $HOME/.zsh.d/before/*.zsh(n); do source $z; done
+  fi
+
+bossjones__oh__my__zsh__after_block: |-
+  # source "after" config files
+  if [ -d "$HOME/.zsh.d/after" ]; then
+    for z in $HOME/.zsh.d/after/*.zsh(n); do source $z; done
+  fi
+
+bossjones__oh__my__zsh__zlogin: |-
+  # https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
+  #
+  # Executes commands at login post-zshrc.
+  #
+  # Authors:
+  #   Sorin Ionescu <sorin.ionescu@gmail.com>
+  #
+  # /etc/zsh/zlogin: system-wide .zlogin file for zsh(1).
+  #
+  # This file is sourced only for login shells. It
+  # should contain commands that should be executed only
+  # in login shells. It should be used to set the terminal
+  # type and run a series of external commands (fortune,
+  # msgs, from, etc.)
+  #
+  # Global Order: zshenv, zprofile, zshrc, zlogin
+
+  # # Execute code that does not affect the current session in the background.
+  # {
+  #   # Compile the completion dump to increase startup speed.
+  #   dump_file="$HOME/.zcompdump"
+  #   if [[ "$dump_file" -nt "${dump_file}.zwc" || ! -s "${dump_file}.zwc" ]]; then
+  #     zcompile "$dump_file"
+  #   fi
+
+  #   # Set environment variables for launchd processes.
+  #   if [[ "$OSTYPE" == darwin* ]]; then
+  #     for env_var in PATH MANPATH; do
+  #       launchctl setenv "$env_var" "${(P)env_var}"
+  #     done
+  #   fi
+  # } &!
+
+  # # Print a random, hopefully interesting, adage.
+  # if (( $+commands[fortune] )); then
+  #   fortune -a
+  #   print
+  # fi
+
+bossjones__oh__my__zsh__zlogout: |-
+  # https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
+  #
+  # Executes commands at logout.
+  #
+  # Authors:
+  #   Sorin Ionescu <sorin.ionescu@gmail.com>
+  #
+
+  # Print the message.
+  cat <<-EOF
+
+  Thank you. Come again!
+    -- Dr. Apu Nahasapeemapetilon
+  EOF
+
+bossjones__oh__my__zsh__zprofile: |-
+  # https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
+  #
+  # Executes commands at login pre-zshrc.
+  #
+  # Authors:
+  #   Sorin Ionescu <sorin.ionescu@gmail.com>
+  #
+
+bossjones__oh__my__zsh__zshenv: |-
+  # Since .zshenv is always sourced, it often contains exported variables that should be available to other programs. For example, $PATH, $EDITOR, and $PAGER are often set in .zshenv. Also, you can set $ZDOTDIR in .zshenv to specify an alternative location for the rest of your zsh configuration.
+  # ~/.zshenv: system-wide .zshenv file for zsh(1).
+  #
+  # This file is sourced on all invocations of the shell.
+  # If the -f flag is present or if the NO_RCS option is
+  # set within this file, all other initialization files
+  # are skipped.
+  #
+  # This file should contain commands to set the command
+  # search path, plus other important environment variables.
+  # This file should not contain commands that produce
+  # output or assume the shell is attached to a tty.
+  #
+  # Global Order: zshenv, zprofile, zshrc, zlogin
+
+  if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
+  then
+    export PATH="/usr/local/bin:/usr/bin:/bin:/usr/games"
+  fi
+  skip_global_compinit=1
+  # # ----------------------------------------------------------------
+  # #
+  # # Defines environment variables.
+  # #
+  # # Authors:
+  # #   Sorin Ionescu <sorin.ionescu@gmail.com>
+  # #
+
+  # # Set the path to Oh My Zsh.
+  # export OMZ="$HOME/.oh-my-zsh"
+
+  # # Paths
+  # typeset -gU cdpath fpath mailpath manpath path
+  # typeset -gUT INFOPATH infopath
+
+  # # Set the the list of directories that cd searches.
+  # # cdpath=(
+  # #   $cdpath
+  # # )
+
+  # # Set the list of directories that info searches for manuals.
+  # infopath=(
+  #   /usr/local/share/info
+  #   /usr/share/info
+  #   $infopath
+  # )
+
+  # # Set the list of directories that man searches for manuals.
+  # manpath=(
+  #   /usr/local/share/man
+  #   /usr/share/man
+  #   $manpath
+  # )
+
+  # for path_file in /etc/manpaths.d/*(.N); do
+  #   manpath+=($(<$path_file))
+  # done
+  # unset path_file
+
+  # # Set the list of directories that Zsh searches for programs.
+  # path=(
+  #   /usr/local/{bin,sbin}
+  #   /usr/{bin,sbin}
+  #   /{bin,sbin}
+  #   $path
+  # )
+
+  # for path_file in /etc/paths.d/*(.N); do
+  #   path+=($(<$path_file))
+  # done
+  # unset path_file
+
+  # # Language
+  # if [[ -z "$LANG" ]]; then
+  #   eval "$(locale)"
+  # fi
+
+  # # Editors
+  # export EDITOR='vim'
+  # export VISUAL='vim'
+  # export PAGER='less'
+
+  # # Browser (Default)
+  # if [[ "$OSTYPE" == darwin* ]]; then
+  #   export BROWSER='open'
+  # fi
+
+  # # Less
+
+  # # Set the default Less options.
+  # # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+  # # Remove -X and -F (exit if the content fits on one screen) to enable it.
+  # export LESS='-F -g -i -M -R -S -w -X -z-4'
+
+  # # Set the Less input preprocessor.
+  # if (( $+commands[lesspipe.sh] )); then
+  #   export LESSOPEN='| /usr/bin/env lesspipe.sh %s 2>&-'
+  # fi
+
+
+
 
 bossjones__oh__my__zsh__zshrc_local: |-
   alias gcl='git clone'
@@ -113,7 +297,7 @@ bossjones__oh__my__zsh__antigen_bundles:
   - { name: viasite/drupal-scripts, command: drs }
   - { name: viasite/server-scripts, command: dbdump }
   - { name: viasite-ansible/zsh-ansible-server, command: ansible-deploy }
-  - bossjones__oh__my__zsh__reload
+  - zsh_reload
   - tmux
   - tmuxinator
   - golang
@@ -225,7 +409,7 @@ bossjones__oh__my__zsh__powerlevel9k_right_prompt:
 
 bossjones__oh__my__zsh__powerlevel_custom_elements:
   - name: command_time
-    command: "bossjones__oh__my__zsh__command_time"
+    command: "zsh_command_time"
     background: "248"
     foreground: "000"
 
@@ -253,3 +437,176 @@ bossjones__oh__my__zsh__powerlevel9k_vcs_untracked_background: "094" # orange
 # command execution time
 bossjones__oh__my__zsh__powerlevel9k_command_execution_time_foreground: "000"
 bossjones__oh__my__zsh__powerlevel9k_command_execution_time_background: "248"
+
+
+bossjones__oh__my__zsh__before_scripts:
+  - name: rust.zsh
+    content: |-
+      if [ -d "$HOME/.cargo/bin" ]; then
+        export PATH=$HOME/.cargo/bin:$PATH
+      fi
+
+bossjones__oh__my__zsh__after_scripts:
+  - name: glob.zsh
+    content: |-
+      # see `man zshoptions`
+      setopt EXTENDED_GLOB
+
+  - name: nvm.zsh
+    content: |-
+      # nvm is installed via homebrew. Here are instructions:
+      #
+      # You should create NVM's working directory if it doesn't exist:
+      #
+      #   mkdir ~/.nvm
+      #
+      # Add the following to ~/.zshrc or your desired shell
+      # configuration file:
+      #
+      #   export NVM_DIR="$HOME/.nvm"
+      #   . "/usr/local/opt/nvm/nvm.sh"
+
+      if [ -d "$HOME/.nvm" ]; then
+        export NVM_DIR="$HOME/.nvm"
+        . "$HOME/.nvm/nvm.sh"
+      fi
+      if [ -f "/usr/local/opt/nvm/nvm.sh" ]; then
+        . "/usr/local/opt/nvm/nvm.sh"
+      fi
+  - name: path.zsh
+    content: |-
+      if [ -d "$HOME/bin" ]; then
+        export PATH=$HOME/bin:$PATH
+      fi
+  - name: rbenv.zsh
+    content: |-
+      if [ -e ~/.rbenv ]; then
+        export PATH="$HOME/.rbenv/bin:$PATH"
+        # export PATH="$HOME/.gem/ruby/2.6.0/bin:$PATH"
+      fi
+      if [[ -x $(which -p rbenv) ]]; then
+        eval "$(rbenv init -)"
+      fi
+  # - name: osx_common.zsh
+  #   content: |-
+  #     # SOURCE: https://github.com/balakrishnanc/dotfiles/blob/bff74304808b68ffbc571b2d13d3b8077ce65c4e/zsh/common-macos.sh
+  #     #,--------------------------------------------------
+  #     #| ---[ Common MacOS Environment Settings ]---
+  #     #'--------------------------------------------------
+
+  #     # ---[ Zsh ]---
+  #     # Which plugins would you like to load?
+  #     # (plugins can be found in ~/.oh-my-zsh/plugins/*)
+  #     # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+  #     # Example format: plugins=(rails git textmate ruby lighthouse)
+  #     # Add wisely, as too many plugins slow down shell startup.
+  #     plugins+=()
+
+
+  #     # ---[ General Path Settings ]---
+
+  #     # NOTE: Include contents of `/etc/paths`.
+  #     export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH"
+  #     # Custom applications.
+  #     path+=(/Applications/Racket/bin
+  #            /Applications/Wireshark.app/Contents/MacOS
+  #            /Library/TeX/texbin
+  #            /usr/local/MacGPG2/bin)
+
+
+  #     # ---[ direnv; environment switcher for shells ]---
+  #     eval "$(direnv hook zsh)"
+
+
+  #     # ---[ Homebrew ]---
+  #     export CELLAR="$(brew --cellar)"
+  #     autoload brew-clean
+
+
+  #     # ---[ Vagrant ]---
+  #     export VAGRANT_HOME="/Volumes/Yggdrasil/Sandboxes/.vagrant.d"
+  #     export VAGRANT_DOTFILE_PATH=".vagrant-${HOST}"
+  #     export SANDBOXES_HOME="/Volumes/Yggdrasil/Sandboxes"
+
+
+  #     # --- [ Python ]---
+  #     autoload pyenv-init
+
+
+  #     # ---[ Ruby ]---
+  #     # Force gems to load everytime.
+  #     export RUBYOPT=rubygems
+
+
+  #     # ---[ Haskell ]---
+  #     CABAL_HOME="${HOME}/.cabal"
+  #     HASKELL_LIB="${HOME}/Library/Haskell"
+  #     path+=(${HASKELL_LIB}/bin)
+
+
+  #     # ---[ OPAM configuration ]---
+  #     export OPAM_HOME="${HOME}/.opam"
+  #     path+=(${OPAM_HOME}/system/bin)
+  #     autoload opam-init
+
+
+  #     # ---[ Fsharp ]---
+  #     export MONO_GAC_PREFIX='/usr/local'
+  - name: pyenv.zsh
+    content: |-
+      if [ -e ~/.pyenv ]; then
+        export PYENV_ROOT=~/.pyenv
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        eval "$(pyenv init -)"
+        pyenv virtualenvwrapper_lazy
+      fi
+  - name: history.zsh
+    content: |-
+      # # see `man zshoptions`
+      # # SOURCE: https://linux.die.net/man/1/zshoptions
+      # # SOURCE: http://zsh.sourceforge.net/Doc/Release/Options.html
+      # # Save each command's beginning timestamp (in seconds since the epoch) and the duration (in seconds) to the history file. The format of this prefixed data is:
+      # # ':<beginning time>:<elapsed seconds>:<command>'.
+      # setopt EXTENDED_HISTORY
+
+      # # If a new command line being added to the history list duplicates an older one, the older command is removed from the list (even if it is not the previous event).
+      # setopt HIST_IGNORE_ALL_DUPS
+
+      # # APPEND_HISTORY <D>
+      # # If this is set, zsh sessions will append their history list to the history file, rather than replace it. Thus, multiple parallel zsh sessions will all have the new entries from their history lists added to the history file, in the order that they exit. The file will still be periodically re-written to trim it when the number of lines grows 20% beyond the value specified by $SAVEHIST (see also the HIST_SAVE_BY_COPY option).
+      # # --------------------------------------------------
+      # # This options works like APPEND_HISTORY except that new history lines are added to the $HISTFILE incrementally (as soon as they are entered), rather than waiting until the shell exits. The file will still be periodically re-written to trim it when the number of lines grows 20% beyond the value specified by $SAVEHIST (see also the HIST_SAVE_BY_COPY option).
+      # setopt INC_APPEND_HISTORY
+
+      # setopt INC_APPEND_HISTORY_TIME
+      # setopt SHARE_HISTORY
+
+      # SOURCE: https://github.com/balakrishnanc/dotfiles/blob/bff74304808b68ffbc571b2d13d3b8077ce65c4e/zsh/zshenv.template
+      # Remove superfluous blanks from each command line being added
+      #  to the history list.
+      setopt HIST_REDUCE_BLANKS
+
+      # When writing out the history file, older commands that duplicate newer ones
+      #  are omitted.
+      setopt HIST_SAVE_NO_DUPS
+
+      # If you find that you want more control over when commands get imported,
+      #  you may wish to turn SHARE_HISTORY off,
+      #  INC_APPEND_HISTORY or INC_APPEND_HISTORY_TIME on, and then manually import
+      #  commands whenever you need them using 'fc -RI'.
+      unsetopt SHARE_HISTORY
+
+      # This option is a variant of INC_APPEND_HISTORY in which, where possible,
+      #  the history entry is written out to the file after the command is finished,
+      #  so that the time taken by the command is recorded correctly in the
+      #  history file in EXTENDED_HISTORY format. This means that the history entry
+      #  will not be available immediately from other instances of the shell that are
+      #  using the same history file.
+      # This option is only useful if INC_APPEND_HISTORY and SHARE_HISTORY are
+      #  turned off. The three options should be considered mutually exclusive.
+      setopt INC_APPEND_HISTORY_TIME
+
+      # This options works like APPEND_HISTORY except that new history lines are
+      #  added to the $HISTFILE incrementally (as soon as they are entered),
+      #  rather than waiting until the shell exits.
+      unsetopt INC_APPEND_HISTORY

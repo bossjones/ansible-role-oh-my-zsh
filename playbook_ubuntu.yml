@@ -91,7 +91,12 @@
     - readline-devel
     - zlib-devel
     rbenv_user_profile: true
-    bossjones__oh__my__zsh__change_default_shell: no
+    bossjones__oh__my__zsh__enable_zlogin: "yes"
+    bossjones__oh__my__zsh__enable_zlogout: "yes"
+    bossjones__oh__my__zsh__enable_zprofile: "no"
+    bossjones__oh__my__zsh__enable_zshenv: "yes"
+    bossjones__oh__my__zsh__install_fzf: "yes"
+    bossjones__oh__my__zsh__change_default_shell: yes
     bossjones__oh__my__zsh__path_to_shell: /usr/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
       - nvm
@@ -168,12 +173,45 @@
       - /usr/games
       - /usr/local/games
 
+    # SOURCE: https://github.com/sorin-ionescu/prezto/blob/4f19700919c8ebbaf75755fc0d03716d13183f49/runcoms/zshenv
+    # #
+    # # Defines environment variables.
+    # #
+    # # Authors:
+    # #   Sorin Ionescu <sorin.ionescu@gmail.com>
+    # #
+
+    # # Ensure that a non-login, non-interactive shell has a defined environment.
+    # if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+    #   source "${ZDOTDIR:-$HOME}/.zprofile"
+    # fi
+
+    bossjones__oh__my__zsh__zlogin: |-
+      # https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
+      #
+      # Executes commands at login post-zshrc.
+      #
+      # Authors:
+      #   Sorin Ionescu <sorin.ionescu@gmail.com>
+      #
+      # /etc/zsh/zlogin: system-wide .zlogin file for zsh(1).
+      #
+      # This file is sourced only for login shells. It
+      # should contain commands that should be executed only
+      # in login shells. It should be used to set the terminal
+      # type and run a series of external commands (fortune,
+      # msgs, from, etc.)
+      #
+      # Global Order: zshenv, zprofile, zshrc, zlogin
+
+      source ~/.zshrc
+
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
       export RBENV_ROOT=~/.rbenv
       export RBENV_VERSION=2.5.1
       export VIRTUAL_ENV_DISABLE_PROMPT=1
-      export bossjones__oh__my__zsh__PYENV_LAZY_VIRTUALENV=1
+      export ZSH_PYENV_LAZY_VIRTUALENV=1
       # OS X nvm load
       [ -s "/usr/local/opt/nvm/nvm.sh" ] && . /usr/local/opt/nvm/nvm.sh # This loads nvm
       export NVM_LAZY_LOAD=true
@@ -181,7 +219,7 @@
 
       # Larger bash history (allow 32³ entries; default is 500)
 
-      export HISTFILE="$HOME/.bossjones__oh__my__zsh__history"
+      export HISTFILE="$HOME/.zsh_history"
       export HISTSIZE=100000
       export HISTCONTROL=ignoredups
       export SAVEHIST=$HISTSIZE
@@ -206,3 +244,21 @@
 
   roles:
     - ../ansible-role-oh-my-zsh
+
+  # tasks:
+
+  #   # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
+  #   - name: Cloning fonts
+  #     git:
+  #       repo=https://github.com/powerline/fonts
+  #       dest="/home/vagrant/powerlinefonts"
+  #       accept_hostkey=yes
+  #     register: fontCloned
+  #     become: yes
+  #     become_user: vagrant
+
+  #   - name: Install Fonts
+  #     shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
+  #     when: fontCloned|success
+  #     become: yes
+  #     become_user: vagrant

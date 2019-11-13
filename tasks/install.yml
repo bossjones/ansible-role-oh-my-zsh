@@ -8,6 +8,7 @@
     - zsh
     - git
     - wget
+    # - fonts-powerline
   # brew don't work from root user on macOS
   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
@@ -38,18 +39,38 @@
   check_mode: no
   register: bossjones__oh__my__zsh__register_fzf_command
 
-# - name: Download fzf
-#   unarchive:
-#     src: "{{ bossjones__oh__my__zsh__fzf_url }}"
-#     dest: /usr/local/bin
-#     remote_src: yes
-#     creates: /usr/local/bin/fzf
-#   when: bossjones__oh__my__zsh__register_fzf_command.rc == 1
+- name: Download fzf
+  unarchive:
+    src: "{{ bossjones__oh__my__zsh__fzf_url }}"
+    dest: /usr/local/bin
+    remote_src: yes
+    creates: /usr/local/bin/fzf
+  when: bossjones__oh__my__zsh__register_fzf_command.rc == 1 and bossjones__oh__my__zsh__install_fzf == "yes"
 
 - name: Set directory permissions
   file:
     name: "{{ bossjones__oh__my__zsh__antigen_path }}"
     owner: "{{ bossjones__oh__my__zsh__user }}"
     group: "{{ bossjones__oh__my__zsh__user_group }}"
+    recurse: yes
+  changed_when: false
+
+- name: "create directory ~{{ bossjones__oh__my__zsh__user }}/.zsh.d/before"
+  file:
+    name: "~{{ bossjones__oh__my__zsh__user }}/.zsh.d/before"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    state: "directory"
+    mode: "0755"
+    recurse: yes
+  changed_when: false
+
+- name: "create directory ~{{ bossjones__oh__my__zsh__user }}/.zsh.d/after"
+  file:
+    name: "~{{ bossjones__oh__my__zsh__user }}/.zsh.d/after"
+    owner: "{{ bossjones__oh__my__zsh__user }}"
+    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    state: "directory"
+    mode: "0755"
     recurse: yes
   changed_when: false
