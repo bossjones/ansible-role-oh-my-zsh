@@ -78,7 +78,11 @@ POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k/powerlevel
 POWERLEVEL9K_INSTALLATION_PATH={{ bossjones__oh__my__zsh__antigen_path_compat }}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-bhilburn-SLASH-powerlevel9k.git
 {% endif %}
 
-antigen theme {{ bossjones__oh__my__zsh__antigen_theme }}
+# antigen theme {{ bossjones__oh__my__zsh__antigen_theme }}
+
+# workaround for https://github.com/zsh-users/antigen/issues/675
+THEME=bhilburn/powerlevel9k
+antigen list | grep $THEME; if [ $? -ne 0 ]; then antigen theme $THEME; fi
 
 antigen apply
 
