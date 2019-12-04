@@ -44,35 +44,35 @@ matrix:
     xcode_sdk: macosx10.13
     # env: MY_RUBY_VERSION=""
 
-  - name: "Sierra (10.12) and xcode8.3"
-    os: osx
-    sudo: required
-    language: objective-c
-    osx_image: xcode8.3
-    xcode_sdk: macosx10.12
+  # - name: "Sierra (10.12) and xcode8.3"
+  #   os: osx
+  #   sudo: required
+  #   language: objective-c
+  #   osx_image: xcode8.3
+  #   xcode_sdk: macosx10.12
 
 
-  - name: "Sierra (10.12) and xcode9"
-    os: osx
-    sudo: required
-    language: objective-c
-    osx_image: xcode9
-    xcode_sdk: macosx10.12
-    env: MY_HOMEBREW_UPDATE="1"
+  # - name: "Sierra (10.12) and xcode9"
+  #   os: osx
+  #   sudo: required
+  #   language: objective-c
+  #   osx_image: xcode9
+  #   xcode_sdk: macosx10.12
+  #   env: MY_HOMEBREW_UPDATE="1"
 
-  - name: "Sierra (10.12) and xcode9.1"
-    os: osx
-    sudo: required
-    language: objective-c
-    osx_image: xcode9.1
-    xcode_sdk: macosx10.12
+  # - name: "Sierra (10.12) and xcode9.1"
+  #   os: osx
+  #   sudo: required
+  #   language: objective-c
+  #   osx_image: xcode9.1
+  #   xcode_sdk: macosx10.12
 
-  - name: "Sierra (10.12) and xcode9.2"
-    os: osx
-    sudo: required
-    language: objective-c
-    osx_image: xcode9.2
-    xcode_sdk: macosx10.12
+  # - name: "Sierra (10.12) and xcode9.2"
+  #   os: osx
+  #   sudo: required
+  #   language: objective-c
+  #   osx_image: xcode9.2
+  #   xcode_sdk: macosx10.12
 
   - name: "High Sierra (10.13) and xcode9.4"
     os: osx
@@ -109,7 +109,7 @@ script:
   # - python -m ensurepip --user
   # - source ./pyenv_test.sh
   - brew install bash-completion2 || true
-  - brew install bats || true
+  # - brew install bats || true
   - brew install coreutils || true
   - brew install findutils || true
   - brew install fpp || true
@@ -131,8 +131,8 @@ script:
   - brew install mtr || true
   - brew install netcat || true
   - brew install nmap || true
-  - brew install node || true
-  - brew install nodejs || true
+  # - brew install node || true
+  # - brew install nodejs || true
   - brew install nvm || true
   - brew install openssl || true
   - brew install pkg-config || true
