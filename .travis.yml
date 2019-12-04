@@ -10,6 +10,9 @@ env:
     # - PYENV_ROOT="$HOME/.pyenv"
     # - PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
     # - PYENV_VERSION=3.7.4
+    - _USER=travis
+    - _GROUP=staff
+    - _TRAVIS_CI=1
 
 # env:
 #   global:
@@ -81,6 +84,12 @@ matrix:
     osx_image: xcode9.4
     xcode_sdk: macosx10.13
 
+  - name: "Mojave (10.14) and xcode9.4"
+    os: osx
+    sudo: required
+    language: objective-c
+    # osx_image: xcode9.4
+    xcode_sdk: macosx10.14
 
 before_install:
   # ---------------------
@@ -97,11 +106,25 @@ before_install:
   - xcodebuild -version
 
 install:
-- curl https://bootstrap.pypa.io/get-pip.py | python
-# - python -m pip install --upgrade wheel>=0.30.0 setuptools>=36.6.0
-- python -m pip install --upgrade --user wheel setuptools
+  - curl https://bootstrap.pypa.io/get-pip.py | python
+  # - python -m pip install --upgrade wheel>=0.30.0 setuptools>=36.6.0
+  - python -m pip install --upgrade --user wheel setuptools
+  - brew install ansible
+
+  # Add ansible.cfg to pick up roles path.
+  - mv ansible.cfg-travis ansible.cfg
+  - cat ansible.cfg
+
+  # Add a hosts file.
+  - sudo mkdir -p /etc/ansible
+  - sudo touch /etc/ansible/hosts
+  - "echo -e '[local]\nlocalhost ansible_connection=local' | sudo tee -a /etc/ansible/hosts > /dev/null"
+
 
 script:
+  - _USER=travis
+  - _GROUP=staff
+  - _TRAVIS_CI=1
   # - brew reinstall pyenv
   # - brew reinstall pyenv-virtualenv
   # - brew reinstall pyenv-virtualenvwrapper
@@ -160,6 +183,10 @@ script:
   - brew install wrk || true
   - brew install youtube-dl || true
   - brew install zsh || true
+
+  - source install.sh
+  - "/usr/local/bin/zsh -l -c 'alias'"
+
   # - brew install --verbose --with-python --devel bossjones/scarlett-deps/cmu-sphinxbase; brew install --verbose --with-python bossjones/scarlett-deps/cmu-pocketsphinx
   # - export LD_LIBRARY_PATH=/usr/local/lib
   # - env PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig" pip install pygobject==3.28.3 ptpython black isort ipython pdbpp Pillow matplotlib numpy_ringbuffer MonkeyType
