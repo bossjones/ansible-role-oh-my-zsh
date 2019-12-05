@@ -133,7 +133,7 @@ script:
   # - source ./pyenv_test.sh
   - brew install bash-completion2 || true
   # - brew install bats || true
-  - brew install coreutils || true
+  # - brew install coreutils || true
   - brew install findutils || true
   - brew install fpp || true
   - brew install fzf || true
@@ -143,22 +143,22 @@ script:
   - brew install htop-osx || true
   - brew install httpie || true
   - brew install hub || true
-  - brew install iftop || true
-  - brew install iperf || true
+  # - brew install iftop || true
+  # - brew install iperf || true
   - brew install jq || true
   - brew install libevent || true
-  - brew install libffi || true
-  - brew install libyaml || true
-  - brew install mcrypt || true
+  # - brew install libffi || true
+  # - brew install libyaml || true
+  # - brew install mcrypt || true
   - brew install moreutils || true
-  - brew install mtr || true
+  # - brew install mtr || true
   - brew install netcat || true
   - brew install nmap || true
   # - brew install node || true
   # - brew install nodejs || true
   - brew install nvm || true
-  - brew install openssl || true
-  - brew install pkg-config || true
+  # - brew install openssl || true
+  # - brew install pkg-config || true
   - brew install pv || true
   - brew install pyenv || true
   - brew install pyenv-ccache || true
@@ -169,19 +169,19 @@ script:
   - brew install rbenv || true
   - brew install readline || true
   - brew install reattach-to-user-namespace || true
-  - brew install ruby-build || true
-  - brew install sqlite || true
+  # - brew install ruby-build || true
+  # - brew install sqlite || true
   - brew install ssh-copy-id || true
-  - brew install task || true
+  # - brew install task || true
   - brew install the_silver_searcher || true
   - brew install tmux || true
   - brew install tree || true
-  - brew install unrar || true
+  # - brew install unrar || true
   - brew install vim || true
-  - brew install watch || true
-  - brew install wget || true
-  - brew install wrk || true
-  - brew install youtube-dl || true
+  # - brew install watch || true
+  # - brew install wget || true
+  # - brew install wrk || true
+  # - brew install youtube-dl || true
   - brew install zsh || true
 
   - source install.sh
