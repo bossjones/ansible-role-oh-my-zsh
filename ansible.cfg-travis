@@ -16,5 +16,7 @@ deprecation_warnings = False
 # SOURCE: https://chrisbergeron.com/2018/06/08/ansible_performance_tuning/
 poll_interval = 5
 
+filter_plugins = filter_plugins
+
 [ssh_connection]
 host_key_checking = False
