@@ -140,13 +140,13 @@ script:
   - brew install git || true
   - brew install go || true
   - brew install gpg || true
-  - brew install htop-osx || true
-  - brew install httpie || true
+  # - brew install htop-osx || true
+  # - brew install httpie || true
   - brew install hub || true
   # - brew install iftop || true
   # - brew install iperf || true
   - brew install jq || true
-  - brew install libevent || true
+  # - brew install libevent || true
   # - brew install libffi || true
   # - brew install libyaml || true
   # - brew install mcrypt || true
@@ -161,7 +161,7 @@ script:
   # - brew install pkg-config || true
   - brew install pv || true
   - brew install pyenv || true
-  - brew install pyenv-ccache || true
+  # - brew install pyenv-ccache || true
   - brew install pyenv-virtualenv || true
   - brew install pyenv-virtualenvwrapper || true
   - brew install python || true
