@@ -137,9 +137,9 @@ script:
   - brew install findutils || true
   - brew install fpp || true
   - brew install fzf || true
-  - brew install git || true
-  - brew install go || true
-  - brew install gpg || true
+  # - brew install git || true
+  # - brew install go || true
+  # - brew install gpg || true
   # - brew install htop-osx || true
   # - brew install httpie || true
   - brew install hub || true
