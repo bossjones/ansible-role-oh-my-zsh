@@ -182,6 +182,7 @@ script:
   # - brew install wget || true
   # - brew install wrk || true
   # - brew install youtube-dl || true
+  - brew install direnv || true
   - brew install zsh || true
 
   - source install.sh
