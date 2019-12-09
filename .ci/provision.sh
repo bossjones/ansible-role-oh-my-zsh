@@ -78,4 +78,4 @@ elif [[ $unamestr == "Linux"  && -f $(which dnf) ]]; then
     fi
 
 fi
-popd
+# popd
