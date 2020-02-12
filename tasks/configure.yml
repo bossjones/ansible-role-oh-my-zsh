@@ -95,7 +95,7 @@
     owner: "{{ bossjones__oh__my__zsh__user }}"
     group: "{{ bossjones__oh__my__zsh__user_group }}"
     backup: yes
-  when: bossjones__oh__my__zsh__enable_zprofile == "yes"
+  when: bossjones__oh__my__zsh__enable_zshenv == "yes"
 
 - name: "Ensure {{bossjones__oh__my__zsh__path_to_shell}} is in /etc/shells"
   lineinfile:

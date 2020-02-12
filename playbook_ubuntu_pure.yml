@@ -158,10 +158,12 @@
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:
+      - "{{rbenv_root}}/shims"
       - $HOME/bin
       - $HOME/.local/bin
       - $HOME/.pyenv/bin
       - $HOME/.rbenv/bin
+      - $HOME/.fnm
       - /usr/local/sbin
       - /usr/local/bin
       - /usr/sbin
@@ -183,6 +185,33 @@
     # if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
     #   source "${ZDOTDIR:-$HOME}/.zprofile"
     # fi
+
+    bossjones__oh__my__zsh__zshenv: |-
+      # Since .zshenv is always sourced, it often contains exported variables that should be available to other programs. For example, $PATH, $EDITOR, and $PAGER are often set in .zshenv. Also, you can set $ZDOTDIR in .zshenv to specify an alternative location for the rest of your zsh configuration.
+      # ~/.zshenv: system-wide .zshenv file for zsh(1).
+      #
+      # This file is sourced on all invocations of the shell.
+      # If the -f flag is present or if the NO_RCS option is
+      # set within this file, all other initialization files
+      # are skipped.
+      #
+      # This file should contain commands to set the command
+      # search path, plus other important environment variables.
+      # This file should not contain commands that produce
+      # output or assume the shell is attached to a tty.
+      #
+      # Global Order: zshenv, zprofile, zshrc, zlogin
+
+      export RBENV_ROOT={{rbenv_root}}
+
+      if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
+      then
+        export PATH="/usr/local/bin:/usr/bin:/bin:/usr/games"
+        export PATH="{{rbenv_root}}/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$PATH"
+      fi
+      skip_global_compinit=1
+
+    # /usr/local/rbenv/shims:/home/vagrant/bin:/home/vagrant/.local/bin:/home/vagrant/.pyenv/bin:/home/vagrant/.rbenv/bin:/home/vagrant/.fnm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 
     bossjones__oh__my__zsh__zlogin: |-
       # https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
@@ -228,6 +257,11 @@
         content: |-
           [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
 
+      - name: pure.zsh
+        content: |-
+          if [ -d "$HOME/.zsh/pure" ]; then
+            fpath+=$HOME/.zsh/pure
+          fi
 
     bossjones__oh__my__zsh__after_scripts:
       - name: fnm.zsh
@@ -304,7 +338,7 @@
       - name: rbenv.zsh
         content: |
           if [ -e {{rbenv_root}} ]; then
-            export PATH="{{rbenv_root}}/bin:$PATH"
+            export PATH="{{rbenv_root}}/shims:$PATH"
           fi
           if [[ -x $(which -p rbenv) ]]; then
             eval "$(rbenv init -)"
@@ -423,6 +457,10 @@
       # HISTFILESIZE=2000
 
       alias reload!='exec "$SHELL" -l'
+
+      fixprompt() {
+        antigen reset; reload!
+      }
 
       # setopt HIST_FIND_NO_DUPS
 

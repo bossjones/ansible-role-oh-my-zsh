@@ -44,6 +44,7 @@ ANTIGEN_SYSTEM_UPDATE_DAYS="{{ bossjones__oh__my__zsh__update_interval }}"
 {% if bossjones__oh__my__zsh__mc_solarized_skin %}export MC_SKIN="$HOME/.mc/lib/mc-solarized/solarized.ini"{% endif %}
 
 {% if bossjones__oh__my__zsh__theme == "pure" %}
+# The -U means mark the function vcs_info for autoloading and suppress alias expansion. The -z means use zsh (rather than ksh) style. See also the functions command.
 autoload -U promptinit && promptinit
 {% endif %}
 
@@ -87,10 +88,12 @@ antigen bundle {{ bundle }}
 {% endif %}
 {% endfor %}
 
+{% if bossjones__oh__my__zsh__theme == "powerlevel" %}
 {% if bossjones__oh__my__zsh__antigen_installed_version >=2.0 %}
 POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k/powerlevel9k.zsh-theme
 {% elif bossjones__oh__my__zsh__version < 5.0.8 %}
 POWERLEVEL9K_INSTALLATION_PATH={{ bossjones__oh__my__zsh__antigen_path_compat }}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-bhilburn-SLASH-powerlevel9k.git
+{% endif %}
 {% endif %}
 
 {% if bossjones__oh__my__zsh__theme == "powerlevel" %}
