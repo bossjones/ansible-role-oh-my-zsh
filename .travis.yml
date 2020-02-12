@@ -106,6 +106,7 @@ before_install:
   - xcodebuild -version
 
 install:
+  - source env/bin/activate
   - curl https://bootstrap.pypa.io/get-pip.py | python
   # - python -m pip install --upgrade wheel>=0.30.0 setuptools>=36.6.0
   - python -m pip install --upgrade --user wheel setuptools
