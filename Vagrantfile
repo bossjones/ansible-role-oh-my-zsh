@@ -3,6 +3,7 @@
 
 # Vagrant multi machine configuration
 
+
 require 'yaml'
 config_yml = YAML.load_file(File.open(__dir__ + '/vagrant-config.yml'))
 
