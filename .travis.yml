@@ -119,6 +119,7 @@ install:
 
   # Add a hosts file.
   - sudo mkdir -p /etc/ansible
+  - sudo mkdir -p /etc/ansible/filter_plugins
   - sudo touch /etc/ansible/hosts
   - "echo -e '[local]\nlocalhost ansible_connection=local' | sudo tee -a /etc/ansible/hosts > /dev/null"
 
@@ -133,6 +134,7 @@ script:
   # - export PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
   # - python -m ensurepip --user
   # - source ./pyenv_test.sh
+  - brew install python@3.8 || true
   - brew install bash-completion2 || true
   # - brew install bats || true
   # - brew install coreutils || true

@@ -133,7 +133,7 @@ export FZF_TMUX=0
 export FZF_DEFAULT_OPTS="{{ bossjones__oh__my__zsh__fzf_default_opts }}"
 
 # fzf-widgets: fzf-change-reset-dir
-{% if bossjones__oh__my__zsh__version | version_compare('5.0', '>=') -%}
+{% if bossjones__oh__my__zsh__version >= 5.0 -%}
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 {% endif %}
