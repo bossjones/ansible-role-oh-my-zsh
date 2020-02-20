@@ -142,7 +142,7 @@ script:
   - brew install pyenv || true
   - brew install pyenv-virtualenv || true
   - brew install pyenv-virtualenvwrapper || true
-  - brew install python2 || true
+  - brew install python@2 || true
   - brew install rbenv || true
   - brew install readline || true
   - brew install reattach-to-user-namespace || true
