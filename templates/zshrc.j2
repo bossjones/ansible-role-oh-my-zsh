@@ -92,7 +92,7 @@ antigen bundle {{ bundle }}
 {% if bossjones__oh__my__zsh__theme == "powerlevel" %}
 {% if (bossjones__oh__my__zsh__antigen_installed_version|int) >= 2 %}
 POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k/powerlevel9k.zsh-theme
-{% elif (bossjones__oh__my__zsh__version|string) is version('5.1', operator='lt', strict=True) %}
+{% elif bossjones__oh__my__zsh__version is version('5.1', operator='lt', strict=True) %}
 POWERLEVEL9K_INSTALLATION_PATH={{ bossjones__oh__my__zsh__antigen_path_compat }}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-bhilburn-SLASH-powerlevel9k.git
 {% endif %}
 {% endif %}
