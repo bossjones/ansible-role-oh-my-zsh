@@ -273,6 +273,10 @@ run-ubuntu:
 run-ubuntu-version-manager:
 	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu_version_manager.yml --extra-vars="bossjones__oh__my__zsh__user=$(WHOAMI) boss__user=$(WHOAMI) boss__group=$(WHOAMI)"
 
+.PHONY: run-ubuntu-pure
+run-ubuntu-pure:
+	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(WHOAMI) boss__user=$(WHOAMI) boss__group=$(WHOAMI) bossjones__oh__my__zsh__theme=pure"
+
 .PHONY: gpr
 gpr:
 	git pull --rebase

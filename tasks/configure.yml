@@ -45,6 +45,38 @@
   set_fact:
     bossjones__oh__my__zsh__antigen_installed_version: "{{ bossjones__oh__my__zsh__register_antigen_version.stdout }}"
 
+- name: 'DEBUGGER - bossjones__oh__my__zsh__version'
+  debug:
+    msg: "{{ bossjones__oh__my__zsh__version }}"
+
+- name: 'DEBUGGER - bossjones__oh__my__zsh__version | get_var_type'
+  debug:
+    msg: "{{ bossjones__oh__my__zsh__version | get_var_type }}"
+
+- name: 'DEBUGGER - bossjones__oh__my__zsh__antigen_installed_version'
+  debug:
+    msg: "{{ bossjones__oh__my__zsh__antigen_installed_version }}"
+
+- name: 'DEBUGGER - bossjones__oh__my__zsh__antigen_installed_version | get_var_type'
+  debug:
+    msg: "{{ bossjones__oh__my__zsh__antigen_installed_version | get_var_type }}"
+
+- name: 'DEBUGGER - bossjones__oh__my__zsh__antigen_installed_version | int'
+  debug:
+    msg: "{{ bossjones__oh__my__zsh__antigen_installed_version | int }}"
+
+- name: 'DEBUGGER - bossjones__oh__my__zsh__version'
+  debug:
+    msg: "{{ bossjones__oh__my__zsh__version }}"
+
+- name: 'DEBUGGER - bossjones__oh__my__zsh__version | get_var_type'
+  debug:
+    msg: "{{ bossjones__oh__my__zsh__version | get_var_type }}"
+
+- name: 'DEBUGGER - bossjones__oh__my__zsh__version is version("5.1", operator="lt", strict=True)'
+  debug:
+    msg: "{{ bossjones__oh__my__zsh__version is version('5.1', operator='lt', strict=True) }}"
+
 - name: Write .zshrc config
   template:
     src: zshrc.j2
@@ -95,7 +127,7 @@
     owner: "{{ bossjones__oh__my__zsh__user }}"
     group: "{{ bossjones__oh__my__zsh__user_group }}"
     backup: yes
-  when: bossjones__oh__my__zsh__enable_zprofile == "yes"
+  when: bossjones__oh__my__zsh__enable_zshenv == "yes"
 
 - name: "Ensure {{bossjones__oh__my__zsh__path_to_shell}} is in /etc/shells"
   lineinfile:

@@ -13,6 +13,8 @@ bossjones__oh__my__zsh__path_to_cat: /bin/cat
 bossjones__oh__my__zsh__disable_correction: no
 bossjones__oh__my__zsh__change_default_shell: no
 
+bossjones__oh__my__zsh__theme: "powerlevel"
+
 bossjones__oh__my__zsh__before_block: |-
   # source "before' config files
   if [ -d "$HOME/.zsh.d/before" ]; then
