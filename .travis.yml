@@ -96,6 +96,7 @@ before_install:
   # SOURCE: https://github.com/Martiusweb/asynctest/blob/292e7519949901dfc49638cad2ff6c067e8a9dcb/.travis.yml
   - brew update
   - brew upgrade pyenv || brew install pyenv || true
+  - pyenv versions
   - pyenv install 3.7.4
   - pyenv local 3.7.4
   - eval "$(pyenv init -)"
@@ -109,7 +110,7 @@ install:
   - source env/bin/activate
   - curl https://bootstrap.pypa.io/get-pip.py | python
   - python -m pip install --upgrade wheel setuptools
-  - env LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite/lib" CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite/include" PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig /usr/local/opt/sqlite/lib/pkgconfig" pip install ansible==2.7.16
+  - env LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite/lib" CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite/include" PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig /usr/local/opt/sqlite/lib/pkgconfig" pip install ansible==2.8.4
 
   - 'python --version'
   - 'ansible --version'
