@@ -18,8 +18,10 @@
   become: yes
   become_method: sudo
   # environment:
-  #   NVM_LAZY_LOAD: yes
+  #   # NVM_LAZY_LOAD: yes
+  #   NODE_VERSION_TO_INSTALL: 10.3.0
   vars:
+    NODE_VERSION_TO_INSTALL: 10.3.0
     rbenv:
       env: system
       version: v1.1.2
@@ -45,86 +47,61 @@
     rbenv_set_vars: true
 
     rbenv_users: []
-    # rbenv:
-    #   env: system
-    #   version: v1.1.2
-    #   default_ruby: 2.6.6
-    #   rubies:
-    #     - version: 2.6.6
 
-    # rbenv_clean_up: false
-
-    # rbenv_repo: "https://github.com/rbenv/rbenv.git"
-
-    # rbenv_plugins:
-    #   - { name: "rbenv-vars",         repo: "https://github.com/rbenv/rbenv-vars.git",         version: "master" }
-    #   - { name: "ruby-build",         repo: "https://github.com/rbenv/ruby-build.git",         version: "master" }
-    #   - { name: "rbenv-default-gems", repo: "https://github.com/rbenv/rbenv-default-gems.git", version: "master" }
-    #   - { name: "rbenv-installer",    repo: "https://github.com/rbenv/rbenv-installer.git",    version: "master" }
-    #   - { name: "rbenv-update",       repo: "https://github.com/rkh/rbenv-update.git",         version: "master" }
-    #   - { name: "rbenv-whatis",       repo: "https://github.com/rkh/rbenv-whatis.git",         version: "master" }
-    #   - { name: "rbenv-use",          repo: "https://github.com/rkh/rbenv-use.git",            version: "master" }
-
-    # rbenv_root: "{% if rbenv.env == 'system' %}/usr/local/rbenv{% else %}~/.rbenv{% endif %}"
-
-    # rbenv_set_vars: true
-
-    # rbenv_users: []
-
-    # rbenv_extra_depends:
-    # - libssl1.0-dev
-    # - build-essential
-    # - bison
-    # - ruby-dev
-    # - rake
-    # - zlib1g-dev
-    # - libyaml-dev
-    # - libssl-dev
-    # - libreadline-dev
-    # - libncurses5-dev
-    # - llvm
-    # - llvm-dev
-    # - libeditline-dev
-    # - libedit-dev
-    # rbenv_apt_packages:
-    # - build-essential
-    # - curl
-    # - git
-    # - libcurl4-openssl-dev
-    # - libffi-dev
-    # - libreadline-dev
-    # - libssl-dev
-    # - libxml2-dev
-    # - libxslt1-dev
-    # - zlib1g-dev
-    # rbenv_dnf_packages:
-    # - curl
-    # - gcc
-    # - openssl-devel
-    # - libyaml-devel
-    # - readline-devel
-    # - zlib-devel
-    # - libffi-devel
-    # - git
-    # rbenv_yum_packages:
-    # - bzip2
-    # - curl
-    # - gcc
-    # - git
-    # - libffi-devel
-    # - libyaml-devel
-    # - openssl-devel
-    # - readline-devel
-    # - zlib-devel
-    # rbenv_user_profile: true
+    rbenv_extra_depends:
+    - libssl1.0-dev
+    - build-essential
+    - bison
+    - ruby-dev
+    - rake
+    - zlib1g-dev
+    - libyaml-dev
+    - libssl-dev
+    - libreadline-dev
+    - libncurses5-dev
+    - llvm
+    - llvm-dev
+    - libeditline-dev
+    - libedit-dev
+    rbenv_apt_packages:
+    - build-essential
+    - curl
+    - git
+    - libcurl4-openssl-dev
+    - libffi-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - zlib1g-dev
+    rbenv_dnf_packages:
+    - curl
+    - gcc
+    - openssl-devel
+    - libyaml-devel
+    - readline-devel
+    - zlib-devel
+    - libffi-devel
+    - git
+    rbenv_yum_packages:
+    - bzip2
+    - curl
+    - gcc
+    - git
+    - libffi-devel
+    - libyaml-devel
+    - openssl-devel
+    - readline-devel
+    - zlib-devel
+    rbenv_user_profile: true
     bossjones__oh__my__zsh__enable_zlogin: "yes"
     bossjones__oh__my__zsh__enable_zlogout: "yes"
     bossjones__oh__my__zsh__enable_zprofile: "no"
     bossjones__oh__my__zsh__enable_zshenv: "yes"
-    bossjones__oh__my__zsh__install_fzf: "yes"
-    bossjones__oh__my__zsh__change_default_shell: yes
+    bossjones__oh__my__zsh__change_default_shell: no
     bossjones__oh__my__zsh__path_to_shell: /usr/local/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
+      # - nvm
       # Solarized dircolors plugin for zsh
       - joel-porquet/zsh-dircolors-solarized
 
@@ -172,6 +149,8 @@
       # Plugin for lazy-loading pyenv in zsh.
       - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
 
+      - { name: vagrant, command: vagrant }
+
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
       - sindresorhus/pretty-time-zsh
 
@@ -183,12 +162,14 @@
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:
-      - "{{rbenv_root}}/shims"
+      # - "~/.rbenv/shims"
       - $HOME/bin
+      - $HOME/.bin
       - $HOME/.local/bin
       - $HOME/.pyenv/bin
       - $HOME/.rbenv/bin
       - $HOME/.fnm
+      - /usr/local/opt/coreutils/libexec/gnubin
       - /usr/local/sbin
       - /usr/local/bin
       - /usr/sbin
@@ -227,12 +208,12 @@
       #
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
-      export RBENV_ROOT={{rbenv_root}}
+      export RBENV_ROOT=~/.rbenv
 
       if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
       then
         export PATH="/usr/local/bin:/usr/bin:/bin:/usr/games"
-        export PATH="{{rbenv_root}}/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$PATH"
+        export PATH="~/.rbenv/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$PATH"
       fi
       skip_global_compinit=1
 
@@ -294,7 +275,15 @@
           # SOURCE: https://github.com/Schniz/fnm
           if [ -n "$(which fnm)" ]; then
               eval "$(fnm env --multi)"
+              if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
+                fnm install {{NODE_VERSION_TO_INSTALL}}
+                fnm use {{NODE_VERSION_TO_INSTALL}}
+                fnm default {{NODE_VERSION_TO_INSTALL}}
+                fnm current
+              fi
           fi
+
+
 
       - name: gnubin.zsh
         content: |-
@@ -362,12 +351,23 @@
 
       - name: rbenv.zsh
         content: |
-          if [ -e {{rbenv_root}} ]; then
-            export PATH="{{rbenv_root}}/shims:$PATH"
+          if [ -e ~/.rbenv ]; then
+            export PATH="~/.rbenv/shims:$PATH"
           fi
           if [[ -x $(which -p rbenv) ]]; then
             eval "$(rbenv init -)"
           fi
+
+      - name: man.zsh
+        content: |
+          get_man_exorts() {
+            for i in /usr/local/Cellar/*/*/share/man; do
+              echo 'export MANPATH="'$i':$MANPATH"'
+            done
+            for i in /usr/local/Cellar/*/*/libexec/gnuman; do
+              echo 'export MANPATH="'$i':$MANPATH"'
+            done
+          }
 
       - name: path.zsh
         content: |
@@ -438,11 +438,15 @@
 
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
-      export RBENV_ROOT={{rbenv_root}}
+      export RBENV_ROOT=~/.rbenv
       export RBENV_VERSION={{rbenv.default_ruby}}
       export VIRTUAL_ENV_DISABLE_PROMPT=1
       export ZSH_PYENV_LAZY_VIRTUALENV=1
       # Larger bash history (allow 32³ entries; default is 500)
+      # OS X nvm load
+      # [ -s "/usr/local/opt/nvm/nvm.sh" ] && . /usr/local/opt/nvm/nvm.sh # This loads nvm
+      # export NVM_LAZY_LOAD=true
+      # export NVM_AUTO_USE=true
 
       # set some history options
       setopt append_history
@@ -542,20 +546,113 @@
   roles:
     - ../ansible-role-oh-my-zsh
 
-  # tasks:
+  pre_tasks:
 
-  #   # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
-  #   - name: Cloning fonts
-  #     git:
-  #       repo=https://github.com/powerline/fonts
-  #       dest="/home/vagrant/powerlinefonts"
-  #       accept_hostkey=yes
-  #     register: fontCloned
-  #     become: yes
-  #     become_user: vagrant
+    - name: ensure directories exist
+      file:
+        dest: "~/{{ item }}"
+        state: directory
+        mode: 0700
+      loop:
+        - .bin
+        - bin
+        - .local/bin
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
 
-  #   - name: Install Fonts
-  #     shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
-  #     when: fontCloned|success
-  #     become: yes
-  #     become_user: vagrant
+    # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
+    - name: 'Cloning fonts | based on https://gist.github.com/ganapativs/e571d9287cb74121d41bfe75a0c864d7'
+      git:
+        repo=https://github.com/powerline/fonts
+        dest="~/powerlinefonts"
+        accept_hostkey=yes
+        depth=1
+      register: fontCloned
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    - name: 'Cloning iterm2-snazzy theme, dont forget to double click ~/iterm2-snazzy/Snazzy.itermcolors'
+      git:
+        repo=https://github.com/sindresorhus/iterm2-snazzy
+        dest="~/iterm2-snazzy"
+        accept_hostkey=yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    - name: Install Fonts
+      shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
+      when: fontCloned|success
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    - name: 'brew tap homebrew/cask-fonts'
+      homebrew_tap:
+        name: homebrew/cask-fonts
+        state: present
+      # brew don't work from root user on macOS
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+    
+    - name: Install font-fira-code
+      homebrew_cask:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - font-fira-code
+      # brew don't work from root user on macOS
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    - name: Install/Setup asdf and direnv
+      package:
+        name: '{{ item }}'
+        state: latest
+      with_items:
+        - direnv
+        - asdf
+        - peco
+        - coreutils
+        - findutils
+        - gnu-tar
+        - gnu-sed
+        - gawk
+        - gnutls
+        - gnu-indent
+        - gnu-getopt
+        - grep
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    - name: Clone fzf
+      git:
+        repo: https://github.com/junegunn/fzf.git
+        dest: "~/.fzf"
+        version: "0.22.0"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_fzf
+
+    - name: Install fzf
+      shell: ./install --all
+      args:
+        chdir: "~/.fzf"
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      
+
+    - name: fzf-drafts | download
+      shell: |
+        curl -L 'https://raw.githubusercontent.com/jan-warchol/dotfiles/master/bin/fzf-drafts' > ~/bin/fzf-drafts;
+        chmod +x ~/bin/fzf-drafts;
+      args:
+        executable: /bin/bash
+      changed_when: false
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"

@@ -8,8 +8,11 @@
     - zsh
     - git
     - wget
+    - Schniz/tap/fnm
     # - fonts-powerline
   # brew don't work from root user on macOS
+  become: yes
+  become_user: "{{ bossjones__oh__my__zsh__user }}"
   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
 - name: Clone antigen {{ bossjones__oh__my__zsh__antigen_version }}

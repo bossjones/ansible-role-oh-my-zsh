@@ -22,9 +22,9 @@
     rbenv:
       env: system
       version: v1.1.2
-      default_ruby: 2.5.1
+      default_ruby: 2.6.6
       rubies:
-        - version: 2.5.1
+        - version: 2.6.6
 
     rbenv_clean_up: false
 
@@ -209,7 +209,7 @@
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
       export RBENV_ROOT=~/.rbenv
-      export RBENV_VERSION=2.5.1
+      export RBENV_VERSION=2.6.6
       export VIRTUAL_ENV_DISABLE_PROMPT=1
       export ZSH_PYENV_LAZY_VIRTUALENV=1
       # OS X nvm load
