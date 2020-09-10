@@ -269,6 +269,12 @@
             fpath+=$HOME/.zsh/pure
           fi
 
+      - name: poetry.zsh
+        content: |-
+          if [ -d "$HOME/.asdf/installs/poetry/1.0.10/env" ]; then
+            . $HOME/.asdf/installs/poetry/1.0.10/env
+          fi
+
     bossjones__oh__my__zsh__after_scripts:
       - name: fnm.zsh
         content: |-
@@ -625,6 +631,9 @@
         - gnu-indent
         - gnu-getopt
         - grep
+        - reattach-to-user-namespace
+        - fpp
+        - urlview
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
