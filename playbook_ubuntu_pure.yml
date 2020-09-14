@@ -677,7 +677,7 @@
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
-    - name: compaudit | fix
+    - name: 'compaudit | fix'
       shell: |
           compaudit | xargs chmod g-w,o-w
           compaudit | xargs chown "{{ bossjones__oh__my__zsh__user }}"
