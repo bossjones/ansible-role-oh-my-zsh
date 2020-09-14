@@ -45,18 +45,18 @@ if [[ $unamestr == "Darwin" ]]; then
 
   # If we set checkonly then run check, else run full suite
   if [[ "${CHECK_ONLY}" = "1" ]]; then
-    ansible-playbook -vvvv playbook_macos_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__user_group=${_GROUP}" --check
+    ansible-playbook -vvvv playbook_macos_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__group=${_GROUP}" --check
 
     # ansible-playbook -vvvv install_version_managers_osx.yml \
     # --extra-vars \
     # "bossjones__user=${_USER} bossjones__group=${_GROUP}" --skip-tags="${SKIP_DOTFILES_ANSIBLE_SKIP_LIST}" --check
   else
-    ansible-playbook -vvvv playbook_macos_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__user_group=${_GROUP}"
+    ansible-playbook -vvvv playbook_macos_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__group=${_GROUP}"
   fi
 elif [[ $unamestr == "Linux"  && -f $(which apt-get) ]]; then
   _USER=$(whoami)
   _GROUP=$(whoami)
-  ansible-playbook -vvvv playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__user_group=${_GROUP}"
+  ansible-playbook -vvvv playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__group=${_GROUP} bossjones__oh__my__zsh__group"
 elif [[ $unamestr == "Linux"  && -f $(which dnf) ]]; then
     _USER=$(whoami)
     _GROUP=$(whoami)

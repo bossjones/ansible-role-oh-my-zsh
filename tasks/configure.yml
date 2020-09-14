@@ -82,7 +82,7 @@
     src: zshrc.j2
     dest: "{{ bossjones__oh__my__zsh__config }}"
     owner: "{{ bossjones__oh__my__zsh__user }}"
-    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    group: "{{ bossjones__oh__my__zsh__group }}"
     backup: yes
 
 - name: Write .zshrc.local config
@@ -90,7 +90,7 @@
     src: zshrc.local.j2
     dest: "~{{bossjones__oh__my__zsh__user}}/.zshrc.local"
     owner: "{{ bossjones__oh__my__zsh__user }}"
-    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    group: "{{ bossjones__oh__my__zsh__group }}"
     backup: yes
 
 - name: Write .zlogin config
@@ -98,7 +98,7 @@
     src: zlogin.j2
     dest: "~{{bossjones__oh__my__zsh__user}}/.zlogin"
     owner: "{{ bossjones__oh__my__zsh__user }}"
-    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    group: "{{ bossjones__oh__my__zsh__group }}"
     backup: yes
   when: bossjones__oh__my__zsh__enable_zlogin == "yes"
 
@@ -107,7 +107,7 @@
     src: zlogout.j2
     dest: "~{{bossjones__oh__my__zsh__user}}/.zlogout"
     owner: "{{ bossjones__oh__my__zsh__user }}"
-    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    group: "{{ bossjones__oh__my__zsh__group }}"
     backup: yes
   when: bossjones__oh__my__zsh__enable_zlogout == "yes"
 
@@ -116,7 +116,7 @@
     src: zprofile.j2
     dest: "~{{bossjones__oh__my__zsh__user}}/.zprofile"
     owner: "{{ bossjones__oh__my__zsh__user }}"
-    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    group: "{{ bossjones__oh__my__zsh__group }}"
     backup: yes
   when: bossjones__oh__my__zsh__enable_zprofile == "yes"
 
@@ -125,7 +125,7 @@
     src: zshenv.j2
     dest: "~{{bossjones__oh__my__zsh__user}}/.zshenv"
     owner: "{{ bossjones__oh__my__zsh__user }}"
-    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    group: "{{ bossjones__oh__my__zsh__group }}"
     backup: yes
   when: bossjones__oh__my__zsh__enable_zshenv == "yes"
 

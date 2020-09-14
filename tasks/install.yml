@@ -54,7 +54,7 @@
   file:
     name: "{{ bossjones__oh__my__zsh__antigen_path }}"
     owner: "{{ bossjones__oh__my__zsh__user }}"
-    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    group: "{{ bossjones__oh__my__zsh__group }}"
     recurse: yes
   changed_when: false
 
@@ -62,7 +62,7 @@
   file:
     name: "~{{ bossjones__oh__my__zsh__user }}/.zsh.d/before"
     owner: "{{ bossjones__oh__my__zsh__user }}"
-    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    group: "{{ bossjones__oh__my__zsh__group }}"
     state: "directory"
     mode: "0755"
     recurse: yes
@@ -72,7 +72,7 @@
   file:
     name: "~{{ bossjones__oh__my__zsh__user }}/.zsh.d/after"
     owner: "{{ bossjones__oh__my__zsh__user }}"
-    group: "{{ bossjones__oh__my__zsh__user_group }}"
+    group: "{{ bossjones__oh__my__zsh__group }}"
     state: "directory"
     mode: "0755"
     recurse: yes
