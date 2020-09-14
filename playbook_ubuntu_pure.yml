@@ -637,7 +637,7 @@
         # - urlview
         - xsel
       become: yes
-      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      # become_user: "{{ bossjones__oh__my__zsh__user }}"
       # when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     - name: Clone fzf
@@ -667,7 +667,7 @@
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
-    - name: compaudit | figure out if anything to fix
+    - name: 'compaudit | figure out if anything to fix'
       shell: |
         compaudit | wc -l
       args:
