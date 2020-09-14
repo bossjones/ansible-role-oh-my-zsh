@@ -21,6 +21,7 @@
   #   # NVM_LAZY_LOAD: yes
   #   NODE_VERSION_TO_INSTALL: 10.3.0
   vars:
+    bossjones__oh__my__zsh__theme: "pure"
     NODE_VERSION_TO_INSTALL: 10.3.0
     rbenv:
       env: system
@@ -176,8 +177,8 @@
       - /usr/bin
       - /sbin
       - /bin
-      - /usr/games
-      - /usr/local/games
+      # - /usr/games
+      # - /usr/local/games
 
     # SOURCE: https://github.com/sorin-ionescu/prezto/blob/4f19700919c8ebbaf75755fc0d03716d13183f49/runcoms/zshenv
     # #
@@ -212,8 +213,8 @@
 
       if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
       then
-        export PATH="/usr/local/bin:/usr/bin:/bin:/usr/games"
-        export PATH="~/.rbenv/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$PATH"
+        export PATH="/usr/local/bin:/usr/bin:/bin"
+        export PATH="~/.rbenv/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
       fi
       skip_global_compinit=1
 
@@ -241,6 +242,12 @@
 
 
     bossjones__oh__my__zsh__before_scripts:
+      - name: asdf.zsh
+        content: |-
+          if [ -d "$HOME/.asdf" ]; then
+            . $HOME/.asdf/asdf.sh
+          fi
+
       - name: rust.zsh
         content: |-
           if [ -d "$HOME/.cargo/bin" ]; then
@@ -289,7 +296,9 @@
               fi
           fi
 
-
+      - name: vpn.zsh
+        content: |-
+          alias vpn="sudo openconnect --user=$(whoami) --os=mac-intel asa-virginia-1.adobe.com"
 
       - name: gnubin.zsh
         content: |-
@@ -589,10 +598,10 @@
 
     - name: Install Fonts
       shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
-      when: fontCloned|success
+      # when: fontCloned|success
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
-      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+      when: (fontCloned|success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     - name: 'brew tap homebrew/cask-fonts'
       homebrew_tap:
@@ -602,7 +611,7 @@
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
-    
+
     - name: Install font-fira-code
       homebrew_cask:
         name: "{{ item }}"
@@ -654,7 +663,6 @@
         chdir: "~/.fzf"
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
-      
 
     - name: fzf-drafts | download
       shell: |
@@ -665,3 +673,40 @@
       changed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+
+    - name: compaudit | figure out if anything to fix
+      shell: |
+        compaudit | wc -l
+      args:
+        executable: /bin/bash
+      register: compaudit_word_count
+      changed_when: false
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+    - name: compaudit | fix
+      shell: |
+          compaudit | xargs chmod g-w,o-w
+          compaudit | xargs chown "{{ bossjones__oh__my__zsh__user }}"
+          rm ~/.zcompdump*
+      args:
+        executable: /bin/bash
+      changed_when: false
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: compaudit_word_count.stdout not "0"
+
+    - name: ensure directories are owned correctly for zsh completion to work
+      file:
+        dest: "{{ item }}"
+        state: directory
+        owner: "{{ bossjones__oh__my__zsh__user }}"
+        group: "{{ bossjones__oh__my__zsh__group }}"
+        recurse: yes
+      loop:
+        - /usr/local/share/zsh/site-functions
+        - /usr/local/share/zsh
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+

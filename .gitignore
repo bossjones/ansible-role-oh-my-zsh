@@ -475,3 +475,5 @@ Gemfile*
 .molecule
 00aptproxy
 .vscode
+kube-config
+.ssh

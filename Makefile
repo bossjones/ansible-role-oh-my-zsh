@@ -283,3 +283,9 @@ gpr:
 
 rbenv:
 	bash scripts/rbenv.sh
+
+debug-omz:
+	bash contrib/debug-omz.sh
+
+debug-omz-session:
+	bash contrib/debug-omz-session-only.sh

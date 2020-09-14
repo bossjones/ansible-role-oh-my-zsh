@@ -1,0 +1,141 @@
+# -- user customizations -------------------------------------------------------
+# this is the place to override or undo settings
+
+# increase history size
+set -g history-limit 50000
+
+# start with mouse mode enabled
+set -g mouse on
+
+
+########################################################################################
+# NOTE: FROM PERSONAL LAPTOP
+########################################################################################
+# Unbind default key bindings, we're going to override
+unbind "\$" # rename-session
+unbind ,    # rename-window
+unbind %    # split-window -h
+unbind '"'  # split-window
+unbind }    # swap-pane -D
+unbind {    # swap-pane -U
+unbind [    # paste-buffer
+unbind ]
+unbind "'"  # select-window
+unbind e    # next-window
+unbind n    # next-window
+unbind p    # previous-window
+unbind l    # last-window
+unbind M-n  # next window with alert
+unbind M-p  # next window with alert
+unbind o    # focus thru panes
+unbind &    # kill-window
+unbind "#"  # list-buffer
+unbind =    # choose-buffer
+unbind z    # zoom-pane
+unbind M-Up  # resize 5 rows up
+unbind M-Down # resize 5 rows down
+unbind M-Right # resize 5 rows right
+unbind M-Left # resize 5 rows left
+
+# force Vi mode
+#   really you should export VISUAL or EDITOR environment variable, see manual
+# set -g status-keys vi # Use vi or emacs-style key bindings in the status line, for example at the command prompt. The default is emacs, unless the VISUAL or EDITOR environment variables are set and contain the string 'vi'.
+set -g mode-keys vi
+bind C-p choose-buffer # choose which buffer to paste from
+
+# replace C-b by C-a instead of using both prefixes
+# set -gu prefix2
+# unbind C-a
+# unbind C-b
+# set -g prefix C-a
+# bind C-a send-prefix
+
+# move status line to top
+#set -g status-position top
+
+# ==========================
+# ===   Key bindings     ===
+# ==========================
+
+# new window and retain cwd
+bind c new-window -c "#{pane_current_path}"
+
+# Prompt to rename window right after it's created
+set-hook -g after-new-window 'command-prompt -I "#{window_name}" "rename-window '%%'"'
+
+# Rename session and window
+bind r command-prompt -I "#{window_name}" "rename-window '%%'"
+bind R command-prompt -I "#{session_name}" "rename-session '%%'"
+
+# Split panes
+bind | split-window -h -c "#{pane_current_path}"
+bind _ split-window -v -c "#{pane_current_path}"
+
+# Select pane and windows
+bind -r C-[ previous-window
+bind -r C-] next-window
+bind -r [ select-pane -t :.-
+bind -r ] select-pane -t :.+
+bind -r Tab last-window   # cycle thru MRU tabs
+bind -r C-o swap-pane -D
+
+# Zoom pane
+bind + resize-pane -Z
+
+# Link window
+bind L command-prompt -p "Link window from (session:window): " "link-window -s %% -a"
+
+# Swap panes back and forth with 1st pane
+# When in main-(horizontal|vertical) layouts, the biggest/widest panel is always @1
+bind \ if '[ #{pane_index} -eq 1 ]' \
+     'swap-pane -s "!"' \
+     'select-pane -t:.1 ; swap-pane -d -t 1 -s "!"'
+
+# Kill pane/window/session shortcuts
+bind x kill-pane
+bind X kill-window
+bind C-x confirm-before -p "kill other windows? (y/n)" "kill-window -a"
+bind Q confirm-before -p "kill-session #S? (y/n)" kill-session
+
+# Merge session with another one (e.g. move all windows)
+# If you use adhoc 1-window sessions, and you want to preserve session upon exit
+# but don't want to create a lot of small unnamed 1-window sessions around
+# move all windows from current session to main named one (dev, work, etc)
+bind C-u command-prompt -p "Session to merge with: " \
+   "run-shell 'yes | head -n #{session_windows} | xargs -I {} -n 1 tmux movew -t %%'"
+
+# Detach from session
+bind d detach
+bind D if -F '#{session_many_attached}' \
+    'confirm-before -p "Detach other clients? (y/n)" "detach -a"' \
+    'display "Session has only 1 client attached"'
+
+# Hide status bar on demand
+bind C-s if -F '#{s/off//:status}' 'set status off' 'set status on'
+
+
+# SOURCE: http://man.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man1/tmux.1?query=tmux&sec=1
+# set -g default-terminal "screen-256color" # colors!
+# set -g buffer-limit 20 # Set the number of buffers; as new buffers are added to the top of the stack, old ones are removed from the bottom if necessary to maintain this maximum length.
+# set -sg escape-time 0 # Set the time in milliseconds for which tmux waits after an escape is input to determine if it is part of a function or meta key sequences. The default is 500 milliseconds.
+# set -g display-time 1500 # Set the amount of time for which status line messages and other on-screen indicators are displayed. If set to 0, messages and indicators are displayed until a key is pressed. time is in milliseconds.
+# set -g remain-on-exit off # A pane with this flag set is not destroyed when the program running in it exits. The pane may be reactivated with the respawn-pane command.
+# set -g repeat-time 300 # Allow multiple commands to be entered without pressing the prefix-key again in the specified time milliseconds (the default is 500). Whether a key repeats may be set when it is bound using the -r flag to bind-key. Repeat is enabled for the default keys bound to the resize-pane command.
+# setw -g allow-rename off # Allow programs in the pane to change the window name using a terminal escape sequence (\ek...\e\\).
+# setw -g automatic-rename off # Control automatic window renaming. When this setting is enabled, tmux will rename the window automatically using the format specified by automatic-rename-format. This flag is automatically disabled for an individual window when a name is specified at creation with new-window or new-session, or later with rename-window, or with a terminal escape sequence. It may be switched off globally with
+setw -g aggressive-resize on # Aggressively resize the chosen window. This means that tmux will resize the window to the size of the smallest or largest session (see the window-size option) for which it is the current window, rather than the session to which it is attached. The window may resize when the current window is changed on another session; this option is good for full-screen programs which support SIGWINCH and poor for interactive programs such as shells.
+
+# trigger copy mode by
+bind -n M-Up copy-mode
+
+# Scroll up/down by 1 line, half screen, whole screen
+bind -T copy-mode-vi M-Up              send-keys -X scroll-up
+bind -T copy-mode-vi M-Down            send-keys -X scroll-down
+bind -T copy-mode-vi M-PageUp          send-keys -X halfpage-up
+bind -T copy-mode-vi M-PageDown        send-keys -X halfpage-down
+bind -T copy-mode-vi PageDown          send-keys -X page-down
+bind -T copy-mode-vi PageUp            send-keys -X page-up
+
+# When scrolling with mouse wheel, reduce number of scrolled rows per tick to "2" (default is 5)
+bind -T copy-mode-vi WheelUpPane       select-pane \; send-keys -X -N 2 scroll-up
+bind -T copy-mode-vi WheelDownPane     select-pane \; send-keys -X -N 2 scroll-down
