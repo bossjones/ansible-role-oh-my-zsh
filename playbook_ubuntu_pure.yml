@@ -687,7 +687,7 @@
       changed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
-      when: compaudit_word_count.stdout not "0"
+      when: compaudit_word_count.stdout != "0"
 
     - name: ensure directories are owned correctly for zsh completion to work
       file:
