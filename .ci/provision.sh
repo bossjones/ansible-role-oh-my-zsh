@@ -31,9 +31,10 @@ elif [[ $unamestr == "Linux"  && -f $(which apt-get) ]]; then
     _USER=$(whoami)
     _GROUP=$(whoami)
 
-    ansible-playbook -vvvv bootstrap_xenial.yml \
-    --extra-vars \
-    "bossjones__user=${_USER} bossjones__group=${_GROUP}"
+    echo "already bootstraped, run version manage now"
+    # ansible-playbook -vvvv bootstrap_xenial.yml \
+    # --extra-vars \
+    # "bossjones__user=${_USER} bossjones__group=${_GROUP}"
 fi
 
 # TODO: Add variable files for different machines
@@ -53,7 +54,7 @@ if [[ $unamestr == "Darwin" ]]; then
     ansible-playbook -vvvv playbook_macos_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__user_group=${_GROUP}"
   fi
 elif [[ $unamestr == "Linux"  && -f $(which apt-get) ]]; then
-  ansible-playbook install_version_managers.yml
+  ansible-playbook -vvvv playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__user_group=${_GROUP}"
 elif [[ $unamestr == "Linux"  && -f $(which dnf) ]]; then
     _USER=$(whoami)
     _GROUP=$(whoami)

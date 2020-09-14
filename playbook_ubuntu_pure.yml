@@ -17,15 +17,15 @@
 - hosts: localhost
   become: yes
   become_method: sudo
-  # environment:
-  #   NVM_LAZY_LOAD: yes
   vars:
+    bossjones__oh__my__zsh__theme: "pure"
+    NODE_VERSION_TO_INSTALL: 10.3.0
     rbenv:
       env: system
       version: v1.1.2
-      default_ruby: 2.5.1
+      default_ruby: 2.6.6
       rubies:
-        - version: 2.5.1
+        - version: 2.6.6
 
     rbenv_clean_up: false
 
@@ -235,6 +235,12 @@
 
 
     bossjones__oh__my__zsh__before_scripts:
+      - name: asdf.zsh
+        content: |-
+          if [ -d "$HOME/.asdf" ]; then
+            . $HOME/.asdf/asdf.sh
+          fi
+
       - name: rust.zsh
         content: |-
           if [ -d "$HOME/.cargo/bin" ]; then
@@ -263,12 +269,24 @@
             fpath+=$HOME/.zsh/pure
           fi
 
+      - name: poetry.zsh
+        content: |-
+          if [ -d "$HOME/.asdf/installs/poetry/1.0.10/env" ]; then
+            . $HOME/.asdf/installs/poetry/1.0.10/env
+          fi
+
     bossjones__oh__my__zsh__after_scripts:
       - name: fnm.zsh
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
           if [ -n "$(which fnm)" ]; then
               eval "$(fnm env --multi)"
+              if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
+                fnm install {{NODE_VERSION_TO_INSTALL}}
+                fnm use {{NODE_VERSION_TO_INSTALL}}
+                fnm default {{NODE_VERSION_TO_INSTALL}}
+                fnm current
+              fi
           fi
 
       - name: gnubin.zsh
@@ -534,3 +552,169 @@
   #     when: fontCloned|success
   #     become: yes
   #     become_user: vagrant
+
+  pre_tasks:
+
+    - name: ensure directories exist
+      file:
+        dest: "~/{{ item }}"
+        state: directory
+        mode: 0700
+      loop:
+        - .bin
+        - bin
+        - .local/bin
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+    # # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
+    # - name: 'Cloning fonts | based on https://gist.github.com/ganapativs/e571d9287cb74121d41bfe75a0c864d7'
+    #   git:
+    #     repo=https://github.com/powerline/fonts
+    #     dest="~/powerlinefonts"
+    #     accept_hostkey=yes
+    #     depth=1
+    #   register: fontCloned
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
+    #   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    # - name: 'Cloning iterm2-snazzy theme, dont forget to double click ~/iterm2-snazzy/Snazzy.itermcolors'
+    #   git:
+    #     repo=https://github.com/sindresorhus/iterm2-snazzy
+    #     dest="~/iterm2-snazzy"
+    #     accept_hostkey=yes
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
+    #   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    # - name: Install Fonts
+    #   shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
+    #   # when: fontCloned|success
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
+    #   when: (fontCloned|success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    # - name: 'brew tap homebrew/cask-fonts'
+    #   homebrew_tap:
+    #     name: homebrew/cask-fonts
+    #     state: present
+    #   # brew don't work from root user on macOS
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
+    #   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    # - name: Install font-fira-code
+    #   homebrew_cask:
+    #     name: "{{ item }}"
+    #     state: present
+    #   with_items:
+    #     - font-fira-code
+    #   # brew don't work from root user on macOS
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
+    #   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    - name: Install/Setup asdf and direnv
+      package:
+        name: '{{ item }}'
+        state: latest
+      with_items:
+        - zsh
+        # - asdf
+        # - peco
+        # - coreutils
+        # - findutils
+        # - gnu-tar
+        # - gnu-sed
+        # - gawk
+        # - gnutls
+        # - gnu-indent
+        # - gnu-getopt
+        # - grep
+        # - reattach-to-user-namespace
+        # - fpp
+        # - urlview
+        - xsel
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      # when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    - name: Clone fzf
+      git:
+        repo: https://github.com/junegunn/fzf.git
+        dest: "~/.fzf"
+        version: "0.22.0"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_fzf
+
+    - name: Install fzf
+      shell: ./install --all
+      args:
+        chdir: "~/.fzf"
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+    - name: fzf-drafts | download
+      shell: |
+        curl -L 'https://raw.githubusercontent.com/jan-warchol/dotfiles/master/bin/fzf-drafts' > ~/bin/fzf-drafts;
+        chmod +x ~/bin/fzf-drafts;
+      args:
+        executable: /bin/bash
+      changed_when: false
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+    - name: compaudit | figure out if anything to fix
+      shell: |
+        compaudit | wc -l
+      args:
+        executable: /bin/bash
+      register: compaudit_word_count
+      changed_when: false
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+    - name: compaudit | fix
+      shell: |
+          compaudit | xargs chmod g-w,o-w
+          compaudit | xargs chown "{{ bossjones__oh__my__zsh__user }}"
+          rm ~/.zcompdump*
+      args:
+        executable: /bin/bash
+      changed_when: false
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: compaudit_word_count.stdout not "0"
+
+    - name: ensure directories are owned correctly for zsh completion to work
+      file:
+        dest: "{{ item }}"
+        state: directory
+        owner: "{{ bossjones__oh__my__zsh__user }}"
+        group: "{{ bossjones__oh__my__zsh__group }}"
+        recurse: yes
+      loop:
+        - /usr/local/share/zsh/site-functions
+        - /usr/local/share/zsh
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+
+    # # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
+    # - name: Cloning fonts
+    #   git:
+    #     repo=https://github.com/powerline/fonts
+    #     dest="/home/vagrant/powerlinefonts"
+    #     accept_hostkey=yes
+    #   register: fontCloned
+    #   become: yes
+    #   become_user: vagrant
+
+    # - name: Install Fonts
+    #   shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
+    #   when: fontCloned|success
+    #   become: yes
+    #   become_user: vagrant
