@@ -689,7 +689,7 @@
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: compaudit_word_count.stdout != "0"
 
-    - name: ensure directories are owned correctly for zsh completion to work
+    - name: 'ensure directories are owned correctly for zsh completion to work'
       file:
         dest: "{{ item }}"
         state: directory
@@ -697,8 +697,8 @@
         group: "{{ bossjones__oh__my__zsh__group }}"
         recurse: yes
       loop:
-        - /usr/local/share/zsh/site-functions
-        - /usr/local/share/zsh
+        - '/usr/local/share/zsh/site-functions'
+        - '/usr/local/share/zsh'
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 

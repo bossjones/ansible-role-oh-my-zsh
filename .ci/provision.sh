@@ -54,6 +54,8 @@ if [[ $unamestr == "Darwin" ]]; then
     ansible-playbook -vvvv playbook_macos_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__user_group=${_GROUP}"
   fi
 elif [[ $unamestr == "Linux"  && -f $(which apt-get) ]]; then
+  _USER=$(whoami)
+  _GROUP=$(whoami)
   ansible-playbook -vvvv playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__user_group=${_GROUP}"
 elif [[ $unamestr == "Linux"  && -f $(which dnf) ]]; then
     _USER=$(whoami)
