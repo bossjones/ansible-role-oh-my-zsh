@@ -21,7 +21,7 @@
     bossjones__oh__my__zsh__theme: "pure"
     NODE_VERSION_TO_INSTALL: 10.3.0
     rbenv:
-      env: system
+      env: personal
       version: v1.1.2
       default_ruby: 2.6.6
       rubies:
@@ -367,6 +367,11 @@
           if [ -d "$HOME/bin" ]; then
             export PATH=$HOME/bin:$PATH
           fi
+      # - name: cheat.zsh
+      #   content: |
+      #     if [ -d "$HOME/bin" ]; then
+      #       export PATH=$HOME/bin:$PATH
+      #     fi
 
       - name: pyenv.zsh
         content: |
@@ -636,9 +641,21 @@
         # - fpp
         # - urlview
         - xsel
+        - direnv
       become: yes
       # become_user: "{{ bossjones__oh__my__zsh__user }}"
       # when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+    # git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git $(pyenv root)/plugins/pyenv-virtualenvwrapper
+    - name: Clone fzpyenv-virtualenvwrapper
+      git:
+        repo: https://github.com/pyenv/pyenv-virtualenvwrapper.git
+        dest: "~/.pyenv/plugins/pyenv-virtualenvwrapper"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_pyenv_virtualenvwrapper
 
     - name: Clone fzf
       git:
@@ -671,7 +688,7 @@
       shell: |
         compaudit | wc -l
       args:
-        executable: /bin/bash
+        executable: /usr/bin/zsh
       register: compaudit_word_count
       changed_when: false
       become: yes
@@ -683,7 +700,7 @@
           compaudit | xargs chown "{{ bossjones__oh__my__zsh__user }}"
           rm ~/.zcompdump*
       args:
-        executable: /bin/bash
+        executable: /usr/bin/zsh
       changed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
@@ -700,7 +717,8 @@
         - '/usr/local/share/zsh/site-functions'
         - '/usr/local/share/zsh'
       become: yes
-      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      become_user: "root"
+      # when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
 
     # # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
@@ -718,3 +736,20 @@
     #   when: fontCloned|success
     #   become: yes
     #   become_user: vagrant
+
+
+    - name: fnm | download
+      shell: |
+        eval "$(fnm env --multi)"
+        if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
+          fnm install {{NODE_VERSION_TO_INSTALL}}
+          fnm use {{NODE_VERSION_TO_INSTALL}}
+          fnm default {{NODE_VERSION_TO_INSTALL}}
+          fnm current
+          npm install -g pure-prompt
+        fi
+      args:
+        executable: /bin/bash
+      changed_when: false
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
