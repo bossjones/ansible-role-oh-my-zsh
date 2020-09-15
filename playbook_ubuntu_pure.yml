@@ -154,6 +154,7 @@
       - mafredri/zsh-async
 
       # Pretty, minimal and fast ZSH prompt
+      - asdf
       - sindresorhus/pure
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
@@ -512,6 +513,10 @@
       fi
 
       [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+      if [ -n "$(which kubectl)" ]; then
+        source <(kubectl completion zsh); echo "kubectl autocomplete loaded"
+      fi
 
 
       # remove dupes from $PATH using a zsh builtin

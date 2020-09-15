@@ -158,6 +158,7 @@
       # Because your terminal should be able to perform tasks asynchronously without external tools!
       - mafredri/zsh-async
 
+      - asdf
       # Pretty, minimal and fast ZSH prompt
       - sindresorhus/pure
 
