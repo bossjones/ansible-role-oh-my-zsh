@@ -153,8 +153,8 @@
       # Because your terminal should be able to perform tasks asynchronously without external tools!
       - mafredri/zsh-async
 
-      # Pretty, minimal and fast ZSH prompt
       - asdf
+      # Pretty, minimal and fast ZSH prompt
       - sindresorhus/pure
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
@@ -240,6 +240,12 @@
         content: |-
           if [ -d "$HOME/.asdf" ]; then
             . $HOME/.asdf/asdf.sh
+          fi
+
+      - name: kubectl.zsh
+        content: |-
+          if [ -d "/srv/ansible-role-oh-my-zsh" ]; then
+             export KUBECONFIG=$KUBECONFIG:/srv/ansible-role-oh-my-zsh/kube-config
           fi
 
       - name: rust.zsh
