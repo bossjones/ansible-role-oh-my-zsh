@@ -680,7 +680,7 @@
       shell: |
         compaudit | wc -l
       args:
-        executable: /bin/bash
+        executable: /usr/local/bin/zsh
       register: compaudit_word_count
       changed_when: false
       become: yes
@@ -692,7 +692,7 @@
           compaudit | xargs chown "{{ bossjones__oh__my__zsh__user }}"
           rm ~/.zcompdump*
       args:
-        executable: /bin/bash
+        executable: /usr/local/bin/zsh
       changed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
