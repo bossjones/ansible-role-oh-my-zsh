@@ -248,6 +248,12 @@
              export KUBECONFIG=$KUBECONFIG:/srv/ansible-role-oh-my-zsh/kube-config
           fi
 
+          enable_kubectl_completion() {
+            if [ -n "$(which kubectl)" ]; then
+             source <(kubectl completion zsh)
+            fi
+          }
+
       - name: rust.zsh
         content: |-
           if [ -d "$HOME/.cargo/bin" ]; then
