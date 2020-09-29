@@ -305,6 +305,10 @@
         content: |-
           alias ls="ls --color=always"
 
+      - name: git_cu.zsh
+        content: |-
+          exxport GIT_CU_DIR="${HOME}/dev"
+
       - name: fzf.zsh
         content: |
           [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
@@ -682,9 +686,12 @@
       args:
         executable: /usr/local/bin/zsh
       register: compaudit_word_count
-      changed_when: false
+      # changed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
+      ignore_errors: yes
+      changed_when: false
+      failed_when: false
 
     - name: compaudit | fix
       shell: |
@@ -693,7 +700,9 @@
           rm ~/.zcompdump*
       args:
         executable: /usr/local/bin/zsh
+      ignore_errors: yes
       changed_when: false
+      failed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: compaudit_word_count.stdout not "0"
@@ -710,4 +719,5 @@
         - /usr/local/share/zsh
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: ansible_facts['os_family'] == 'Darwin'
 
