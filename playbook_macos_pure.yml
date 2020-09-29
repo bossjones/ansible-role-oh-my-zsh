@@ -307,7 +307,7 @@
 
       - name: git_cu.zsh
         content: |-
-          exxport GIT_CU_DIR="${HOME}/dev"
+          export GIT_CU_DIR="${HOME}/dev"
 
       - name: fzf.zsh
         content: |

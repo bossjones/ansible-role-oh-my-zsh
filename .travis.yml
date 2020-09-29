@@ -77,12 +77,12 @@ matrix:
   #   osx_image: xcode9.2
   #   xcode_sdk: macosx10.12
 
-  - name: "High Sierra (10.13) and xcode9.4"
-    os: osx
-    sudo: required
-    language: objective-c
-    osx_image: xcode9.4
-    xcode_sdk: macosx10.13
+  # - name: "High Sierra (10.13) and xcode9.4"
+  #   os: osx
+  #   sudo: required
+  #   language: objective-c
+  #   osx_image: xcode9.4
+  #   xcode_sdk: macosx10.13
 
   - name: "Mojave (10.14) and xcode9.4"
     os: osx
