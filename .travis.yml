@@ -38,14 +38,14 @@ env:
 matrix:
   include:
   # ORIGINAL WORKING VERSION
-  - name: "High Sierra (10.13) and xcode9.3"
-    os: osx
-    sudo: required
-    language: objective-c
-    # 10.13 (see https://docs.travis-ci.com/user/osx-ci-environment/#OS-X-Version)
-    osx_image: xcode9.3
-    xcode_sdk: macosx10.13
-    # env: MY_RUBY_VERSION=""
+  # - name: "High Sierra (10.13) and xcode9.3"
+  #   os: osx
+  #   sudo: required
+  #   language: objective-c
+  #   # 10.13 (see https://docs.travis-ci.com/user/osx-ci-environment/#OS-X-Version)
+  #   osx_image: xcode9.3
+  #   xcode_sdk: macosx10.13
+  #   # env: MY_RUBY_VERSION=""
 
   # - name: "Sierra (10.12) and xcode8.3"
   #   os: osx
