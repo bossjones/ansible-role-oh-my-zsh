@@ -38,14 +38,14 @@ env:
 matrix:
   include:
   # ORIGINAL WORKING VERSION
-  - name: "High Sierra (10.13) and xcode9.3"
-    os: osx
-    sudo: required
-    language: objective-c
-    # 10.13 (see https://docs.travis-ci.com/user/osx-ci-environment/#OS-X-Version)
-    osx_image: xcode9.3
-    xcode_sdk: macosx10.13
-    # env: MY_RUBY_VERSION=""
+  # - name: "High Sierra (10.13) and xcode9.3"
+  #   os: osx
+  #   sudo: required
+  #   language: objective-c
+  #   # 10.13 (see https://docs.travis-ci.com/user/osx-ci-environment/#OS-X-Version)
+  #   osx_image: xcode9.3
+  #   xcode_sdk: macosx10.13
+  #   # env: MY_RUBY_VERSION=""
 
   # - name: "Sierra (10.12) and xcode8.3"
   #   os: osx
@@ -77,12 +77,12 @@ matrix:
   #   osx_image: xcode9.2
   #   xcode_sdk: macosx10.12
 
-  - name: "High Sierra (10.13) and xcode9.4"
-    os: osx
-    sudo: required
-    language: objective-c
-    osx_image: xcode9.4
-    xcode_sdk: macosx10.13
+  # - name: "High Sierra (10.13) and xcode9.4"
+  #   os: osx
+  #   sudo: required
+  #   language: objective-c
+  #   osx_image: xcode9.4
+  #   xcode_sdk: macosx10.13
 
   - name: "Mojave (10.14) and xcode9.4"
     os: osx
@@ -143,7 +143,7 @@ script:
   - brew install pyenv || true
   - brew install pyenv-virtualenv || true
   - brew install pyenv-virtualenvwrapper || true
-  - brew install python@2 || true
+  # - brew install python@2 || true
   - brew install rbenv || true
   # - brew install readline || true
   # - brew install reattach-to-user-namespace || true
@@ -154,6 +154,7 @@ script:
   - brew install vim || true
   - brew install direnv || true
   - brew install zsh || true
+  # - brew install asdf || true
 
   - source install.sh
   - "/usr/local/bin/zsh -l -c 'alias'"

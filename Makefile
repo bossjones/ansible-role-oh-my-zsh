@@ -275,7 +275,7 @@ run-ubuntu-version-manager:
 
 .PHONY: run-ubuntu-pure
 run-ubuntu-pure:
-	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(WHOAMI) boss__user=$(WHOAMI) boss__group=$(WHOAMI) bossjones__oh__my__zsh__theme=pure"
+	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(WHOAMI) boss__user=$(WHOAMI) boss__group=staff bossjones__oh__my__zsh__theme=pure"
 
 .PHONY: gpr
 gpr:
@@ -283,3 +283,9 @@ gpr:
 
 rbenv:
 	bash scripts/rbenv.sh
+
+debug-omz:
+	bash contrib/debug-omz.sh
+
+debug-omz-session:
+	bash contrib/debug-omz-session-only.sh

@@ -174,7 +174,7 @@ Vagrant.configure(2) do |config|
       vm_config.vbguest.auto_update = true
 
       vm_config.vm.box = settings[:box]
-      vm_config.disksize.size = '15GB'
+      vm_config.disksize.size = '35GB'
 
       # config.vm.box_version = settings[:box_version]
       vm_config.vm.network 'private_network', ip: settings[:eth1]

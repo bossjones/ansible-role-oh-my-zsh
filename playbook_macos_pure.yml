@@ -17,11 +17,14 @@
 - hosts: localhost
   become: yes
   become_method: sudo
+  # environment:
+  #   # NVM_LAZY_LOAD: yes
+  #   NODE_VERSION_TO_INSTALL: 10.3.0
   vars:
     bossjones__oh__my__zsh__theme: "pure"
     NODE_VERSION_TO_INSTALL: 10.3.0
     rbenv:
-      env: personal
+      env: system
       version: v1.1.2
       default_ruby: 2.6.6
       rubies:
@@ -96,10 +99,10 @@
     bossjones__oh__my__zsh__enable_zlogout: "yes"
     bossjones__oh__my__zsh__enable_zprofile: "no"
     bossjones__oh__my__zsh__enable_zshenv: "yes"
-    bossjones__oh__my__zsh__install_fzf: "yes"
-    bossjones__oh__my__zsh__change_default_shell: yes
-    bossjones__oh__my__zsh__path_to_shell: /usr/bin/zsh
+    bossjones__oh__my__zsh__change_default_shell: no
+    bossjones__oh__my__zsh__path_to_shell: /usr/local/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
+      # - nvm
       # Solarized dircolors plugin for zsh
       - joel-porquet/zsh-dircolors-solarized
 
@@ -147,6 +150,8 @@
       # Plugin for lazy-loading pyenv in zsh.
       - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
 
+      - { name: vagrant, command: vagrant }
+
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
       - sindresorhus/pretty-time-zsh
 
@@ -159,20 +164,22 @@
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:
-      - "{{rbenv_root}}/shims"
+      # - "~/.rbenv/shims"
       - $HOME/bin
+      - $HOME/.bin
       - $HOME/.local/bin
       - $HOME/.pyenv/bin
       - $HOME/.rbenv/bin
       - $HOME/.fnm
+      - /usr/local/opt/coreutils/libexec/gnubin
       - /usr/local/sbin
       - /usr/local/bin
       - /usr/sbin
       - /usr/bin
       - /sbin
       - /bin
-      - /usr/games
-      - /usr/local/games
+      # - /usr/games
+      # - /usr/local/games
 
     # SOURCE: https://github.com/sorin-ionescu/prezto/blob/4f19700919c8ebbaf75755fc0d03716d13183f49/runcoms/zshenv
     # #
@@ -203,12 +210,12 @@
       #
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
-      export RBENV_ROOT={{rbenv_root}}
+      export RBENV_ROOT=~/.rbenv
 
       if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
       then
-        export PATH="/usr/local/bin:/usr/bin:/bin:/usr/games"
-        export PATH="{{rbenv_root}}/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$PATH"
+        export PATH="/usr/local/bin:/usr/bin:/bin"
+        export PATH="~/.rbenv/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
       fi
       skip_global_compinit=1
 
@@ -241,18 +248,6 @@
           if [ -d "$HOME/.asdf" ]; then
             . $HOME/.asdf/asdf.sh
           fi
-
-      - name: kubeconfig.zsh
-        content: |-
-          if [ -d "/srv/ansible-role-oh-my-zsh" ]; then
-             export KUBECONFIG=$KUBECONFIG:/srv/ansible-role-oh-my-zsh/kube-config
-          fi
-
-          enable_kubectl_completion() {
-            if [ -n "$(which kubectl)" ]; then
-             source <(kubectl completion zsh)
-            fi
-          }
 
       - name: rust.zsh
         content: |-
@@ -302,9 +297,17 @@
               fi
           fi
 
+      - name: vpn.zsh
+        content: |-
+          alias vpn="sudo openconnect --user=$(whoami) --os=mac-intel asa-virginia-1.adobe.com"
+
       - name: gnubin.zsh
         content: |-
           alias ls="ls --color=always"
+
+      - name: git_cu.zsh
+        content: |-
+          export GIT_CU_DIR="${HOME}/dev"
 
       - name: fzf.zsh
         content: |
@@ -368,23 +371,29 @@
 
       - name: rbenv.zsh
         content: |
-          if [ -e {{rbenv_root}} ]; then
-            export PATH="{{rbenv_root}}/shims:$PATH"
+          if [ -e ~/.rbenv ]; then
+            export PATH="~/.rbenv/shims:$PATH"
           fi
           if [[ -x $(which -p rbenv) ]]; then
             eval "$(rbenv init -)"
           fi
+
+      - name: man.zsh
+        content: |
+          get_man_exorts() {
+            for i in /usr/local/Cellar/*/*/share/man; do
+              echo 'export MANPATH="'$i':$MANPATH"'
+            done
+            for i in /usr/local/Cellar/*/*/libexec/gnuman; do
+              echo 'export MANPATH="'$i':$MANPATH"'
+            done
+          }
 
       - name: path.zsh
         content: |
           if [ -d "$HOME/bin" ]; then
             export PATH=$HOME/bin:$PATH
           fi
-      # - name: cheat.zsh
-      #   content: |
-      #     if [ -d "$HOME/bin" ]; then
-      #       export PATH=$HOME/bin:$PATH
-      #     fi
 
       - name: pyenv.zsh
         content: |
@@ -449,11 +458,15 @@
 
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
-      export RBENV_ROOT={{rbenv_root}}
+      export RBENV_ROOT=~/.rbenv
       export RBENV_VERSION={{rbenv.default_ruby}}
       export VIRTUAL_ENV_DISABLE_PROMPT=1
       export ZSH_PYENV_LAZY_VIRTUALENV=1
       # Larger bash history (allow 32³ entries; default is 500)
+      # OS X nvm load
+      # [ -s "/usr/local/opt/nvm/nvm.sh" ] && . /usr/local/opt/nvm/nvm.sh # This loads nvm
+      # export NVM_LAZY_LOAD=true
+      # export NVM_AUTO_USE=true
 
       # set some history options
       setopt append_history
@@ -526,10 +539,6 @@
 
       [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-      if [ -n "$(which kubectl)" ]; then
-        source <(kubectl completion zsh); echo "kubectl autocomplete loaded"
-      fi
-
 
       # remove dupes from $PATH using a zsh builtin
       # https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
@@ -557,24 +566,6 @@
   roles:
     - ../ansible-role-oh-my-zsh
 
-  # tasks:
-
-  #   # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
-  #   - name: Cloning fonts
-  #     git:
-  #       repo=https://github.com/powerline/fonts
-  #       dest="/home/vagrant/powerlinefonts"
-  #       accept_hostkey=yes
-  #     register: fontCloned
-  #     become: yes
-  #     become_user: vagrant
-
-  #   - name: Install Fonts
-  #     shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
-  #     when: fontCloned|success
-  #     become: yes
-  #     become_user: vagrant
-
   pre_tasks:
 
     - name: ensure directories exist
@@ -589,90 +580,77 @@
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
-    # # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
-    # - name: 'Cloning fonts | based on https://gist.github.com/ganapativs/e571d9287cb74121d41bfe75a0c864d7'
-    #   git:
-    #     repo=https://github.com/powerline/fonts
-    #     dest="~/powerlinefonts"
-    #     accept_hostkey=yes
-    #     depth=1
-    #   register: fontCloned
-    #   become: yes
-    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
-    #   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+    # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
+    - name: 'Cloning fonts | based on https://gist.github.com/ganapativs/e571d9287cb74121d41bfe75a0c864d7'
+      git:
+        repo=https://github.com/powerline/fonts
+        dest="~/powerlinefonts"
+        accept_hostkey=yes
+        depth=1
+      register: fontCloned
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
-    # - name: 'Cloning iterm2-snazzy theme, dont forget to double click ~/iterm2-snazzy/Snazzy.itermcolors'
-    #   git:
-    #     repo=https://github.com/sindresorhus/iterm2-snazzy
-    #     dest="~/iterm2-snazzy"
-    #     accept_hostkey=yes
-    #   become: yes
-    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
-    #   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+    - name: 'Cloning iterm2-snazzy theme, dont forget to double click ~/iterm2-snazzy/Snazzy.itermcolors'
+      git:
+        repo=https://github.com/sindresorhus/iterm2-snazzy
+        dest="~/iterm2-snazzy"
+        accept_hostkey=yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
-    # - name: Install Fonts
-    #   shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
-    #   # when: fontCloned|success
-    #   become: yes
-    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
-    #   when: (fontCloned|success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+    - name: Install Fonts
+      shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
+      # when: fontCloned|success
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: (fontCloned|success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
-    # - name: 'brew tap homebrew/cask-fonts'
-    #   homebrew_tap:
-    #     name: homebrew/cask-fonts
-    #     state: present
-    #   # brew don't work from root user on macOS
-    #   become: yes
-    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
-    #   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+    - name: 'brew tap homebrew/cask-fonts'
+      homebrew_tap:
+        name: homebrew/cask-fonts
+        state: present
+      # brew don't work from root user on macOS
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
-    # - name: Install font-fira-code
-    #   homebrew_cask:
-    #     name: "{{ item }}"
-    #     state: present
-    #   with_items:
-    #     - font-fira-code
-    #   # brew don't work from root user on macOS
-    #   become: yes
-    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
-    #   when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+    - name: Install font-fira-code
+      homebrew_cask:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - font-fira-code
+      # brew don't work from root user on macOS
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     - name: Install/Setup asdf and direnv
       package:
         name: '{{ item }}'
         state: latest
       with_items:
-        - zsh
-        # - asdf
-        # - peco
-        # - coreutils
-        # - findutils
-        # - gnu-tar
-        # - gnu-sed
-        # - gawk
-        # - gnutls
-        # - gnu-indent
-        # - gnu-getopt
-        # - grep
-        # - reattach-to-user-namespace
-        # - fpp
-        # - urlview
-        - xsel
         - direnv
-      become: yes
-      # become_user: "{{ bossjones__oh__my__zsh__user }}"
-      # when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
-
-    # git clone https://github.com/pyenv/pyenv-virtualenvwrapper.git $(pyenv root)/plugins/pyenv-virtualenvwrapper
-    - name: Clone fzpyenv-virtualenvwrapper
-      git:
-        repo: https://github.com/pyenv/pyenv-virtualenvwrapper.git
-        dest: "~/.pyenv/plugins/pyenv-virtualenvwrapper"
-        version: "master"
-        force: yes
+        - asdf
+        - peco
+        - coreutils
+        - findutils
+        - gnu-tar
+        - gnu-sed
+        - gawk
+        - gnutls
+        - gnu-indent
+        - gnu-getopt
+        - grep
+        - reattach-to-user-namespace
+        - fpp
+        - urlview
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
-      register: bossjones__oh__my__zsh__register_pyenv_virtualenvwrapper
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     - name: Clone fzf
       git:
@@ -701,29 +679,35 @@
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
-    - name: 'compaudit | figure out if anything to fix'
+
+    - name: compaudit | figure out if anything to fix
       shell: |
         compaudit | wc -l
       args:
-        executable: /usr/bin/zsh
+        executable: /usr/local/bin/zsh
       register: compaudit_word_count
-      changed_when: false
+      # changed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
+      ignore_errors: yes
+      changed_when: false
+      failed_when: false
 
-    - name: 'compaudit | fix'
+    - name: compaudit | fix
       shell: |
           compaudit | xargs chmod g-w,o-w
           compaudit | xargs chown "{{ bossjones__oh__my__zsh__user }}"
           rm ~/.zcompdump*
       args:
-        executable: /usr/bin/zsh
+        executable: /usr/local/bin/zsh
+      ignore_errors: yes
       changed_when: false
+      failed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
-      when: compaudit_word_count.stdout != "0"
+      when: compaudit_word_count.stdout not "0"
 
-    - name: 'ensure directories are owned correctly for zsh completion to work'
+    - name: ensure directories are owned correctly for zsh completion to work
       file:
         dest: "{{ item }}"
         state: directory
@@ -731,42 +715,9 @@
         group: "{{ bossjones__oh__my__zsh__group }}"
         recurse: yes
       loop:
-        - '/usr/local/share/zsh/site-functions'
-        - '/usr/local/share/zsh'
-      become: yes
-      become_user: "root"
-      # when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
-
-
-    # # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
-    # - name: Cloning fonts
-    #   git:
-    #     repo=https://github.com/powerline/fonts
-    #     dest="/home/vagrant/powerlinefonts"
-    #     accept_hostkey=yes
-    #   register: fontCloned
-    #   become: yes
-    #   become_user: vagrant
-
-    # - name: Install Fonts
-    #   shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
-    #   when: fontCloned|success
-    #   become: yes
-    #   become_user: vagrant
-
-
-    - name: fnm | download
-      shell: |
-        eval "$(fnm env --multi)"
-        if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
-          fnm install {{NODE_VERSION_TO_INSTALL}}
-          fnm use {{NODE_VERSION_TO_INSTALL}}
-          fnm default {{NODE_VERSION_TO_INSTALL}}
-          fnm current
-          npm install -g pure-prompt
-        fi
-      args:
-        executable: /bin/bash
-      changed_when: false
+        - /usr/local/share/zsh/site-functions
+        - /usr/local/share/zsh
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: ansible_facts['os_family'] == 'Darwin'
+
