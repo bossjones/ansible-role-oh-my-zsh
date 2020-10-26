@@ -283,6 +283,27 @@
             . $HOME/.asdf/installs/poetry/1.0.10/env
           fi
 
+      - name: openconnect.zsh
+        content: |-
+          # adobe openconnect ldap
+          adobe-connect ()
+          {
+            sudo openconnect --user=malcolm --background --pid-file="$HOME/.openconnect.pid"  asa-vrgneqx-1.adobe.com
+          }
+          vpnsetup() {
+            sudo sh -c 'echo "%admin ALL=(ALL) NOPASSWD: /usr/local/bin/openconnect, /bin/kill" > /etc/sudoers.d/openconnect'
+          }
+          vpnstart() {
+            adobe-connect
+          }
+          vpnstop() {
+              if [[ -f "$HOME/.openconnect.pid" ]]; then
+                  sudo kill -2 $(cat "$HOME/.openconnect.pid") && rm -f "$HOME/.openconnect.pid"
+              else
+                  echo "openconnect pid file does not exist, probably not running"
+              fi
+          }
+
     bossjones__oh__my__zsh__after_scripts:
       - name: fnm.zsh
         content: |-
@@ -312,6 +333,19 @@
       - name: fzf.zsh
         content: |
           [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
+
+      - name: docker.zsh
+        content: |
+          docker-imagemagick(){
+            docker pull dpokidov/imagemagick || true
+            docker run -it --rm -v $(PWD):/imgs dpokidov/imagemagick --entrypoint="/bin/bash" -l
+          }
+          docker-ffmpeg(){
+            docker pull linuxserver/ffmpeg || true
+            echo " [docker-ffmpeg] when inside the container, use ffmpegwrapper.sh"
+            docker run -it --rm -v $(PWD):/config linuxserver/ffmpeg --entrypoint="/bin/bash" -l
+          }
+
 
       - name: glob.zsh
         content: |
