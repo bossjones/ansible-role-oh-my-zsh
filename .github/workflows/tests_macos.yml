@@ -1,0 +1,109 @@
+name: macOS Tests
+on:
+  push:
+    branches:
+      - master
+      - patch**
+      - newlocallab
+  pull_request:
+    branches:
+      - master
+      - newlocallab
+  release:
+    types:
+      - created
+jobs:
+  lint:
+    name: Run dotfiles test (Python ${{ matrix.python-version }})
+    runs-on: macos-10.15
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install prereqs
+        run: |
+          brew update
+          brew upgrade pyenv || brew install pyenv || true
+          pyenv versions
+          pyenv install 3.7.4
+          pyenv local 3.7.4
+          eval "$(pyenv init -)"
+          python3 -m venv env
+          pyenv local --unset
+          source env/bin/activate
+          xcodebuild -version
+      - uses: actions/cache@v1
+        id: cache-dev-deps
+        with:
+          path: .venv
+          key: venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-
+            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-
+            venv-dev-${{ runner.os }}-py-
+            venv-dev-${{ runner.os }}-
+      # - name: Install dependencies
+      #   if: steps.cache-dev-deps.outputs.cache-hit != 'true'
+      #   run: |
+      #     poetry config virtualenvs.in-project true
+      #     poetry install
+      - name: Install dependencies
+        if: steps.cache-dev-deps.outputs.cache-hit != 'true'
+        env:
+          _USER: runner
+          _GROUP: staff
+          _GITHUB_CI: 1
+          _TRAVIS_CI: 1
+        run: |
+          source env/bin/activate
+          curl https://bootstrap.pypa.io/get-pip.py | python
+          python -m pip install --upgrade wheel setuptools
+          env LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite/lib" CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite/include" PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig /usr/local/opt/sqlite/lib/pkgconfig" pip install ansible==2.8.4
+          'python --version'
+          'ansible --version'
+          # Add ansible.cfg to pick up roles path.
+          mv ansible.cfg-travis ansible.cfg
+          cat ansible.cfg
+          # Add a hosts file.
+          sudo mkdir -p /etc/ansible
+          sudo mkdir -p /etc/ansible/filter_plugins
+          sudo touch /etc/ansible/hosts
+          "echo -e '[local]\nlocalhost ansible_connection=local' | sudo tee -a /etc/ansible/hosts > /dev/null"
+
+      - name: Run tests
+        env:
+          _USER: runner
+          _GROUP: staff
+          _GITHUB_CI: 1
+          _TRAVIS_CI: 1
+        run: |
+          brew install python@3.9 || true
+          brew install fzf || true
+          brew install jq || true
+          brew install moreutils || true
+          brew install pyenv || true
+          brew install pyenv-virtualenv || true
+          brew install pyenv-virtualenvwrapper || true
+          brew install rbenv || true
+          brew install the_silver_searcher || true
+          brew install tmux || true
+          brew install tree || true
+          brew install vim || true
+          brew install direnv || true
+          brew install zsh || true
+          source install.sh
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v1
+      - name: Finish build
+        env:
+          _USER: runner
+          _GROUP: staff
+          _GITHUB_CI: 1
+          _TRAVIS_CI: 1
+        run: |
+          /usr/local/bin/zsh -l -c 'alias'
