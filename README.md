@@ -66,6 +66,29 @@ bindings. It should not change the shell environment.
 This file is sourced by login shells during logout. It should be used for
 displaying messages and the deletion of files.
 
+
+Desktop tools
+-------
+
+[1]: https://brew.sh/
+[1]: https://support.1password.com/command-line-getting-started/
+[2]: https://www.google.com/chrome/
+[3]: https://www.mozilla.org/en-US/firefox/new/
+[4]: https://www.alfredapp.com/
+[5]: https://apps.apple.com/app/slack/id803453959
+[6]: https://iterm2.com/downloads.html
+[6]: https://www.spotify.com/us/download/other/
+[7]: https://code.visualstudio.com/download
+[7]: [Divvy](https://mizage.com/divvy/)
+[7]: iina
+[7]: [theunarchiver](https://theunarchiver.com/)
+[7]: https://www.virtualbox.org/wiki/Downloads
+[7]: https://www.vagrantup.com/downloads.html
+[7]: https://discord.com/download
+[7]: https://www.yacreader.com/
+
+
+
 Authors
 -------
 
