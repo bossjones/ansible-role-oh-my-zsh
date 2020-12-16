@@ -71,21 +71,22 @@ Desktop tools
 -------
 
 [1]: https://brew.sh/
-[1]: https://support.1password.com/command-line-getting-started/
-[2]: https://www.google.com/chrome/
-[3]: https://www.mozilla.org/en-US/firefox/new/
-[4]: https://www.alfredapp.com/
-[5]: https://apps.apple.com/app/slack/id803453959
-[6]: https://iterm2.com/downloads.html
-[6]: https://www.spotify.com/us/download/other/
-[7]: https://code.visualstudio.com/download
-[7]: [Divvy](https://mizage.com/divvy/)
-[7]: iina
-[7]: [theunarchiver](https://theunarchiver.com/)
-[7]: https://www.virtualbox.org/wiki/Downloads
-[7]: https://www.vagrantup.com/downloads.html
-[7]: https://discord.com/download
-[7]: https://www.yacreader.com/
+[2]: https://support.1password.com/command-line-getting-started/
+[3]: https://www.google.com/chrome/
+[4]: https://www.mozilla.org/en-US/firefox/new/
+[5]: https://www.alfredapp.com/
+[6]: https://apps.apple.com/app/slack/id803453959
+[7]: https://iterm2.com/downloads.html
+[8]: https://www.spotify.com/us/download/other/
+[9]: https://code.visualstudio.com/download
+[10]: [Divvy](https://mizage.com/divvy/)
+[11]: iina
+[12]: [theunarchiver](https://theunarchiver.com/)
+[13]: https://www.virtualbox.org/wiki/Downloads
+[14]: https://www.vagrantup.com/downloads.html
+[15]: https://discord.com/download
+[16]: https://www.yacreader.com/
+[17]: https://github.com/bossjones/linux-dotfiles/pull/28
 
 
 
