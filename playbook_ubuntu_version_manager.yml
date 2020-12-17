@@ -740,6 +740,6 @@
 
   #   - name: Install Fonts
   #     shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
-  #     when: fontClonedis success
+  #     when: fontCloned is success
   #     become: yes
   #     become_user: vagrant

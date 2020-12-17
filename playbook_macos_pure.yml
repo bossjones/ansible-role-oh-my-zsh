@@ -828,7 +828,7 @@
 
     - name: Install Fonts
       shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
-      # when: fontClonedis success
+      # when: fontCloned is success
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: (fontCloned is success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
