@@ -312,7 +312,7 @@
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
           if [ -n "$(which fnm)" ]; then
-              eval "$(fnm env --multi)"
+              eval "$(fnm env)"
               if [ "$(fnm ls | grep -i 10.3.0 | wc -l | awk '{print $1}')" = "0" ]; then
                 fnm install {{NODE_VERSION_TO_INSTALL}} || true
                 fnm use {{NODE_VERSION_TO_INSTALL}} || true
@@ -828,7 +828,7 @@
 
     - name: Install Fonts
       shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
-      # when: fontCloned|success
+      # when: fontCloned is success
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: (fontCloned is success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')

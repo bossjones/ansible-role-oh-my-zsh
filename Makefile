@@ -293,3 +293,10 @@ debug-omz-session:
 .PHONY: install-goss
 install-goss:
 	bash scripts/install-goss.sh
+
+op-add:
+	op create document ~/secret-dotfiles.tar.gz --filename "secret-dotfiles.tar.gz" --tags "dotfiles,zsh" --title "~/secret-dotfiles.tar.gz"
+
+op-get:
+	op get document "~/secret-dotfiles.tar.gz" --output ~/secret-dotfiles.tar.gz
+	tar xvf ~/secret-dotfiles.tar.gz

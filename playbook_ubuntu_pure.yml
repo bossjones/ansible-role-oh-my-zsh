@@ -571,7 +571,7 @@
 
   #   - name: Install Fonts
   #     shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
-  #     when: fontCloned|success
+  #     when: fontCloned is success
   #     become: yes
   #     become_user: vagrant
 
@@ -612,10 +612,10 @@
 
     # - name: Install Fonts
     #   shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
-    #   # when: fontCloned|success
+    #   # when: fontCloned is success
     #   become: yes
     #   become_user: "{{ bossjones__oh__my__zsh__user }}"
-    #   when: (fontCloned|success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+    #   when: (fontCloned is success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     # - name: 'brew tap homebrew/cask-fonts'
     #   homebrew_tap:
@@ -750,7 +750,7 @@
 
     # - name: Install Fonts
     #   shell: /home/vagrant/powerlinefonts/install.sh chdir=/home/vagrant/powerlinefonts
-    #   when: fontCloned|success
+    #   when: fontCloned is success
     #   become: yes
     #   become_user: vagrant
 
