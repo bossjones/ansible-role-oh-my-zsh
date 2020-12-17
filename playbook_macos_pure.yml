@@ -831,7 +831,7 @@
       # when: fontCloned|success
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
-      when: (fontCloned|success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+      when: (fontCloned is success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     - name: 'brew tap homebrew/cask-fonts'
       homebrew_tap:
