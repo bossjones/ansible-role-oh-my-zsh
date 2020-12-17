@@ -8,5 +8,5 @@ class FilterModule(object):
         }
 
     def be_jinja_console_log(self, a_text):
-        print text
+        print(a_text)
         return ''
