@@ -1,4 +1,4 @@
-ansible<2.8
+ansible
 # yolk3k
 # PyYAML
 mitogen
@@ -22,6 +22,6 @@ botocore
 # openshift
 # pbr
 # pre-commit
-docker
+# docker
 wget
 # readline

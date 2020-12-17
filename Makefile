@@ -289,3 +289,7 @@ debug-omz:
 
 debug-omz-session:
 	bash contrib/debug-omz-session-only.sh
+
+.PHONY: install-goss
+install-goss:
+	bash scripts/install-goss.sh
