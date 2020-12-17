@@ -1,4 +1,5 @@
-molecule[ec2]
+# molecule[ec2]
+pytest-testinfra
 pylint
 yamllint
 ansible-lint

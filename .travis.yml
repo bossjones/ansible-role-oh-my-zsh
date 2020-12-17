@@ -1,161 +1,161 @@
----
-cache:
-  directories:
-    - "$HOME/.pip/cache"
-    - "$PYENV_ROOT/cache"
-
-env:
-  global:
-    - PYTHON_CONFIGURE_OPTS="--enable-shared"
-    # - PYENV_ROOT="$HOME/.pyenv"
-    # - PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
-    # - PYENV_VERSION=3.7.4
-    - _USER=travis
-    - _GROUP=staff
-    - _TRAVIS_CI=1
+# ---
+# cache:
+#   directories:
+#     - "$HOME/.pip/cache"
+#     - "$PYENV_ROOT/cache"
 
 # env:
 #   global:
-#   - LC_CTYPE=en_US.UTF-8
-#   - LANG=en_US.UTF-8
-#   - LANGUAGE=en_US.UTF-8
+#     - PYTHON_CONFIGURE_OPTS="--enable-shared"
+#     # - PYENV_ROOT="$HOME/.pyenv"
+#     # - PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+#     # - PYENV_VERSION=3.7.4
+#     - _USER=travis
+#     - _GROUP=staff
+#     - _TRAVIS_CI=1
 
-# FIXME: Enable this
+# # env:
+# #   global:
+# #   - LC_CTYPE=en_US.UTF-8
+# #   - LANG=en_US.UTF-8
+# #   - LANGUAGE=en_US.UTF-8
+
+# # FIXME: Enable this
+# # matrix:
+# #   fast_finish: true
+# #   allow_failures:
+# #     - osx_image: xcode8
+
+
+# # Reference:
+# #   https://docs.travis-ci.com/user/reference/osx/
+# #   https://docs.travis-ci.com/user/languages/objective-c/
+# #   https://docs.travis-ci.com/user/build-stages/
+# #   https://github.com/ReactiveCocoa/ReactiveSwift/blob/master/.travis.yml
+
+
+# # --------------------------
 # matrix:
-#   fast_finish: true
-#   allow_failures:
-#     - osx_image: xcode8
+#   include:
+#   # ORIGINAL WORKING VERSION
+#   # - name: "High Sierra (10.13) and xcode9.3"
+#   #   os: osx
+#   #   sudo: required
+#   #   language: objective-c
+#   #   # 10.13 (see https://docs.travis-ci.com/user/osx-ci-environment/#OS-X-Version)
+#   #   osx_image: xcode9.3
+#   #   xcode_sdk: macosx10.13
+#   #   # env: MY_RUBY_VERSION=""
+
+#   # - name: "Sierra (10.12) and xcode8.3"
+#   #   os: osx
+#   #   sudo: required
+#   #   language: objective-c
+#   #   osx_image: xcode8.3
+#   #   xcode_sdk: macosx10.12
 
 
-# Reference:
-#   https://docs.travis-ci.com/user/reference/osx/
-#   https://docs.travis-ci.com/user/languages/objective-c/
-#   https://docs.travis-ci.com/user/build-stages/
-#   https://github.com/ReactiveCocoa/ReactiveSwift/blob/master/.travis.yml
+#   # - name: "Sierra (10.12) and xcode9"
+#   #   os: osx
+#   #   sudo: required
+#   #   language: objective-c
+#   #   osx_image: xcode9
+#   #   xcode_sdk: macosx10.12
+#   #   env: MY_HOMEBREW_UPDATE="1"
+
+#   # - name: "Sierra (10.12) and xcode9.1"
+#   #   os: osx
+#   #   sudo: required
+#   #   language: objective-c
+#   #   osx_image: xcode9.1
+#   #   xcode_sdk: macosx10.12
+
+#   # - name: "Sierra (10.12) and xcode9.2"
+#   #   os: osx
+#   #   sudo: required
+#   #   language: objective-c
+#   #   osx_image: xcode9.2
+#   #   xcode_sdk: macosx10.12
+
+#   # - name: "High Sierra (10.13) and xcode9.4"
+#   #   os: osx
+#   #   sudo: required
+#   #   language: objective-c
+#   #   osx_image: xcode9.4
+#   #   xcode_sdk: macosx10.13
+
+#   - name: "Mojave (10.14) and xcode9.4"
+#     os: osx
+#     sudo: required
+#     language: objective-c
+#     # osx_image: xcode9.4
+#     xcode_sdk: macosx10.14
+
+# before_install:
+#   # ---------------------
+#   # SOURCE: https://github.com/Martiusweb/asynctest/blob/292e7519949901dfc49638cad2ff6c067e8a9dcb/.travis.yml
+#   - brew update
+#   - brew upgrade pyenv || brew install pyenv || true
+#   - pyenv versions
+#   - pyenv install 3.7.4
+#   - pyenv local 3.7.4
+#   - eval "$(pyenv init -)"
+#   - python3 -m venv env
+#   - pyenv local --unset
+#   - source env/bin/activate
+#   # -----------------------
+#   - xcodebuild -version
+
+# install:
+#   - source env/bin/activate
+#   - curl https://bootstrap.pypa.io/get-pip.py | python
+#   - python -m pip install --upgrade wheel setuptools
+#   - env LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite/lib" CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite/include" PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig /usr/local/opt/sqlite/lib/pkgconfig" pip install ansible==2.8.4
+
+#   - 'python --version'
+#   - 'ansible --version'
+
+#   # Add ansible.cfg to pick up roles path.
+#   - mv ansible.cfg-travis ansible.cfg
+#   - cat ansible.cfg
+
+#   # Add a hosts file.
+#   - sudo mkdir -p /etc/ansible
+#   - sudo mkdir -p /etc/ansible/filter_plugins
+#   - sudo touch /etc/ansible/hosts
+#   - "echo -e '[local]\nlocalhost ansible_connection=local' | sudo tee -a /etc/ansible/hosts > /dev/null"
 
 
-# --------------------------
-matrix:
-  include:
-  # ORIGINAL WORKING VERSION
-  # - name: "High Sierra (10.13) and xcode9.3"
-  #   os: osx
-  #   sudo: required
-  #   language: objective-c
-  #   # 10.13 (see https://docs.travis-ci.com/user/osx-ci-environment/#OS-X-Version)
-  #   osx_image: xcode9.3
-  #   xcode_sdk: macosx10.13
-  #   # env: MY_RUBY_VERSION=""
+# script:
+#   - _USER=travis
+#   - _GROUP=staff
+#   - _TRAVIS_CI=1
+#   - brew install python@3.8 || true
+#   # - brew install bash-completion2 || true
+#   # - brew install findutils || true
+#   # - brew install fpp || true
+#   - brew install fzf || true
+#   # - brew install hub || true
+#   - brew install jq || true
+#   - brew install moreutils || true
+#   # - brew install netcat || true
+#   # - brew install pv || true
+#   - brew install pyenv || true
+#   - brew install pyenv-virtualenv || true
+#   - brew install pyenv-virtualenvwrapper || true
+#   # - brew install python@2 || true
+#   - brew install rbenv || true
+#   # - brew install readline || true
+#   # - brew install reattach-to-user-namespace || true
+#   # - brew install ssh-copy-id || true
+#   - brew install the_silver_searcher || true
+#   - brew install tmux || true
+#   - brew install tree || true
+#   - brew install vim || true
+#   - brew install direnv || true
+#   - brew install zsh || true
+#   # - brew install asdf || true
 
-  # - name: "Sierra (10.12) and xcode8.3"
-  #   os: osx
-  #   sudo: required
-  #   language: objective-c
-  #   osx_image: xcode8.3
-  #   xcode_sdk: macosx10.12
-
-
-  # - name: "Sierra (10.12) and xcode9"
-  #   os: osx
-  #   sudo: required
-  #   language: objective-c
-  #   osx_image: xcode9
-  #   xcode_sdk: macosx10.12
-  #   env: MY_HOMEBREW_UPDATE="1"
-
-  # - name: "Sierra (10.12) and xcode9.1"
-  #   os: osx
-  #   sudo: required
-  #   language: objective-c
-  #   osx_image: xcode9.1
-  #   xcode_sdk: macosx10.12
-
-  # - name: "Sierra (10.12) and xcode9.2"
-  #   os: osx
-  #   sudo: required
-  #   language: objective-c
-  #   osx_image: xcode9.2
-  #   xcode_sdk: macosx10.12
-
-  # - name: "High Sierra (10.13) and xcode9.4"
-  #   os: osx
-  #   sudo: required
-  #   language: objective-c
-  #   osx_image: xcode9.4
-  #   xcode_sdk: macosx10.13
-
-  - name: "Mojave (10.14) and xcode9.4"
-    os: osx
-    sudo: required
-    language: objective-c
-    # osx_image: xcode9.4
-    xcode_sdk: macosx10.14
-
-before_install:
-  # ---------------------
-  # SOURCE: https://github.com/Martiusweb/asynctest/blob/292e7519949901dfc49638cad2ff6c067e8a9dcb/.travis.yml
-  - brew update
-  - brew upgrade pyenv || brew install pyenv || true
-  - pyenv versions
-  - pyenv install 3.7.4
-  - pyenv local 3.7.4
-  - eval "$(pyenv init -)"
-  - python3 -m venv env
-  - pyenv local --unset
-  - source env/bin/activate
-  # -----------------------
-  - xcodebuild -version
-
-install:
-  - source env/bin/activate
-  - curl https://bootstrap.pypa.io/get-pip.py | python
-  - python -m pip install --upgrade wheel setuptools
-  - env LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite/lib" CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite/include" PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig /usr/local/opt/sqlite/lib/pkgconfig" pip install ansible==2.8.4
-
-  - 'python --version'
-  - 'ansible --version'
-
-  # Add ansible.cfg to pick up roles path.
-  - mv ansible.cfg-travis ansible.cfg
-  - cat ansible.cfg
-
-  # Add a hosts file.
-  - sudo mkdir -p /etc/ansible
-  - sudo mkdir -p /etc/ansible/filter_plugins
-  - sudo touch /etc/ansible/hosts
-  - "echo -e '[local]\nlocalhost ansible_connection=local' | sudo tee -a /etc/ansible/hosts > /dev/null"
-
-
-script:
-  - _USER=travis
-  - _GROUP=staff
-  - _TRAVIS_CI=1
-  - brew install python@3.8 || true
-  # - brew install bash-completion2 || true
-  # - brew install findutils || true
-  # - brew install fpp || true
-  - brew install fzf || true
-  # - brew install hub || true
-  - brew install jq || true
-  - brew install moreutils || true
-  # - brew install netcat || true
-  # - brew install pv || true
-  - brew install pyenv || true
-  - brew install pyenv-virtualenv || true
-  - brew install pyenv-virtualenvwrapper || true
-  # - brew install python@2 || true
-  - brew install rbenv || true
-  # - brew install readline || true
-  # - brew install reattach-to-user-namespace || true
-  # - brew install ssh-copy-id || true
-  - brew install the_silver_searcher || true
-  - brew install tmux || true
-  - brew install tree || true
-  - brew install vim || true
-  - brew install direnv || true
-  - brew install zsh || true
-  # - brew install asdf || true
-
-  - source install.sh
-  - "/usr/local/bin/zsh -l -c 'alias'"
+#   - source install.sh
+#   - "/usr/local/bin/zsh -l -c 'alias'"
 

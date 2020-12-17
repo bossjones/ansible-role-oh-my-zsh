@@ -243,6 +243,9 @@
 
 
     bossjones__oh__my__zsh__before_scripts:
+      - name: secrets.zsh
+        content: |-
+          [ -f ~/.secret ] && . ~/.secret
       - name: asdf.zsh
         content: |-
           if [ -d "$HOME/.asdf" ]; then
@@ -284,22 +287,94 @@
           fi
 
     bossjones__oh__my__zsh__after_scripts:
+      - name: nvm.zsh
+        content: |-
+          # # nvm is installed via homebrew. Here are instructions:
+          # #
+          # # You should create NVM's working directory if it doesn't exist:
+          # #
+          # #   mkdir ~/.nvm
+          # #
+          # # Add the following to ~/.zshrc or your desired shell
+          # # configuration file:
+          # #
+          # #   export NVM_DIR="$HOME/.nvm"
+          # #   . "/usr/local/opt/nvm/nvm.sh"
+          # if [ -d "$HOME/.nvm" ]; then
+          #   export NVM_DIR="$HOME/.nvm"
+          #   . "$HOME/.nvm/nvm.sh"
+          # fi
+          # if [ -f "/usr/local/opt/nvm/nvm.sh" ]; then
+          #   . "/usr/local/opt/nvm/nvm.sh"
+          # fi
+
       - name: fnm.zsh
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
           if [ -n "$(which fnm)" ]; then
               eval "$(fnm env --multi)"
-              if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
-                fnm install {{NODE_VERSION_TO_INSTALL}}
-                fnm use {{NODE_VERSION_TO_INSTALL}}
-                fnm default {{NODE_VERSION_TO_INSTALL}}
+              if [ "$(fnm ls | grep -i 10.3.0 | wc -l | awk '{print $1}')" = "0" ]; then
+                fnm install {{NODE_VERSION_TO_INSTALL}} || true
+                fnm use {{NODE_VERSION_TO_INSTALL}} || true
+                fnm default {{NODE_VERSION_TO_INSTALL}} || true
                 fnm current
               fi
           fi
 
+
+      - name: hub.zsh
+        content: |-
+          # https://github.com/github/hub/issues/1419
+          repos_via_hub() {
+            local user="${1?}"
+            shift 1
+            paginate hub api -t graphql -f user="$user" "$@" -f query='
+              query($user: String!, $per_page: Int = 100, $after: String) {
+                user(login: $user) {
+                  repositories(first: $per_page, after: $after) {
+                    nodes {
+                      nameWithOwner
+                    }
+                    pageInfo {
+                      hasNextPage
+                      endCursor
+                    }
+                  }
+                }
+              }
+            '
+          }
+          paginate() {
+            local output cursor
+            output="$("$@")"
+            cursor="$(awk '/\.hasNextPage/ { has_next=$2 } /\.endCursor/ { if (has_next=="true") print $2 }' <<<"$output")"
+            printf "%s\n" "$output"
+            [ -z "$cursor" ] || paginate "$@" -f after="$cursor"
+          }
+          # USAGE: repos_via_hub "bossjones" | awk '/\.nameWithOwner\t/ { print $2 }'
+
+
       - name: vpn.zsh
         content: |-
           alias vpn="sudo openconnect --user=$(whoami) --os=mac-intel asa-virginia-1.adobe.com"
+
+      - name: aws_utils.zsh
+        content: |-
+          awslookup() {
+            # SOURCE: https://engineering.talis.com/articles/bash-awslookup-tool/
+            # uses aws cli to lookup instances based on a filter on the Name tag
+            # $1 is the filter to use
+            # $2 is the output format defaults to 'table'
+            # $3 is optional, the value doesn't matter but if passed in will result
+            #    in this function printing out the raw command its about to run
+            #    for debugging purposes
+            cmd="aws ec2 describe-instances --filters \"Name=tag:Name,Values=$1\" --query 'Reservations[].Instances[].[InstanceId,PublicDnsName,PrivateIpAddress,State.Name,InstanceType,join(\`,\`,Tags[?Key==\`Name\`].Value)]' --output ${2:-table}"
+            if [ $# -eq 3 ]
+            then
+              echo "Running $cmd"
+            fi
+            eval $cmd
+          }
 
       - name: gnubin.zsh
         content: |-
@@ -395,6 +470,25 @@
             export PATH=$HOME/bin:$PATH
           fi
 
+      - name: cheat.zsh
+        content: |
+          export CHEAT_CONFIG_PATH="~/.config/cheat/conf.yml"
+
+      - name: custom.zsh
+        content: |
+          cp_mp4() {
+              rm -fv cp.txt
+              touch cp.txt
+              mkdir reactions_copy || true
+              [ "$(ls *.mp4 | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*mp4*; do echo cp -av "${filename}" reactions_copy/; done >> cp.txt
+              bash -x cp.txt
+          }
+
+      - name: unzip.zsh
+        content: |
+          # darktop config (8/10/2020)
+          export PATH="/usr/local/opt/unzip/bin:$PATH"
+
       - name: pyenv.zsh
         content: |
           if [ -e ~/.pyenv ]; then
@@ -404,6 +498,114 @@
             pyenv virtualenvwrapper_lazy
           fi
 
+          enable_compile_flags() {
+            # SOURCE: https://github.com/jiansoung/issues-list/issues/13
+            # Fixes: zipimport.ZipImportError: can't decompress data; zlib not available
+            export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
+            export PATH="/usr/local/opt/bzip2/bin:$PATH"
+            export PATH="/usr/local/opt/ncurses/bin:$PATH"
+            export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+            # SOURCE: https://github.com/jiansoung/issues-list/issues/13
+            # Fixes: zipimport.ZipImportError: can't decompress data; zlib not available
+            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/tcl-tk/lib"
+            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/tcl-tk/include"
+            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib"
+            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/zlib/include"
+            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/sqlite/lib"
+            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/sqlite/include"
+            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/libffi/lib"
+            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/libffi/include"
+            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/bzip2/lib"
+            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/bzip2/include"
+            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/ncurses/lib"
+            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/ncurses/include"
+            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/openssl@1.1/lib"
+            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/openssl@1.1/include"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/sqlite/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/tcl-tk/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/libffi/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/ncurses/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/openssl@1.1/lib/pkgconfig"
+            export PROFILE_TASK='-m test.regrtest --pgo \
+                  test_array \
+                  test_base64 \
+                  test_binascii \
+                  test_binhex \
+                  test_binop \
+                  test_bytes \
+                  test_c_locale_coercion \
+                  test_class \
+                  test_cmath \
+                  test_codecs \
+                  test_compile \
+                  test_complex \
+                  test_csv \
+                  test_decimal \
+                  test_dict \
+                  test_float \
+                  test_fstring \
+                  test_hashlib \
+                  test_io \
+                  test_iter \
+                  test_json \
+                  test_long \
+                  test_math \
+                  test_memoryview \
+                  test_pickle \
+                  test_re \
+                  test_set \
+                  test_slice \
+                  test_struct \
+                  test_threading \
+                  test_time \
+                  test_traceback \
+                  test_unicode \
+            '
+          }
+          print_compile_flags() {
+            # echo "export LDFLAGS=\"${LDFLAGS} -L/usr/local/opt/zlib/lib\""
+            # echo "export CPPFLAGS=\"${CPPFLAGS} -I/usr/local/opt/zlib/include\""
+            # echo "export PKG_CONFIG_PATH=\"${PKG_CONFIG_PATH} /usr/local/opt/openssl@1.1/lib/pkgconfig\""
+            echo "----------------------"
+            echo "Verify pyenv compile env vars"
+            echo "----------------------"
+            echo "LDFLAGS: ${LDFLAGS}"
+            echo "CPPFLAGS: ${CPPFLAGS}"
+            echo "PKG_CONFIG_PATH: ${PKG_CONFIG_PATH}"
+            echo "----------------------"
+          }
+
+          function compile_python() {
+              if [ ! -d "${PYENV_ROOT}/versions/${_PY_VER_MAJOR}.${_PY_VER_MINOR}.${_PY_VER_MICRO}" ]; then
+              # Control will enter here if $DIRECTORY exists.
+              env PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --enable-ipv6 --with-dtrace --enable-loadable-sqlite-extensions --with-openssl=/usr/local/opt/openssl@1.1" pyenv install -v ${_PY_VER_MAJOR}.${_PY_VER_MINOR}.${_PY_VER_MICRO}
+              else
+              echo " [python-compile](compile_python) python version ${_PY_VER_MAJOR}.${_PY_VER_MINOR}.${_PY_VER_MICRO} already installed, skipping"
+              fi
+          }
+
+      - name: 1pass.zsh
+        content: |
+          enable_op_cli(){
+            # 1pass
+            if [ -f /usr/local/bin/op ]; then
+                eval $(op signin my)
+                eval "$(op completion zsh)"; compdef _op op
+            fi
+          }
+
+          get_all_secret_dotfiles(){
+
+            op get document ".secret.vault" --output ~/.secret.vault
+            chmod 0600 ~/.secret.vault
+
+            op get document "~/.zsh.d/after/cv.zsh" --output ~/.zsh.d/after/cv.zsh || ls -lta ~/.zsh.d/after/cv.zsh
+            op get document "~/.zsh.d/after/ffmpeg.zsh" --output ~/.zsh.d/after/ffmpeg.zsh || ls -lta ~/.zsh.d/after/ffmpeg.zsh
+            op get document "~/.zsh.d/after/adobe.zsh" --output ~/.zsh.d/after/adobe.zsh || ls -lta ~/.zsh.d/after/adobe.zsh
+
+          }
+
       - name: updatedb.zsh
         content: |
           # updatedb () {
@@ -411,6 +613,29 @@
           #     sudo /usr/libexec/locate.updatedb
 
           # }
+
+      - name: youtube.zsh
+        content: |
+          dl(){
+              /usr/local/bin/youtube-dl -o "$(uuidgen).%(ext)s" "${1}"
+          }
+
+          dl-best(){
+              /usr/local/bin/youtube-dl -o "$(uuidgen).%(ext)s" -f $(/usr/local/bin/youtube-dl -o "$(uuidgen).%(ext)s" -F "${1}" | grep best | grep mp4 | head -1 | awk '{print $1}') "${1}"
+          }
+
+          dl-mp3(){
+              /usr/local/bin/youtube-dl -o "$(uuidgen).%(ext)s" --extract-audio --audio-format mp3 "${1}"
+          }
+
+          youtube-dl-best-until(){
+              until dl-best "${1}" &> /dev/null
+              do
+                  echo "running dl-best \"${1}\" ..."
+                  sleep 1
+              done
+              echo -e "\nThe mp4 is downloaded."
+          }
 
 
       - name: unixorn.zsh
@@ -549,11 +774,11 @@
 
       # Expand aliases inline - see http://blog.patshead.com/2012/11/automatically-expaning-zsh-global-aliases---simplified.html
       globalias() {
-         if [[ $LBUFFER =~ ' [A-Z0-9]+$' ]]; then
-           zle _expand_alias
-           zle expand-word
-         fi
-         zle self-insert
+        if [[ $LBUFFER =~ ' [A-Z0-9]+$' ]]; then
+          zle _expand_alias
+          zle expand-word
+        fi
+        zle self-insert
       }
 
       zle -N globalias
@@ -606,7 +831,7 @@
       # when: fontCloned|success
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
-      when: (fontCloned|success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+      when: (fontCloned is success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     - name: 'brew tap homebrew/cask-fonts'
       homebrew_tap:
@@ -705,7 +930,7 @@
       failed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
-      when: compaudit_word_count.stdout not "0"
+      when: (compaudit_word_count|bool) and compaudit_word_count.stdout not "0"
 
     - name: ensure directories are owned correctly for zsh completion to work
       file:

@@ -477,3 +477,14 @@ Gemfile*
 .vscode
 kube-config
 .ssh
+
+
+be-net-cron-temp/
+crons.yaml
+defaults/glue.py
+hosts.private
+need.sh
+nginx.yaml
+observer-sidecar-pod.yaml
+
+1pass.sh
