@@ -109,4 +109,4 @@ jobs:
           brew install direnv || true
           brew install zsh || true
           source install.sh
-          "/usr/local/bin/zsh -l -c 'alias'"
+          /usr/local/bin/zsh -l -c 'whence gpr'
