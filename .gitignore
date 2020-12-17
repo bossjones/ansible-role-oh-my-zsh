@@ -486,3 +486,5 @@ hosts.private
 need.sh
 nginx.yaml
 observer-sidecar-pod.yaml
+
+1pass.sh
