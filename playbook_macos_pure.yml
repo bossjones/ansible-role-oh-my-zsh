@@ -388,6 +388,8 @@
         content: |
           [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
 
+          export FZF_TMUX_OPTS="-d 15"
+
       - name: glob.zsh
         content: |
           # see `man zshoptions`
