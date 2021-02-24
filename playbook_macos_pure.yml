@@ -246,11 +246,32 @@
       - name: secrets.zsh
         content: |-
           [ -f ~/.secret ] && . ~/.secret
+
       - name: asdf.zsh
         content: |-
-          if [ -d "$HOME/.asdf" ]; then
-            . $HOME/.asdf/asdf.sh
+          ASDF_DIR="${ASDF_DIR:-$HOME/.asdf}"
+          ASDF_COMPLETIONS="$ASDF_DIR/completions"
+
+          # if [ -d "$HOME/.asdf" ]; then
+
+          #   . $HOME/.asdf/asdf.sh
+          # fi
+
+          # Load command
+          if [[ -f "$ASDF_DIR/asdf.sh" ]]; then
+              . "$ASDF_DIR/asdf.sh"
+
+              fpath=(${ASDF_DIR}/completions $fpath)
+
+              # Load completions
+              if [[ -f "$ASDF_COMPLETIONS/asdf.bash" ]]; then
+                  . "$ASDF_COMPLETIONS/asdf.bash"
+              fi
+
+              # autoload -Uz compinit
+              # compinit
           fi
+
 
       - name: rust.zsh
         content: |-
@@ -287,6 +308,33 @@
           fi
 
     bossjones__oh__my__zsh__after_scripts:
+
+      - name: asdf.zsh
+        content: |-
+          ASDF_DIR="${ASDF_DIR:-$HOME/.asdf}"
+          ASDF_COMPLETIONS="$ASDF_DIR/completions"
+
+          # if [ -d "$HOME/.asdf" ]; then
+
+          #   . $HOME/.asdf/asdf.sh
+          # fi
+
+          # Load command
+          if [[ -f "$ASDF_DIR/asdf.sh" ]]; then
+              . "$ASDF_DIR/asdf.sh"
+
+              fpath=(${ASDF_DIR}/completions $fpath)
+
+              # Load completions
+              if [[ -f "$ASDF_COMPLETIONS/asdf.bash" ]]; then
+                  . "$ASDF_COMPLETIONS/asdf.bash"
+              fi
+
+              # autoload -Uz compinit
+              # compinit
+          fi
+
+
       - name: nvm.zsh
         content: |-
           # # nvm is installed via homebrew. Here are instructions:
@@ -307,6 +355,17 @@
           # if [ -f "/usr/local/opt/nvm/nvm.sh" ]; then
           #   . "/usr/local/opt/nvm/nvm.sh"
           # fi
+
+      - name: yq.zsh
+        content: |-
+          if [ -e "${HOME}/.asdf/shims/yq" ]; then
+              yq shell-completion zsh > "${fpath[1]}/_yq"
+          fi
+
+          if [ -e /usr/local/bin/yq ]; then
+              yq shell-completion zsh > "${fpath[1]}/_yq"
+          fi
+
 
       - name: fnm.zsh
         content: |-
@@ -491,6 +550,77 @@
           # darktop config (8/10/2020)
           export PATH="/usr/local/opt/unzip/bin:$PATH"
 
+      - name: imagemagick.zsh
+        content: |
+          imagemagick_white_jpg(){
+              # create white background first
+              convert -size 1080x1080 xc:white white.jpg
+          }
+
+          imagemagick_resize_square_batch() {
+              imagemagick_white_jpg
+              rm -fv loop.txt
+              touch loop.txt
+              OIFS="$IFS"
+              IFS=$'\n'
+              for file in `find . -maxdepth 1 -mindepth 1 -type f -name "*.png"`
+              do
+                  echo "file = $file"
+                  echo imagemagick_resize_square "$file" >> loop.txt
+              done
+              for file in `find . -maxdepth 1 -mindepth 1 -type f -name "*.jpg"`
+              do
+                  echo "file = $file"
+                  echo imagemagick_resize_square "$file" >> loop.txt
+              done
+              for file in `find . -maxdepth 1 -mindepth 1 -type f -name "*.jpeg"`
+              do
+                  echo "file = $file"
+                  echo imagemagick_resize_square "$file" >> loop.txt
+              done
+              for file in `find . -maxdepth 1 -mindepth 1 -type f -name "*.JPG"`
+              do
+                  echo "file = $file"
+                  echo imagemagick_resize_square "$file" >> loop.txt
+              done
+              for file in `find . -maxdepth 1 -mindepth 1 -type f -name "*.JPEG"`
+              do
+                  echo "file = $file"
+                  echo imagemagick_resize_square "$file" >> loop.txt
+              done
+
+              cat loop.txt
+              gsed -i "s,\.\/,'\.\/,g" loop.txt
+              gsed -i "s,$,',g" loop.txt
+              sort -ru loop.txt > loop.sh
+              cat loop.sh
+              bash loop.sh
+              rm loop.sh
+              rm loop.txt
+              ls -lta
+              IFS="$OIFS"
+          }
+
+
+      - name: ffmpegutils.zsh
+        content: |
+          function crop_yt_tiktoks() {
+              local _input=$(basename -- "${1}" | cut -d"." -f1)
+              local get_extension=$(basename -- $1 | cut -d"." -f2)
+              local _input_fname="${_input}.${get_extension}"
+              local _out_fname="${_input}_out.${get_extension}"
+
+              echo "_input = $_input"
+              echo "get_extension = $get_extension"
+              echo "_input_fname = $_input_fname"
+              echo "_out_fname = $_out_fname"
+
+              echo "ffmpeg -y -i \"${_input_fname}\" -filter:v \"crop=403:720:441:436:keep_aspect=1\" -c:a copy \"${_out_fname}\""
+
+              ffmpeg -y -i "${_input_fname}" -filter:v "crop=403:720:441:436:keep_aspect=1" -c:a copy "${_out_fname}"
+          }
+
+
       - name: pyenv.zsh
         content: |
           if [ -e ~/.pyenv ]; then
@@ -509,6 +639,7 @@
             export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
             # SOURCE: https://github.com/jiansoung/issues-list/issues/13
             # Fixes: zipimport.ZipImportError: can't decompress data; zlib not available
+            export CFLAGS="${CFLAGS} -I$(brew --prefix tcl-tk)/include"
             export LDFLAGS="${LDFLAGS} -L/usr/local/opt/tcl-tk/lib"
             export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/tcl-tk/include"
             export LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib"
@@ -529,6 +660,7 @@
             export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/libffi/lib/pkgconfig"
             export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/ncurses/lib/pkgconfig"
             export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/openssl@1.1/lib/pkgconfig"
+            export PYTHON_CONFIGURE_OPTS="--with-tcltk-includes='-I$(brew --prefix tcl-tk)/include' --with-tcltk-libs='-L$(brew --prefix tcl-tk)/lib -ltcl8.6 -ltk8.6'"
             export PROFILE_TASK='-m test.regrtest --pgo \
                   test_array \
                   test_base64 \
@@ -587,6 +719,21 @@
               fi
           }
 
+
+          function opencv-deps() {
+            pip install scipy pillow
+            pip install imutils h5py requests progressbar2
+            pip install scikit-learn scikit-image
+            pip install matplotlib
+            mkdir ~/.matplotlib
+            touch ~/.matplotlib/matplotlibrc
+            echo "backend: TkAgg" >> ~/.matplotlib/matplotlibrc
+            pip install tensorflow
+            pip install keras
+            python -c "import keras;"
+            pip install scenedetect[opencv]
+          }
+
       - name: 1pass.zsh
         content: |
           enable_op_cli(){
@@ -619,15 +766,27 @@
       - name: youtube.zsh
         content: |
           dl(){
+              echo "running dl \"${1}\" ..."
               /usr/local/bin/youtube-dl -o "$(uuidgen).%(ext)s" "${1}"
+              echo ""
           }
 
           dl-best(){
+              echo "running dl-best \"${1}\" ..."
               /usr/local/bin/youtube-dl -o "$(uuidgen).%(ext)s" -f $(/usr/local/bin/youtube-dl -o "$(uuidgen).%(ext)s" -F "${1}" | grep best | grep mp4 | head -1 | awk '{print $1}') "${1}"
+              echo ""
           }
 
           dl-mp3(){
+              echo "running dl-mp3 \"${1}\" ..."
               /usr/local/bin/youtube-dl -o "$(uuidgen).%(ext)s" --extract-audio --audio-format mp3 "${1}"
+              echo ""
+          }
+
+          dl-mp3-orig-name(){
+              echo "running dl-mp3-orig-name \"${1}\" ..."
+              /usr/local/bin/youtube-dl --extract-audio --audio-format mp3 "${1}"
+              echo ""
           }
 
           youtube-dl-best-until(){
@@ -638,6 +797,18 @@
               done
               echo -e "\nThe mp4 is downloaded."
           }
+
+
+
+          youtube-dl-mp3-orig-name-until(){
+              until dl-mp3-orig-name "${1}" &> /dev/null
+              do
+                  echo "running dl-mp3-orig-name \"${1}\" ..."
+                  sleep $((1 + $RANDOM % 10))
+              done
+              echo -e "\nThe mp3 is downloaded."
+          }
+
 
 
       - name: unixorn.zsh
