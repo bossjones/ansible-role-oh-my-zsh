@@ -773,8 +773,9 @@
     - name: bossjones debug-tools install
       shell: |
         git clone https://github.com/bossjones/debug-tools /usr/local/src/debug-tools || true
+        sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
         /usr/local/src/debug-tools/update-bossjones-debug-tools
-        chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }}
+        sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
       args:
         executable: /bin/bash
       changed_when: false
