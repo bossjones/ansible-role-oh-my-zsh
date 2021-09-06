@@ -163,6 +163,7 @@
       - $HOME/bin
       - $HOME/.local/bin
       - $HOME/.pyenv/bin
+      - /.pyenv/bin
       - $HOME/.rbenv/bin
       - $HOME/.fnm
       - /usr/local/sbin
@@ -236,6 +237,19 @@
 
 
     bossjones__oh__my__zsh__before_scripts:
+      - name: fnm.zsh
+        content: |-
+          export PATH=~/.fnm:$PATH
+          # SOURCE: https://github.com/Schniz/fnm
+          if [ -n "$(which fnm)" ]; then
+              eval "$(fnm env)"
+              if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
+                fnm install {{NODE_VERSION_TO_INSTALL}}
+                fnm use {{NODE_VERSION_TO_INSTALL}}
+                fnm default {{NODE_VERSION_TO_INSTALL}}
+                fnm current
+              fi
+          fi
       - name: asdf.zsh
         content: |-
           if [ -d "$HOME/.asdf" ]; then
@@ -293,7 +307,7 @@
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
           if [ -n "$(which fnm)" ]; then
-              eval "$(fnm env --multi)"
+              eval "$(fnm env)"
               if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
                 fnm install {{NODE_VERSION_TO_INSTALL}}
                 fnm use {{NODE_VERSION_TO_INSTALL}}
