@@ -138,7 +138,7 @@
       - unixorn/git-extra-commands
 
       # alias for docker aliases
-      - { name: luismayta/zsh-docker-aliases, command: docker }
+      - { name: hadenlabs/zsh-docker, command: docker }
       # servers functions for shell
       - luismayta/zsh-servers-functions
       # Search ssh connect with peco
@@ -824,6 +824,7 @@
           fnm default {{NODE_VERSION_TO_INSTALL}} || true
           fnm current || true
           npm install -g pure-prompt || true
+          npm install -g pretty-time-zsh || true
         fi
       args:
         executable: /bin/bash
