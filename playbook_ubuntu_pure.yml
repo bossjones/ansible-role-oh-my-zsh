@@ -23,9 +23,9 @@
     rbenv:
       env: personal
       version: v1.1.2
-      default_ruby: 2.6.6
+      default_ruby: 2.7.2
       rubies:
-        - version: 2.6.6
+        - version: 2.7.2
 
     rbenv_clean_up: false
 
@@ -138,7 +138,7 @@
       - unixorn/git-extra-commands
 
       # alias for docker aliases
-      - { name: luismayta/zsh-docker-aliases, command: docker }
+      - { name: hadenlabs/zsh-docker, command: docker }
       # servers functions for shell
       - luismayta/zsh-servers-functions
       # Search ssh connect with peco
@@ -163,6 +163,7 @@
       - $HOME/bin
       - $HOME/.local/bin
       - $HOME/.pyenv/bin
+      - /.pyenv/bin
       - $HOME/.rbenv/bin
       - $HOME/.fnm
       - /usr/local/sbin
@@ -236,6 +237,19 @@
 
 
     bossjones__oh__my__zsh__before_scripts:
+      - name: fnm.zsh
+        content: |-
+          export PATH=~/.fnm:$PATH
+          # SOURCE: https://github.com/Schniz/fnm
+          if [ -n "$(which fnm)" ]; then
+              eval "$(fnm env)"
+              if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
+                fnm install {{NODE_VERSION_TO_INSTALL}}
+                fnm use {{NODE_VERSION_TO_INSTALL}}
+                fnm default {{NODE_VERSION_TO_INSTALL}}
+                fnm current
+              fi
+          fi
       - name: asdf.zsh
         content: |-
           if [ -d "$HOME/.asdf" ]; then
@@ -293,7 +307,7 @@
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
           if [ -n "$(which fnm)" ]; then
-              eval "$(fnm env --multi)"
+              eval "$(fnm env)"
               if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
                 fnm install {{NODE_VERSION_TO_INSTALL}}
                 fnm use {{NODE_VERSION_TO_INSTALL}}
@@ -388,8 +402,8 @@
 
       - name: pyenv.zsh
         content: |
-          if [ -e ~/.pyenv ]; then
-            export PYENV_ROOT=~/.pyenv
+          if [ -e /.pyenv ]; then
+            export PYENV_ROOT=/.pyenv
             export PATH="$PYENV_ROOT/bin:$PATH"
             eval "$(pyenv init -)"
             pyenv virtualenvwrapper_lazy
@@ -674,20 +688,22 @@
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       register: bossjones__oh__my__zsh__register_pyenv_virtualenvwrapper
 
-    - name: Clone fzf
-      git:
-        repo: https://github.com/junegunn/fzf.git
-        dest: "~/.fzf"
-        version: "0.22.0"
-        force: yes
-      become: yes
-      become_user: "{{ bossjones__oh__my__zsh__user }}"
-      register: bossjones__oh__my__zsh__register_fzf
+    # - name: Clone fzf
+    #   git:
+    #     repo: https://github.com/junegunn/fzf.git
+    #     dest: "~/.fzf"
+    #     version: "0.22.0"
+    #     force: yes
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
+    #   register: bossjones__oh__my__zsh__register_fzf
 
     - name: Install fzf
-      shell: ./install --all
-      args:
-        chdir: "~/.fzf"
+      shell: |
+        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf || true
+        ~/.fzf/install --all
+      # args:
+      #   chdir: "~/.fzf"
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
@@ -703,6 +719,7 @@
 
     - name: 'compaudit | figure out if anything to fix'
       shell: |
+        autoload -U compaudit compinit
         compaudit | wc -l
       args:
         executable: /usr/bin/zsh
@@ -713,6 +730,7 @@
 
     - name: 'compaudit | fix'
       shell: |
+          autoload -U compaudit compinit
           compaudit | xargs chmod g-w,o-w
           compaudit | xargs chown "{{ bossjones__oh__my__zsh__user }}"
           rm ~/.zcompdump*
@@ -724,18 +742,30 @@
       when: compaudit_word_count.stdout != "0"
 
     - name: 'ensure directories are owned correctly for zsh completion to work'
-      file:
-        dest: "{{ item }}"
-        state: directory
-        owner: "{{ bossjones__oh__my__zsh__user }}"
-        group: "{{ bossjones__oh__my__zsh__group }}"
-        recurse: yes
+      shell: |
+          chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__group }} -Rv {{ item }}
+      args:
+        executable: /usr/bin/zsh
       loop:
         - '/usr/local/share/zsh/site-functions'
         - '/usr/local/share/zsh'
       become: yes
       become_user: "root"
-      # when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+      changed_when: false
+
+    # - name: 'ensure directories are owned correctly for zsh completion to work'
+    #   file:
+    #     dest: "{{ item }}"
+    #     state: directory
+    #     owner: "{{ bossjones__oh__my__zsh__user }}"
+    #     group: "{{ bossjones__oh__my__zsh__group }}"
+    #     recurse: yes
+    #   loop:
+    #     - '/usr/local/share/zsh/site-functions'
+    #     - '/usr/local/share/zsh'
+    #   become: yes
+    #   become_user: "root"
+    #   # when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
 
     # # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
@@ -754,19 +784,65 @@
     #   become: yes
     #   become_user: vagrant
 
+    - name: bossjones debug-tools install
+      shell: |
+        git clone https://github.com/bossjones/debug-tools /usr/local/src/debug-tools || true
+        sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
+        /usr/local/src/debug-tools/update-bossjones-debug-tools
+        sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
+      args:
+        executable: /bin/bash
+      changed_when: false
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+
+    - name: "create /usr/local/bin/install-config"
+      copy:
+        content: |
+          export PYENV_VERSIONS_TO_INSTALL="3.9.0\n"
+          export PYENV_ROOT=/.pyenv
+          export PATH="${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:$PATH"
+          export RBENV_ROOT=~/.rbenv
+          export RBENV_VERSION=2.7.2
+          export NODE_VERSION_TO_INSTALL=10.3.0
+          export PATH="$HOME/.fnm:${RBENV_ROOT}/shims:${RBENV_ROOT}/bin:$PATH"
+        dest: "/usr/local/bin/install-config"
+        owner: "{{ bossjones__oh__my__zsh__user }}"
+        group: "{{ bossjones__oh__my__zsh__group }}"
+        mode: 0755
 
     - name: fnm | download
       shell: |
-        eval "$(fnm env --multi)"
+        export NODE_VERSION_TO_INSTALL=10.3.0
+        install-fnm.sh
+        export PATH=~/.fnm:$PATH
+        eval "`fnm env`"
         if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
-          fnm install {{NODE_VERSION_TO_INSTALL}}
-          fnm use {{NODE_VERSION_TO_INSTALL}}
-          fnm default {{NODE_VERSION_TO_INSTALL}}
-          fnm current
-          npm install -g pure-prompt
+          fnm install {{NODE_VERSION_TO_INSTALL}} || true
+          fnm use {{NODE_VERSION_TO_INSTALL}} || true
+          fnm default {{NODE_VERSION_TO_INSTALL}} || true
+          fnm current || true
+          npm install -g pure-prompt || true
+          npm install -g pretty-time-zsh || true
         fi
       args:
         executable: /bin/bash
       changed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+    # SOURCE: https://github.com/k3s-io/k3s-ansible/blob/master/roles/prereq/tasks/main.yml
+    - name: Enable IPv4 forwarding
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: "1"
+        state: present
+        reload: yes
+
+    - name: Enable IPv6 forwarding
+      sysctl:
+        name: net.ipv6.conf.all.forwarding
+        value: "1"
+        state: present
+        reload: yes

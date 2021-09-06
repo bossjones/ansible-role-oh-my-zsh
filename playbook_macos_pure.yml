@@ -141,7 +141,7 @@
       - unixorn/git-extra-commands
 
       # alias for docker aliases
-      - { name: luismayta/zsh-docker-aliases, command: docker }
+      - { name: hadenlabs/zsh-docker, command: docker }
       # servers functions for shell
       - luismayta/zsh-servers-functions
       # Search ssh connect with peco
