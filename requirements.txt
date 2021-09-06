@@ -22,7 +22,7 @@ cffi==1.14.4
     # via cryptography
 colorama==0.4.3
     # via awscli
-cryptography==3.3.1
+cryptography==3.3.2
     # via ansible-base
 docutils==0.15.2
     # via awscli
