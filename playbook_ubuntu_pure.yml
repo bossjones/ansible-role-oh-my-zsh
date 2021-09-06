@@ -816,7 +816,8 @@
       shell: |
         export NODE_VERSION_TO_INSTALL=10.3.0
         install-fnm.sh
-        eval "$(fnm env --multi)"
+        export PATH=~/.fnm:$PATH
+        eval "`fnm env`"
         if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
           fnm install {{NODE_VERSION_TO_INSTALL}} || true
           fnm use {{NODE_VERSION_TO_INSTALL}} || true
