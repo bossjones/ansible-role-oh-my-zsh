@@ -4,9 +4,9 @@
 #
 #    pip-compile --output-file=requirements-dev.txt requirements-dev.in
 #
-ansible==2.10.4
+ansible==2.10.7
     # via ansible-lint
-ansible-base==2.10.4
+ansible-base==2.10.13
     # via ansible
 ansible-lint==4.3.7
     # via -r requirements-dev.in

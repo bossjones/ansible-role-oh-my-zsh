@@ -4,9 +4,9 @@
 #
 #    pip-compile --output-file=requirements.txt requirements.in
 #
-ansible==2.10.4
+ansible==2.10.7
     # via -r requirements.in
-ansible-base==2.10.4
+ansible-base==2.10.13
     # via ansible
 awscli==1.18.198
     # via -r requirements.in
