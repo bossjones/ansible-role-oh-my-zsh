@@ -23,9 +23,9 @@
     rbenv:
       env: personal
       version: v1.1.2
-      default_ruby: 2.6.6
+      default_ruby: 2.7.2
       rubies:
-        - version: 2.6.6
+        - version: 2.7.2
 
     rbenv_clean_up: false
 
@@ -804,7 +804,7 @@
           export PYENV_ROOT=/.pyenv
           export PATH="${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:$PATH"
           export RBENV_ROOT=~/.rbenv
-          export RBENV_VERSION=2.6.6
+          export RBENV_VERSION=2.7.2
           export NODE_VERSION_TO_INSTALL=10.3.0
           export PATH="$HOME/.fnm:${RBENV_ROOT}/shims:${RBENV_ROOT}/bin:$PATH"
         dest: "/usr/local/bin/install-config"
