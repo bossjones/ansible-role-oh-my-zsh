@@ -130,7 +130,7 @@
       - unixorn/git-extra-commands
 
       # alias for docker aliases
-      - { name: hadenlabs/zsh-docker, command: docker }
+      - { name: hadenlabs/zsh-docker@main, command: docker }
       # servers functions for shell
       - luismayta/zsh-servers-functions
       # Search ssh connect with peco
@@ -163,7 +163,7 @@
       # # - wwilsman/zsh-clean-project
 
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
-      - sindresorhus/pretty-time-zsh
+      - sindresorhus/pretty-time-zsh@main
 
       # Search shell history with peco when pressing ctrl+r.
       # - jimeh/zsh-peco-history
@@ -171,7 +171,7 @@
       # - zsh-users/zsh-history-substring-search
 
       # Pretty, minimal and fast ZSH prompt
-      # - sindresorhus/pure
+      # - sindresorhus/pure@main
 
     # bossjones__oh__my__zsh__hotkeys_extras:
     # - { hotkey: '^[[3~', action: delete-char }
