@@ -138,7 +138,7 @@
       - unixorn/git-extra-commands
 
       # alias for docker aliases
-      - { name: hadenlabs/zsh-docker, command: docker }
+      - { name: hadenlabs/zsh-docker@main, command: docker }
       # servers functions for shell
       - luismayta/zsh-servers-functions
       # Search ssh connect with peco
@@ -148,14 +148,14 @@
       - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
 
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
-      - sindresorhus/pretty-time-zsh
+      - sindresorhus/pretty-time-zsh@main
 
       # Because your terminal should be able to perform tasks asynchronously without external tools!
       - mafredri/zsh-async
 
       - asdf
       # Pretty, minimal and fast ZSH prompt
-      - sindresorhus/pure
+      - sindresorhus/pure@main
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:

@@ -142,7 +142,7 @@
       - unixorn/git-extra-commands
 
       # alias for docker aliases
-      - { name: hadenlabs/zsh-docker, command: docker }
+      - { name: hadenlabs/zsh-docker@main, command: docker }
       # servers functions for shell
       - luismayta/zsh-servers-functions
       # Search ssh connect with peco
@@ -155,7 +155,7 @@
       - chrissicool/zsh-256color
 
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
-      - sindresorhus/pretty-time-zsh
+      - sindresorhus/pretty-time-zsh@main
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:
