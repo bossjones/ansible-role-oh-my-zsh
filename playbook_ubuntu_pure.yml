@@ -205,11 +205,13 @@
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
       export RBENV_ROOT={{rbenv_root}}
+      export GOENV_ROOT=~/.goenv
 
       if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
       then
         export PATH="/usr/local/bin:/usr/bin:/bin:/usr/games"
         export PATH="{{rbenv_root}}/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$PATH"
+        export PATH="${GOENV_ROOT}/bin:${PATH}"
       fi
       skip_global_compinit=1
 
@@ -259,12 +261,12 @@
       - name: kubeconfig.zsh
         content: |-
           if [ -d "/srv/ansible-role-oh-my-zsh" ]; then
-             export KUBECONFIG=$KUBECONFIG:/srv/ansible-role-oh-my-zsh/kube-config
+            export KUBECONFIG=$KUBECONFIG:/srv/ansible-role-oh-my-zsh/kube-config
           fi
 
           enable_kubectl_completion() {
             if [ -n "$(which kubectl)" ]; then
-             source <(kubectl completion zsh)
+              source <(kubectl completion zsh)
             fi
           }
 
@@ -280,6 +282,14 @@
           fi
           export PATH=$GOPATH/bin:$PATH
           alias cdgo='CDPATH=.:$GOPATH/src/github.com:$GOPATH/src/golang.org:$GOPATH/src'
+
+          if [ -d ~/.goenv ]; then
+            export GOENV_ROOT="$HOME/.goenv"
+            export PATH="$GOENV_ROOT/bin:$PATH"
+            eval "$(goenv init -)"
+            export PATH="$GOROOT/bin:$PATH"
+            export PATH="$PATH:$GOPATH/bin"
+          fi
 
       - name: workon.zsh
         content: |-
@@ -602,6 +612,17 @@
         - .local/bin
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+
+    - name: 'Cloning goenv | based on https://github.com/syndbg/goenv/blob/master/INSTALL.md'
+      git:
+        repo=https://github.com/syndbg/goenv
+        dest="~/.goenv"
+        accept_hostkey=yes
+      register: goenvCloned
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      # when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     # # SOURCE: https://github.com/veggiemonk/ansible-dotfiles/blob/master/tasks/fonts.yml
     # - name: 'Cloning fonts | based on https://gist.github.com/ganapativs/e571d9287cb74121d41bfe75a0c864d7'
