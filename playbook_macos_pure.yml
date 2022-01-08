@@ -141,7 +141,7 @@
       # Desktop notifications for long-running commands in zsh.
       - marzocchi/zsh-notify
       # Add zsh's missing hooks, and support for user-defined hooks
-      - willghatch/zsh-hooks
+      - zsh-hooks/zsh-hooks
 
       # A collection of git utilities and useful extra git scripts I've discovered or written, packaged for ease of use with shell frameworks.
       - unixorn/git-extra-commands@main
