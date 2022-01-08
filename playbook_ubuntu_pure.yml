@@ -100,7 +100,7 @@
     bossjones__oh__my__zsh__change_default_shell: yes
     bossjones__oh__my__zsh__path_to_shell: /usr/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
-      - zdharma-continuum/fast-syntax-highlighting@main
+      - zdharma-continuum/fast-syntax-highlighting@master
       # Solarized dircolors plugin for zsh
       - joel-porquet/zsh-dircolors-solarized
 
