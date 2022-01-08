@@ -322,6 +322,10 @@
 
       - name: pure.zsh
         content: |-
+          zstyle :prompt:pure:virtualenv color '#739e8c'
+          # turn on git stash status
+          zstyle :prompt:pure:virtualenv show yes
+
           if [ -d "$HOME/.zsh/pure" ]; then
             fpath+=$HOME/.zsh/pure
           fi
@@ -465,7 +469,7 @@
           # }
       - name: custom_plugins.zsh
         content: |
-          plugins+=(git-extra-commands zsh-256color zsh-peco-history)
+          plugins+=(git-extra-commands zsh-256color zsh-peco-history pyenv rbenv fd fzf zsh-syntax-highlighting)
 
 
       - name: unixorn.zsh
@@ -723,6 +727,7 @@
         # - asdf
         # NOTE: I probably really don't need these, but the oh-my-zsh plugins need certain things to exist in order for it to setup the plugin properly
         - peco
+        - http
         - wmctrl
         - xdotool
         - neofetch
@@ -809,6 +814,17 @@
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       register: bossjones__oh__my__zsh__register_zsh_256color
+
+    # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    - name: Clone zsh-users zsh-syntax-highlighting
+      git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_syntax_highlighting
 
       # git clone https://github.com/jimeh/zsh-peco-history.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-peco-history
 

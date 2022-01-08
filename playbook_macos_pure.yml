@@ -2026,11 +2026,6 @@
       export RBENV_VERSION={{rbenv.default_ruby}}
       export VIRTUAL_ENV_DISABLE_PROMPT=1
       export ZSH_PYENV_LAZY_VIRTUALENV=1
-      # Larger bash history (allow 32³ entries; default is 500)
-      # OS X nvm load
-      # [ -s "/usr/local/opt/nvm/nvm.sh" ] && . /usr/local/opt/nvm/nvm.sh # This loads nvm
-      # export NVM_LAZY_LOAD=true
-      # export NVM_AUTO_USE=true
 
       # set some history options
       setopt append_history
