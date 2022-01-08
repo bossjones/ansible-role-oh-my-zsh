@@ -1406,7 +1406,10 @@
         - openssh-client
         - fd-find
         - gawk
-        - libnotify
+        - libnotify4
+        - libnotify-bin
+        - libnotify-dev
+        - libnotify-doc
         # - pyenv
         # - coreutils
         # - findutils
