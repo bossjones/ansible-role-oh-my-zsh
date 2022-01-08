@@ -838,7 +838,7 @@
         export NODE_VERSION_TO_INSTALL=16.13.1
         install-fnm.sh
         export PATH=~/.fnm:$PATH
-        eval "`fnm env`"
+        eval "`fnm env --use-on-cd`"
         if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
           fnm install {{NODE_VERSION_TO_INSTALL}} || true
           fnm use {{NODE_VERSION_TO_INSTALL}} || true
