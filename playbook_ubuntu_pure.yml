@@ -115,11 +115,16 @@
       - { name: vscode, command: code }
       - { name: gpg-agent, command: gpg-agent }
       - history
-      - { name: fd, command: fd }
-      - { name: autopep8, command: autopep8 }
-      - { name: pylint, command: pylint }
-      - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
-      - { name: colored-man-pages, command: man }
+      # - { name: fd, command: fd }
+      # - { name: autopep8, command: autopep8 }
+      # - { name: pylint, command: pylint }
+      # - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
+      # - { name: colored-man-pages, command: man }
+      - fd
+      - autopep8
+      - pylint
+      - ELLIOTTCABLE/rbenv.plugin.zsh
+      - colored-man-pages
 
       - { name: bossjones/boss-git-zsh-plugin, command: git }
       - { name: bossjones/boss-docker-zsh-plugin, command: docker }
@@ -143,10 +148,12 @@
       # servers functions for shell
       - luismayta/zsh-servers-functions
       # Search ssh connect with peco
-      - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+      # - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+      - luismayta/zsh-peco-ssh-connect
 
       # Plugin for lazy-loading pyenv in zsh.
-      - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
+      # - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
+      - erikced/zsh-pyenv-lazy-load
 
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
       - sindresorhus/pretty-time-zsh@main
