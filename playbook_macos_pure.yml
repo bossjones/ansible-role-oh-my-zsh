@@ -21,6 +21,7 @@
   #   # NVM_LAZY_LOAD: yes
   #   NODE_VERSION_TO_INSTALL: 16.11.1
   vars:
+    bossjones__oh__my__zsh__pyenv_version: 2.2.2
     bossjones__oh__my__zsh__theme: "pure"
     NODE_VERSION_TO_INSTALL: 16.11.1
     rbenv:
@@ -30,6 +31,11 @@
       rubies:
         - version: 2.7.2
 
+    # Need something like this
+    #  /usr/local/opt/unzip/bin:$HOME/.rbenv/shims:~/.rbenv/shims:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/shims:/usr/local/Cellar/pyenv/2.2.2/libexec:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/bin:$HOME/.pyenv/plugins/pyenv-update/bin:$HOME/.pyenv/plugins/pyenv-pip-update/bin:$HOME/.pyenv/plugins/pyenv-pip-migrate/bin:$HOME/.pyenv/plugins/pyenv-doctor/bin:/usr/local/Cellar/pyenv/2.2.2/plugins/python-build/bin:$HOME/.pyenv/shims:$HOME/.pyenv/bin:$HOME/bin:$HOME/.asdf/shims:$HOME/.asdf/bin:~/go/bin:$HOME/.bin:$HOME/.local/bin:$HOME/.rbenv/bin:$HOME/.fnm:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$HOME/.fzf/bin
+
+    bossjones__oh__my__zsh__static_paths_for_proper_install_of_antigen: "/usr/local/opt/unzip/bin:$HOME/.rbenv/shims:~/.rbenv/shims:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/shims:/usr/local/Cellar/pyenv/{{bossjones__oh__my__zsh__pyenv_version}}/libexec:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/bin:$HOME/.pyenv/plugins/pyenv-update/bin:$HOME/.pyenv/plugins/pyenv-pip-update/bin:$HOME/.pyenv/plugins/pyenv-pip-migrate/bin:$HOME/.pyenv/plugins/pyenv-doctor/bin:/usr/local/Cellar/pyenv/2.2.2/plugins/python-build/bin:$HOME/.pyenv/shims:$HOME/.pyenv/bin:$HOME/bin:$HOME/.asdf/shims:$HOME/.asdf/bin:~/go/bin:$HOME/.bin:$HOME/.local/bin:$HOME/.rbenv/bin:$HOME/.fnm:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$HOME/.fzf/bin"
+    bossjones__oh__my__zsh__goenv_root: "$HOME/.goenv"
     rbenv_clean_up: false
 
     rbenv_repo: "https://github.com/rbenv/rbenv.git"
@@ -135,17 +141,17 @@
       # Desktop notifications for long-running commands in zsh.
       - marzocchi/zsh-notify
       # Add zsh's missing hooks, and support for user-defined hooks
-      - willghatch/zsh-hooks
+      - zsh-hooks/zsh-hooks
 
       # A collection of git utilities and useful extra git scripts I've discovered or written, packaged for ease of use with shell frameworks.
-      - unixorn/git-extra-commands
+      - unixorn/git-extra-commands@main
 
       # alias for docker aliases
       - { name: hadenlabs/zsh-docker@main, command: docker }
       # servers functions for shell
-      - luismayta/zsh-servers-functions
+      # - luismayta/zsh-servers-functions
       # Search ssh connect with peco
-      - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+      # - { name: luismayta/zsh-peco-ssh-connect, command: peco }
 
       # Plugin for lazy-loading pyenv in zsh.
       - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
@@ -211,7 +217,7 @@
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
       export RBENV_ROOT=~/.rbenv
-      export GOENV_ROOT=~/.goenv
+      export GOENV_ROOT=$HOME/.goenv
 
       if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
       then
@@ -2020,11 +2026,6 @@
       export RBENV_VERSION={{rbenv.default_ruby}}
       export VIRTUAL_ENV_DISABLE_PROMPT=1
       export ZSH_PYENV_LAZY_VIRTUALENV=1
-      # Larger bash history (allow 32³ entries; default is 500)
-      # OS X nvm load
-      # [ -s "/usr/local/opt/nvm/nvm.sh" ] && . /usr/local/opt/nvm/nvm.sh # This loads nvm
-      # export NVM_LAZY_LOAD=true
-      # export NVM_AUTO_USE=true
 
       # set some history options
       setopt append_history

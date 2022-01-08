@@ -275,7 +275,7 @@ run-ubuntu-version-manager:
 
 .PHONY: run-ubuntu-pure
 run-ubuntu-pure:
-	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(WHOAMI) boss__user=$(WHOAMI) boss__group=staff bossjones__oh__my__zsh__theme=pure"
+	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=pi boss__user=pi boss__group=pi bossjones__oh__my__zsh__theme=pure"
 
 .PHONY: gpr
 gpr:

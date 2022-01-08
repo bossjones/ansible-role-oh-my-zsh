@@ -19,13 +19,18 @@
   become_method: sudo
   vars:
     bossjones__oh__my__zsh__theme: "pure"
-    NODE_VERSION_TO_INSTALL: 10.3.0
+    bossjones__oh__my__zsh__pyenv_version: 2.2.3
+    NODE_VERSION_TO_INSTALL: 16.13.1
     rbenv:
       env: personal
       version: v1.1.2
       default_ruby: 2.7.2
       rubies:
         - version: 2.7.2
+
+    bossjones__oh__my__zsh__static_paths_for_proper_install_of_antigen: "$HOME/.rbenv/shims:~/.rbenv/shims:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/shims:$HOME/.pyenv/libexec:$HOME/.pyenv/plugins/python-build/bin:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/bin:$HOME/.pyenv/plugins/pyenv-virtualenv/bin:$HOME/.pyenv/plugins/pyenv-update/bin:$HOME/.pyenv/plugins/pyenv-installer/bin:$HOME/.pyenv/plugins/pyenv-doctor/bin:$HOME/.pyenv/bin:$HOME/bin:$HOME/.cargo/bin:/bin:$HOME/.goenv/shims:$HOME/.goenv/bin:~/go/bin:$HOME/.fnm:$HOME/.asdf/shims:$HOME/.asdf/bin:$HOME/.local/bin:~/.pyenv/bin:$HOME/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/usr/games:/usr/local/games:$HOME/.fzf/bin"
+    bossjones__oh__my__zsh__goenv_root: "$HOME/.goenv"
+
 
     rbenv_clean_up: false
 
@@ -100,6 +105,7 @@
     bossjones__oh__my__zsh__change_default_shell: yes
     bossjones__oh__my__zsh__path_to_shell: /usr/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
+      - zdharma-continuum/fast-syntax-highlighting@master
       # Solarized dircolors plugin for zsh
       - joel-porquet/zsh-dircolors-solarized
 
@@ -114,11 +120,16 @@
       - { name: vscode, command: code }
       - { name: gpg-agent, command: gpg-agent }
       - history
-      - { name: fd, command: fd }
-      - { name: autopep8, command: autopep8 }
-      - { name: pylint, command: pylint }
-      - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
-      - { name: colored-man-pages, command: man }
+      # - { name: fd, command: fd }
+      # - { name: autopep8, command: autopep8 }
+      # - { name: pylint, command: pylint }
+      # - { name: ELLIOTTCABLE/rbenv.plugin.zsh, command: ruby }
+      # - { name: colored-man-pages, command: man }
+      - fd
+      - autopep8
+      - pylint
+      - ELLIOTTCABLE/rbenv.plugin.zsh
+      - colored-man-pages
 
       - { name: bossjones/boss-git-zsh-plugin, command: git }
       - { name: bossjones/boss-docker-zsh-plugin, command: docker }
@@ -132,28 +143,30 @@
       # Desktop notifications for long-running commands in zsh.
       - marzocchi/zsh-notify
       # Add zsh's missing hooks, and support for user-defined hooks
-      - willghatch/zsh-hooks
+      - zsh-hooks/zsh-hooks
 
       # A collection of git utilities and useful extra git scripts I've discovered or written, packaged for ease of use with shell frameworks.
-      - unixorn/git-extra-commands
+      - unixorn/git-extra-commands@main
 
       # alias for docker aliases
       - { name: hadenlabs/zsh-docker@main, command: docker }
       # servers functions for shell
-      - luismayta/zsh-servers-functions
+      # - luismayta/zsh-servers-functions
       # Search ssh connect with peco
-      - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+      # - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+      # - luismayta/zsh-peco-ssh-connect
 
       # Plugin for lazy-loading pyenv in zsh.
-      - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
+      # - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
+      - erikced/zsh-pyenv-lazy-load
 
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
       - sindresorhus/pretty-time-zsh@main
 
       # Because your terminal should be able to perform tasks asynchronously without external tools!
-      - mafredri/zsh-async
+      # - mafredri/zsh-async
 
-      - asdf
+      - kiurchv/asdf.plugin.zsh
       # Pretty, minimal and fast ZSH prompt
       - sindresorhus/pure@main
 
@@ -163,7 +176,7 @@
       - $HOME/bin
       - $HOME/.local/bin
       - $HOME/.pyenv/bin
-      - /.pyenv/bin
+      - ~/.pyenv/bin
       - $HOME/.rbenv/bin
       - $HOME/.fnm
       - /usr/local/sbin
@@ -205,7 +218,7 @@
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
       export RBENV_ROOT={{rbenv_root}}
-      export GOENV_ROOT=~/.goenv
+      export GOENV_ROOT=$HOME/.goenv
 
       if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
       then
@@ -244,12 +257,14 @@
           export PATH=~/.fnm:$PATH
           # SOURCE: https://github.com/Schniz/fnm
           if [ -n "$(which fnm)" ]; then
-              eval "$(fnm env)"
+              eval "$(fnm env --use-on-cd)"
               if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
-                fnm install {{NODE_VERSION_TO_INSTALL}}
-                fnm use {{NODE_VERSION_TO_INSTALL}}
-                fnm default {{NODE_VERSION_TO_INSTALL}}
-                fnm current
+                fnm install {{NODE_VERSION_TO_INSTALL}} || true
+                fnm use {{NODE_VERSION_TO_INSTALL}} || true
+                fnm default {{NODE_VERSION_TO_INSTALL}} || true
+                fnm current || true
+                # npm install -g pure-prompt || true
+                # npm install -g pretty-time-zsh || true
               fi
           fi
       - name: asdf.zsh
@@ -275,6 +290,11 @@
           if [ -d "$HOME/.cargo/bin" ]; then
             export PATH=$HOME/.cargo/bin:$PATH
           fi
+      - name: notify.zsh
+        content: |-
+          # https://github.com/marzocchi/zsh-notify
+          # Enable when connected over SSH, which is disabled by default.
+          zstyle ':notify:*' enable-on-ssh yes
       - name: go.zsh
         content: |-
           if [ -d "/usr/local/go/bin" ]; then
@@ -302,6 +322,15 @@
 
       - name: pure.zsh
         content: |-
+          zstyle :prompt:pure:virtualenv color '#739e8c'
+          # turn on git stash status
+          zstyle :prompt:pure:virtualenv show yes
+
+          if [ -d "$HOME/.zsh/pure" ]; then
+            fpath+=$HOME/.zsh/pure
+          fi
+      - name: pure.zsh
+        content: |-
           if [ -d "$HOME/.zsh/pure" ]; then
             fpath+=$HOME/.zsh/pure
           fi
@@ -317,12 +346,14 @@
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
           if [ -n "$(which fnm)" ]; then
-              eval "$(fnm env)"
+              eval "$(fnm env --use-on-cd)"
               if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
-                fnm install {{NODE_VERSION_TO_INSTALL}}
-                fnm use {{NODE_VERSION_TO_INSTALL}}
-                fnm default {{NODE_VERSION_TO_INSTALL}}
-                fnm current
+                fnm install {{NODE_VERSION_TO_INSTALL}} || true
+                fnm use {{NODE_VERSION_TO_INSTALL}} || true
+                fnm default {{NODE_VERSION_TO_INSTALL}} || true
+                fnm current || true
+                npm install -g pure-prompt || true
+                npm install -g pretty-time-zsh || true
               fi
           fi
 
@@ -390,12 +421,22 @@
           #  rather than waiting until the shell exits.
           unsetopt INC_APPEND_HISTORY
 
+      - name: yq.zsh
+        content: |-
+          if [ -e "${HOME}/.asdf/shims/yq" ]; then
+              yq shell-completion zsh > "${fpath[1]}/_yq"
+          fi
+
+          if [ -e /usr/local/bin/yq ]; then
+              yq shell-completion zsh > "${fpath[1]}/_yq"
+          fi
+
       - name: rbenv.zsh
         content: |
           if [ -e {{rbenv_root}} ]; then
             export PATH="{{rbenv_root}}/shims:$PATH"
           fi
-          if [[ -x $(which -p rbenv) ]]; then
+          if [[ -x $(which rbenv) ]]; then
             eval "$(rbenv init -)"
           fi
 
@@ -412,8 +453,8 @@
 
       - name: pyenv.zsh
         content: |
-          if [ -e /.pyenv ]; then
-            export PYENV_ROOT=/.pyenv
+          if [ -e ~/.pyenv ]; then
+            export PYENV_ROOT=~/.pyenv
             export PATH="$PYENV_ROOT/bin:$PATH"
             eval "$(pyenv init -)"
             pyenv virtualenvwrapper_lazy
@@ -426,6 +467,9 @@
           #     sudo /usr/libexec/locate.updatedb
 
           # }
+      - name: custom_plugins.zsh
+        content: |
+          plugins+=(git-extra-commands zsh-256color zsh-peco-history pyenv rbenv fd fzf zsh-syntax-highlighting)
 
 
       - name: unixorn.zsh
@@ -610,6 +654,8 @@
         - .bin
         - bin
         - .local/bin
+        - ~/.oh-my-zsh/custom/plugins
+        - ~/.zsh
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
@@ -679,7 +725,25 @@
       with_items:
         - zsh
         # - asdf
-        # - peco
+        # NOTE: I probably really don't need these, but the oh-my-zsh plugins need certain things to exist in order for it to setup the plugin properly
+        - peco
+        - httpie
+        - wmctrl
+        - xdotool
+        - neofetch
+        - mlocate
+        - tmux
+        - rbenv
+        - golang
+        - tmuxinator
+        - openssh-client
+        - fd-find
+        - gawk
+        - libnotify4
+        - libnotify-bin
+        - libnotify-dev
+        - libnotify-doc
+        # - pyenv
         # - coreutils
         # - findutils
         # - gnu-tar
@@ -691,7 +755,7 @@
         # - grep
         # - reattach-to-user-namespace
         # - fpp
-        # - urlview
+        - urlview
         - xsel
         - direnv
       become: yes
@@ -708,6 +772,63 @@
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       register: bossjones__oh__my__zsh__register_pyenv_virtualenvwrapper
+
+    - name: Clone unixorn git-extra-commands
+      git:
+        repo: https://github.com/unixorn/git-extra-commands.git
+        dest: "~/.oh-my-zsh/custom/plugins/git-extra-commands"
+        version: "main"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_git_extra_commands
+
+      # mkdir -p "$HOME/.zsh"
+      # git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
+    - name: Clone pure
+      git:
+        repo: https://github.com/sindresorhus/pure.git
+        dest: "~/.zsh/pure"
+        version: "main"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_pure
+
+    - name: Clone zsh-peco-history
+      git:
+        repo: https://github.com/jimeh/zsh-peco-history.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-peco-history"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_peco_history
+
+    - name: Clone chrissicool zsh-256color
+      git:
+        repo: https://github.com/chrissicool/zsh-256color.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-256color"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_256color
+
+    # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    - name: Clone zsh-users zsh-syntax-highlighting
+      git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_syntax_highlighting
+
+      # git clone https://github.com/jimeh/zsh-peco-history.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-peco-history
+
+    # git clone https://github.com/jimeh/zsh-peco-history.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-peco-history
 
     # - name: Clone fzf
     #   git:
@@ -732,6 +853,16 @@
       shell: |
         curl -L 'https://raw.githubusercontent.com/jan-warchol/dotfiles/master/bin/fzf-drafts' > ~/bin/fzf-drafts;
         chmod +x ~/bin/fzf-drafts;
+      args:
+        executable: /bin/bash
+      changed_when: false
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+
+    - name: async.zsh | download
+      shell: |
+        mkdir -p ~/.zsh.d/before || true
+        curl -L 'https://raw.githubusercontent.com/mafredri/zsh-async/master/async.zsh' > ~/.zsh.d/before/async.zsh;
       args:
         executable: /bin/bash
       changed_when: false
@@ -805,28 +936,28 @@
     #   become: yes
     #   become_user: vagrant
 
-    - name: bossjones debug-tools install
-      shell: |
-        git clone https://github.com/bossjones/debug-tools /usr/local/src/debug-tools || true
-        sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
-        /usr/local/src/debug-tools/update-bossjones-debug-tools
-        sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
-      args:
-        executable: /bin/bash
-      changed_when: false
-      become: yes
-      become_user: "{{ bossjones__oh__my__zsh__user }}"
+    # - name: bossjones debug-tools install
+    #   shell: |
+    #     git clone https://github.com/bossjones/debug-tools /usr/local/src/debug-tools || true
+    #     sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
+    #     /usr/local/src/debug-tools/update-bossjones-debug-tools
+    #     sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
+    #   args:
+    #     executable: /bin/bash
+    #   changed_when: false
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
 
 
     - name: "create /usr/local/bin/install-config"
       copy:
         content: |
-          export PYENV_VERSIONS_TO_INSTALL="3.9.0\n"
-          export PYENV_ROOT=/.pyenv
+          export PYENV_VERSIONS_TO_INSTALL="3.9.0\n3.9.8\n"
+          export PYENV_ROOT=~/.pyenv
           export PATH="${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:$PATH"
           export RBENV_ROOT=~/.rbenv
           export RBENV_VERSION=2.7.2
-          export NODE_VERSION_TO_INSTALL=10.3.0
+          export NODE_VERSION_TO_INSTALL=16.13.1
           export PATH="$HOME/.fnm:${RBENV_ROOT}/shims:${RBENV_ROOT}/bin:$PATH"
         dest: "/usr/local/bin/install-config"
         owner: "{{ bossjones__oh__my__zsh__user }}"
@@ -835,10 +966,10 @@
 
     - name: fnm | download
       shell: |
-        export NODE_VERSION_TO_INSTALL=10.3.0
+        export NODE_VERSION_TO_INSTALL=16.13.1
         install-fnm.sh
         export PATH=~/.fnm:$PATH
-        eval "`fnm env`"
+        eval "`fnm env --use-on-cd`"
         if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
           fnm install {{NODE_VERSION_TO_INSTALL}} || true
           fnm use {{NODE_VERSION_TO_INSTALL}} || true

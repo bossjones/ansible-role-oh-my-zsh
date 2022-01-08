@@ -88,7 +88,7 @@
       - nvm
       - joel-porquet/zsh-dircolors-solarized
       - mollifier/anyframe
-      - zdharma/fast-syntax-highlighting
+      - zdharma-continuum/fast-syntax-highlighting
       - wfxr/forgit
       # - { name: davidparsson/zsh-pyenv-lazy, command: pyenv }
       - { name: eventi/noreallyjustfuckingstopalready, command: killall }
@@ -124,7 +124,7 @@
       # Desktop notifications for long-running commands in zsh.
       - marzocchi/zsh-notify
       # Add zsh's missing hooks, and support for user-defined hooks
-      - willghatch/zsh-hooks
+      - zsh-hooks/zsh-hooks
 
       # A collection of git utilities and useful extra git scripts I've discovered or written, packaged for ease of use with shell frameworks.
       - unixorn/git-extra-commands
@@ -132,9 +132,9 @@
       # alias for docker aliases
       - { name: hadenlabs/zsh-docker@main, command: docker }
       # servers functions for shell
-      - luismayta/zsh-servers-functions
-      # Search ssh connect with peco
-      - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+      # - luismayta/zsh-servers-functions
+      # # Search ssh connect with peco
+      # - { name: luismayta/zsh-peco-ssh-connect, command: peco }
 
       # - luismayta/zsh-gvm
       # - luismayta/zsh-nvm
