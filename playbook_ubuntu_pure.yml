@@ -705,7 +705,7 @@
         - openssh-client
         - fd-find
         - gawk
-        - pyenv
+        # - pyenv
         # - coreutils
         # - findutils
         # - gnu-tar
