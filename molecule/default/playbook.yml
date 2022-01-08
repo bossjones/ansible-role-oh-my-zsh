@@ -82,7 +82,7 @@
       - nvm
       - joel-porquet/zsh-dircolors-solarized
       - mollifier/anyframe
-      - zdharma/fast-syntax-highlighting
+      - zdharma-continuum/fast-syntax-highlighting
       - wfxr/forgit
       # - { name: davidparsson/zsh-pyenv-lazy, command: pyenv }
       - { name: eventi/noreallyjustfuckingstopalready, command: killall }

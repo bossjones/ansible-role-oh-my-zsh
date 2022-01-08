@@ -314,8 +314,8 @@ bossjones__oh__my__zsh__antigen_bundles:
   - "{{ fzf_widgets }}"
   # must be last, don't work on zsh < 4.3.17
   #- { name: zsh-users/zsh-syntax-highlighting, when: "{{ bossjones__oh__my__zsh__version | default(false) | version_compare('4.3.17', '>=') }}" }
-  # bug with text paste in fast-syntax-highlighting v1.21, see https://github.com/zdharma/fast-syntax-highlighting/issues/30
-  - zdharma/fast-syntax-highlighting
+  # bug with text paste in fast-syntax-highlighting v1.21, see https://github.com/zdharma-continuum/fast-syntax-highlighting/issues/30
+  - zdharma-continuum/fast-syntax-highlighting
 
 bossjones__oh__my__zsh__antigen_bundles_extras: []
 
