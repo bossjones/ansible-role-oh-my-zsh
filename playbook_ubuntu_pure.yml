@@ -100,6 +100,7 @@
     bossjones__oh__my__zsh__change_default_shell: yes
     bossjones__oh__my__zsh__path_to_shell: /usr/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
+      - zdharma-continuum/fast-syntax-highlighting
       # Solarized dircolors plugin for zsh
       - joel-porquet/zsh-dircolors-solarized
 
@@ -205,7 +206,7 @@
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
       export RBENV_ROOT={{rbenv_root}}
-      export GOENV_ROOT=~/.goenv
+      export GOENV_ROOT=$HOME/.goenv
 
       if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
       then
@@ -317,12 +318,14 @@
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
           if [ -n "$(which fnm)" ]; then
-              eval "$(fnm env)"
+              eval "$(fnm env --use-on-cd)"
               if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
-                fnm install {{NODE_VERSION_TO_INSTALL}}
-                fnm use {{NODE_VERSION_TO_INSTALL}}
-                fnm default {{NODE_VERSION_TO_INSTALL}}
-                fnm current
+                fnm install {{NODE_VERSION_TO_INSTALL}} || true
+                fnm use {{NODE_VERSION_TO_INSTALL}} || true
+                fnm default {{NODE_VERSION_TO_INSTALL}} || true
+                fnm current || true
+                npm install -g pure-prompt || true
+                npm install -g pretty-time-zsh || true
               fi
           fi
 
@@ -818,40 +821,40 @@
     #   become_user: "{{ bossjones__oh__my__zsh__user }}"
 
 
-    - name: "create /usr/local/bin/install-config"
-      copy:
-        content: |
-          export PYENV_VERSIONS_TO_INSTALL="3.9.0\n3.9.8\n"
-          export PYENV_ROOT=~/.pyenv
-          export PATH="${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:$PATH"
-          export RBENV_ROOT=~/.rbenv
-          export RBENV_VERSION=2.7.2
-          export NODE_VERSION_TO_INSTALL=16.13.1
-          export PATH="$HOME/.fnm:${RBENV_ROOT}/shims:${RBENV_ROOT}/bin:$PATH"
-        dest: "/usr/local/bin/install-config"
-        owner: "{{ bossjones__oh__my__zsh__user }}"
-        group: "{{ bossjones__oh__my__zsh__group }}"
-        mode: 0755
+    # - name: "create /usr/local/bin/install-config"
+    #   copy:
+    #     content: |
+    #       export PYENV_VERSIONS_TO_INSTALL="3.9.0\n3.9.8\n"
+    #       export PYENV_ROOT=~/.pyenv
+    #       export PATH="${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:$PATH"
+    #       export RBENV_ROOT=~/.rbenv
+    #       export RBENV_VERSION=2.7.2
+    #       export NODE_VERSION_TO_INSTALL=16.13.1
+    #       export PATH="$HOME/.fnm:${RBENV_ROOT}/shims:${RBENV_ROOT}/bin:$PATH"
+    #     dest: "/usr/local/bin/install-config"
+    #     owner: "{{ bossjones__oh__my__zsh__user }}"
+    #     group: "{{ bossjones__oh__my__zsh__group }}"
+    #     mode: 0755
 
-    - name: fnm | download
-      shell: |
-        export NODE_VERSION_TO_INSTALL=16.13.1
-        install-fnm.sh
-        export PATH=~/.fnm:$PATH
-        eval "`fnm env --use-on-cd`"
-        if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
-          fnm install {{NODE_VERSION_TO_INSTALL}} || true
-          fnm use {{NODE_VERSION_TO_INSTALL}} || true
-          fnm default {{NODE_VERSION_TO_INSTALL}} || true
-          fnm current || true
-          npm install -g pure-prompt || true
-          npm install -g pretty-time-zsh || true
-        fi
-      args:
-        executable: /bin/bash
-      changed_when: false
-      become: yes
-      become_user: "{{ bossjones__oh__my__zsh__user }}"
+    # - name: fnm | download
+    #   shell: |
+    #     export NODE_VERSION_TO_INSTALL=16.13.1
+    #     install-fnm.sh
+    #     export PATH=~/.fnm:$PATH
+    #     eval "`fnm env --use-on-cd`"
+    #     if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
+    #       fnm install {{NODE_VERSION_TO_INSTALL}} || true
+    #       fnm use {{NODE_VERSION_TO_INSTALL}} || true
+    #       fnm default {{NODE_VERSION_TO_INSTALL}} || true
+    #       fnm current || true
+    #       npm install -g pure-prompt || true
+    #       npm install -g pretty-time-zsh || true
+    #     fi
+    #   args:
+    #     executable: /bin/bash
+    #   changed_when: false
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
 
     # SOURCE: https://github.com/k3s-io/k3s-ansible/blob/master/roles/prereq/tasks/main.yml
     - name: Enable IPv4 forwarding
