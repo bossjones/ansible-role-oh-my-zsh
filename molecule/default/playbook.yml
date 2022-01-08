@@ -121,14 +121,14 @@
       - willghatch/zsh-hooks
 
       # A collection of git utilities and useful extra git scripts I've discovered or written, packaged for ease of use with shell frameworks.
-      - unixorn/git-extra-commands
+      - unixorn/git-extra-commands@main
 
       # alias for docker aliases
       - { name: hadenlabs/zsh-docker@main, command: docker }
       # servers functions for shell
-      - luismayta/zsh-servers-functions
-      # Search ssh connect with peco
-      - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+      # - luismayta/zsh-servers-functions
+      # # Search ssh connect with peco
+      # - { name: luismayta/zsh-peco-ssh-connect, command: peco }
 
       # - luismayta/zsh-gvm
       # - luismayta/zsh-nvm

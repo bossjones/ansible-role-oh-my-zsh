@@ -132,9 +132,9 @@
       # alias for docker aliases
       - { name: hadenlabs/zsh-docker@main, command: docker }
       # servers functions for shell
-      - luismayta/zsh-servers-functions
-      # Search ssh connect with peco
-      - { name: luismayta/zsh-peco-ssh-connect, command: peco }
+      # - luismayta/zsh-servers-functions
+      # # Search ssh connect with peco
+      # - { name: luismayta/zsh-peco-ssh-connect, command: peco }
 
       # - luismayta/zsh-gvm
       # - luismayta/zsh-nvm

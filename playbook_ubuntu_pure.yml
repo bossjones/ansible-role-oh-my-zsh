@@ -151,10 +151,10 @@
       # alias for docker aliases
       - { name: hadenlabs/zsh-docker@main, command: docker }
       # servers functions for shell
-      - luismayta/zsh-servers-functions
+      # - luismayta/zsh-servers-functions
       # Search ssh connect with peco
       # - { name: luismayta/zsh-peco-ssh-connect, command: peco }
-      - luismayta/zsh-peco-ssh-connect
+      # - luismayta/zsh-peco-ssh-connect
 
       # Plugin for lazy-loading pyenv in zsh.
       # - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
@@ -704,6 +704,8 @@
         - tmuxinator
         - openssh-client
         - fd-find
+        - gawk
+        - pyenv
         # - coreutils
         # - findutils
         # - gnu-tar
@@ -715,7 +717,7 @@
         # - grep
         # - reattach-to-user-namespace
         # - fpp
-        # - urlview
+        - urlview
         - xsel
         - direnv
       become: yes
@@ -733,15 +735,17 @@
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       register: bossjones__oh__my__zsh__register_pyenv_virtualenvwrapper
 
-    - name: Clone unixorn git-extra-commands
-      git:
-        repo: https://github.com/unixorn/git-extra-commands.git
-        dest: "~/.pyenv/plugins/pyenv-virtualenvwrapper"
-        version: "master"
-        force: yes
-      become: yes
-      become_user: "{{ bossjones__oh__my__zsh__user }}"
-      register: bossjones__oh__my__zsh__register_pyenv_virtualenvwrapper
+    # - name: Clone unixorn git-extra-commands
+    #   git:
+    #     repo: https://github.com/unixorn/git-extra-commands.git
+    #     dest: "~/.pyenv/plugins/pyenv-virtualenvwrapper"
+    #     version: "master"
+    #     force: yes
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
+    #   register: bossjones__oh__my__zsh__register_pyenv_virtualenvwrapper
+
+    # git clone https://github.com/jimeh/zsh-peco-history.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-peco-history
 
     # - name: Clone fzf
     #   git:
