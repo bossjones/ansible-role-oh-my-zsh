@@ -211,11 +211,13 @@
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
       export RBENV_ROOT=~/.rbenv
+      export GOENV_ROOT=~/.goenv
 
       if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
       then
         export PATH="/usr/local/bin:/usr/bin:/bin"
         export PATH="~/.rbenv/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+        export PATH="${GOENV_ROOT}/bin:${PATH}"
       fi
       skip_global_compinit=1
 
@@ -285,6 +287,15 @@
           fi
           export PATH=$GOPATH/bin:$PATH
           alias cdgo='CDPATH=.:$GOPATH/src/github.com:$GOPATH/src/golang.org:$GOPATH/src'
+
+          if [ -d ~/.goenv ]; then
+            export GOENV_ROOT="$HOME/.goenv"
+            export PATH="$GOENV_ROOT/bin:$PATH"
+            eval "$(goenv init -)"
+            export PATH="$GOROOT/bin:$PATH"
+            export PATH="$PATH:$GOPATH/bin"
+          fi
+
 
       - name: workon.zsh
         content: |-
@@ -2139,6 +2150,16 @@
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
+    - name: 'Cloning goenv | based on https://github.com/syndbg/goenv/blob/master/INSTALL.md'
+      git:
+        repo=https://github.com/syndbg/goenv
+        dest="~/.goenv"
+        accept_hostkey=yes
+      register: goenvCloned
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
     - name: 'Cloning iterm2-snazzy theme, dont forget to double click ~/iterm2-snazzy/Snazzy.itermcolors'
       git:
         repo=https://github.com/sindresorhus/iterm2-snazzy
@@ -2289,6 +2310,3 @@
         group: "{{ bossjones__oh__my__zsh__group }}"
         mode: 0755
       with_items: "{{bossjones__oh__my__zsh__bin_files}}"
-
-
-
