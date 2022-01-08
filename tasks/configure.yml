@@ -83,6 +83,8 @@
 
     command -v {{ item.command }} || which {{ item.command }}
   with_items: "{{ bossjones__oh__my__zsh__antigen_bundles }}"
+  args:
+    executable: /bin/bash
   failed_when: false
   changed_when: false
   check_mode: no
