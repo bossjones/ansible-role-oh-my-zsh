@@ -702,8 +702,8 @@
         - rbenv
         - golang
         - tmuxinator
-        - ssh-agent
-        - fd
+        - openssh-client
+        - fd-find
         # - coreutils
         # - findutils
         # - gnu-tar
