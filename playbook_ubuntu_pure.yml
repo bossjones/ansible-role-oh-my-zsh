@@ -727,7 +727,7 @@
         # - asdf
         # NOTE: I probably really don't need these, but the oh-my-zsh plugins need certain things to exist in order for it to setup the plugin properly
         - peco
-        - http
+        - httpie
         - wmctrl
         - xdotool
         - neofetch
