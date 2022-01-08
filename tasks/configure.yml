@@ -28,6 +28,9 @@
   check_mode: no
   when: item.command is defined
   register: bossjones__oh__my__zsh__register_commands_exists
+  environment:
+    PATH: "{{ bossjones__oh__my__zsh__static_paths_for_proper_install_of_antigen }}"
+    GOENV_ROOT: "{{ bossjones__oh__my__zsh__goenv_root }}"
 
 - name: Merge hotkeys lists
   set_fact:
