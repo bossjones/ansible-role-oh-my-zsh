@@ -66,7 +66,7 @@
     if [ -e {{rbenv_root}} ]; then
       export PATH="{{rbenv_root}}/shims:$PATH"
     fi
-    if [[ -x $(which -p rbenv) ]]; then
+    if [[ -x $(which rbenv) ]]; then
       eval "$(rbenv init -)"
     fi
 
