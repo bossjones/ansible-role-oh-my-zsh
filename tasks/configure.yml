@@ -21,7 +21,67 @@
   when: bossjones__oh__my__zsh__shared
 
 - name: Check commands exists
-  shell: "command -v {{ item.command }} || which {{ item.command }}"
+  shell: |
+    # NOTE: All of this is required to properly load "command -v"
+    if [ -d "$HOME/.asdf" ]; then
+      . $HOME/.asdf/asdf.sh
+    fi
+
+    if [ -d "$HOME/.cargo/bin" ]; then
+      export PATH=$HOME/.cargo/bin:$PATH
+    fi
+
+    if [ -d "/usr/local/go/bin" ]; then
+      export PATH=/usr/local/go/bin:$PATH
+    fi
+    export PATH=$GOPATH/bin:$PATH
+    alias cdgo='CDPATH=.:$GOPATH/src/github.com:$GOPATH/src/golang.org:$GOPATH/src'
+
+    if [ -d ~/.goenv ]; then
+      export GOENV_ROOT="$HOME/.goenv"
+      export PATH="$GOENV_ROOT/bin:$PATH"
+      eval "$(goenv init -)"
+      export PATH="$GOROOT/bin:$PATH"
+      export PATH="$PATH:$GOPATH/bin"
+    fi
+
+    # fnm
+    export PATH=~/.fnm:$PATH
+    # SOURCE: https://github.com/Schniz/fnm
+    if [ -n "$(which fnm)" ]; then
+        eval "$(fnm env --use-on-cd)"
+        if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
+          fnm install {{NODE_VERSION_TO_INSTALL}} || true
+          fnm use {{NODE_VERSION_TO_INSTALL}} || true
+          fnm default {{NODE_VERSION_TO_INSTALL}} || true
+          fnm current || true
+        fi
+    fi
+
+    export WORKON_HOME="$HOME/.pyenv/versions"
+    export PROJECT_HOME=$HOME/dev
+
+    [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
+
+    if [ -e {{rbenv_root}} ]; then
+      export PATH="{{rbenv_root}}/shims:$PATH"
+    fi
+    if [[ -x $(which -p rbenv) ]]; then
+      eval "$(rbenv init -)"
+    fi
+
+    if [ -e ~/.pyenv ]; then
+      export PYENV_ROOT=~/.pyenv
+      export PATH="$PYENV_ROOT/bin:$PATH"
+      eval "$(pyenv init -)"
+      pyenv virtualenvwrapper_lazy
+    fi
+
+    if [ -d "$HOME/bin" ]; then
+      export PATH=$HOME/bin:$PATH
+    fi
+
+    command -v {{ item.command }} || which {{ item.command }}
   with_items: "{{ bossjones__oh__my__zsh__antigen_bundles }}"
   failed_when: false
   changed_when: false
