@@ -20,6 +20,7 @@
   vars:
     bossjones__oh__my__zsh__theme: "pure"
     bossjones__oh__my__zsh__pyenv_version: 2.2.3
+    bossjones__oh__my__zsh__editor: "lvim"
     NODE_VERSION_TO_INSTALL: 16.13.1
     rbenv:
       env: personal
@@ -729,6 +730,7 @@
         - peco
         - httpie
         - wmctrl
+        - notify-osd
         - xdotool
         - neofetch
         - mlocate

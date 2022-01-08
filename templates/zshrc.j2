@@ -290,6 +290,10 @@ alias '{{ alias.alias }}'="{{ alias.action }}"
 # ################################################################
 # pure
 # ################################################################
+zstyle :prompt:pure:virtualenv color '#739e8c'
+# turn on git stash status
+zstyle :prompt:pure:virtualenv show yes
+
 PURE_PROMPT_SYMBOL=❯
 prompt pure
 {% endif %}
