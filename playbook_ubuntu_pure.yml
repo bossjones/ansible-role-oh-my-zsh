@@ -19,7 +19,7 @@
   become_method: sudo
   vars:
     bossjones__oh__my__zsh__theme: "pure"
-    NODE_VERSION_TO_INSTALL: 10.3.0
+    NODE_VERSION_TO_INSTALL: 16.13.1
     rbenv:
       env: personal
       version: v1.1.2
@@ -163,7 +163,7 @@
       - $HOME/bin
       - $HOME/.local/bin
       - $HOME/.pyenv/bin
-      - /.pyenv/bin
+      - ~/.pyenv/bin
       - $HOME/.rbenv/bin
       - $HOME/.fnm
       - /usr/local/sbin
@@ -412,8 +412,8 @@
 
       - name: pyenv.zsh
         content: |
-          if [ -e /.pyenv ]; then
-            export PYENV_ROOT=/.pyenv
+          if [ -e ~/.pyenv ]; then
+            export PYENV_ROOT=~/.pyenv
             export PATH="$PYENV_ROOT/bin:$PATH"
             eval "$(pyenv init -)"
             pyenv virtualenvwrapper_lazy
@@ -805,28 +805,28 @@
     #   become: yes
     #   become_user: vagrant
 
-    - name: bossjones debug-tools install
-      shell: |
-        git clone https://github.com/bossjones/debug-tools /usr/local/src/debug-tools || true
-        sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
-        /usr/local/src/debug-tools/update-bossjones-debug-tools
-        sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
-      args:
-        executable: /bin/bash
-      changed_when: false
-      become: yes
-      become_user: "{{ bossjones__oh__my__zsh__user }}"
+    # - name: bossjones debug-tools install
+    #   shell: |
+    #     git clone https://github.com/bossjones/debug-tools /usr/local/src/debug-tools || true
+    #     sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
+    #     /usr/local/src/debug-tools/update-bossjones-debug-tools
+    #     sudo chown {{ bossjones__oh__my__zsh__user }}:{{ bossjones__oh__my__zsh__user }} -Rv ~{{ bossjones__oh__my__zsh__user }} || true
+    #   args:
+    #     executable: /bin/bash
+    #   changed_when: false
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
 
 
     - name: "create /usr/local/bin/install-config"
       copy:
         content: |
-          export PYENV_VERSIONS_TO_INSTALL="3.9.0\n"
-          export PYENV_ROOT=/.pyenv
+          export PYENV_VERSIONS_TO_INSTALL="3.9.0\n3.9.8\n"
+          export PYENV_ROOT=~/.pyenv
           export PATH="${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:$PATH"
           export RBENV_ROOT=~/.rbenv
           export RBENV_VERSION=2.7.2
-          export NODE_VERSION_TO_INSTALL=10.3.0
+          export NODE_VERSION_TO_INSTALL=16.13.1
           export PATH="$HOME/.fnm:${RBENV_ROOT}/shims:${RBENV_ROOT}/bin:$PATH"
         dest: "/usr/local/bin/install-config"
         owner: "{{ bossjones__oh__my__zsh__user }}"
@@ -835,7 +835,7 @@
 
     - name: fnm | download
       shell: |
-        export NODE_VERSION_TO_INSTALL=10.3.0
+        export NODE_VERSION_TO_INSTALL=16.13.1
         install-fnm.sh
         export PATH=~/.fnm:$PATH
         eval "`fnm env`"
