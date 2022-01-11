@@ -180,7 +180,7 @@
       # - $HOME/.pyenv/bin
       # - $HOME/.rbenv/bin
       - $HOME/.fnm
-      - /usr/local/opt/coreutils/libexec/gnubin
+      # - /usr/local/opt/coreutils/libexec/gnubin
       - /usr/local/sbin
       - /usr/local/bin
       - /usr/sbin
@@ -253,6 +253,10 @@
         . "$HOME"/.asdf/asdf.sh
       fi
 
+      if [[ -d "$HOMEBREW_PREFIX"/opt/coreutils/libexec/gnubin ]]; then
+        path=(${HOMEBREW_PREFIX}/opt/coreutils/libexec/gnubin $path)
+      fi
+
       # SOURCE: https://github.com/ajh/dotfiles/blob/master/configs/zsh/dot_zshrc
       {{bossjones__oh__my__zsh__before_block}}
 
@@ -296,7 +300,6 @@
         $HOME/.bin
         $HOME/.local/bin
         $HOME/.fnm
-        /usr/local/opt/coreutils/libexec/gnubin
         /usr/local/sbin
         /usr/local/bin
         /usr/sbin
