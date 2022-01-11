@@ -3,6 +3,15 @@
 [Version: v0.1.0]
 
 
+#### Initialization order of files:
+
+SOURCE: https://github.com/crineu/arquivosponto/blob/00109fd1546caa3863170127db7e56bf63d4cca3/README.md
+
+* `.zshenv`: invoked always; it should be concise and merely initialize the necessary variables;
+* `.zlogin`: loaded into _login shells_ after `.zshrc`; compiles _zcompdump_ in background as it is slow process and done 1x / login;
+* `.zprofile` : similar to `.zlogin` but loaded before `.zshrc` (`.zprofile` and `.zshrc` are ignored in _non-login non-interactive shells - so I learned a trick from Prezto that declares environment variables in _.zprofile_ and uses .zshenv_ to source _.zprofile_ (eg .zprofile and .zshenv). This way, non-login non-interactive shells will receive proper variable initialisations).
+* `.zshrc`: loaded in _interactive shells_; contains the main part of the ZSH settings.
+
 Zsh Configuration Files
 =======================
 

@@ -15,21 +15,98 @@ on:
 jobs:
   lint:
     name: Run dotfiles test (Python ${{ matrix.python-version }})
-    runs-on: macos-10.15
+    runs-on: macos-latest
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.9]
+    env:
+      LANG: en_US.UTF-8
+      LC_CTYPE: en_US.UTF-8
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: SetLocale
+        env:
+          LANG: en_US.UTF-8
+          LC_CTYPE: en_US.UTF-8
+        run: |
+          brew update
+          brew install icu4c || true
+          brew install readline || true
+          brew install libxslt || true
+          brew install perl || true
+
+      - name: Install packages on MacOS
+        # if: steps.brew-cachee.outputs.cache-hit != 'true'
+        env:
+          LANG: en_US.UTF-8
+          LC_CTYPE: en_US.UTF-8
+        run: |
+            brew update
+            brew tap homebrew/cask-fonts || true
+            brew install --cask font-meslo-lg-nerd-font || true
+            brew install --cask font-fira-code-nerd-font || true
+            brew install --cask font-hack-nerd-font || true
+            brew install --cask font-inconsolata-nerd-font || true
+            brew install --cask font-sauce-code-pro-nerd-font || true
+            brew install cmake || true  # macos image has cmake installed, but a new version may exist; ignore it if so
+            brew install doxygen || true
+            brew install hdf5 || true
+            brew install pkg-config || true
+            brew install wget || true
+            brew install jpeg || true
+            brew install libpng || true
+            brew install libtiff || true
+            brew install openexr || true
+            brew install eigen || true
+            brew install tbb || true
+            brew install hdf5 || true
+            # pytorch
+            brew install openblas || true
+            brew install libomp || true
+            brew install openmpi || true
+            brew install tcl-tk || true
+            brew install openssl || true
+            brew install readline || true
+            brew install sqlite3 || true
+            brew install xz || true
+            brew install zlib || true
+            # https://techblog.willshouse.com/2013/05/20/brew-install-gnu-stat/
+            brew install coreutils || true
+            brew install findutils || true
+            brew install gnu-tar || true
+            brew install gnu-sed || true
+            brew install gawk || true
+            brew install gnutls || true
+            brew install gnu-getopt || true
+            brew install libmagic || true
+            brew install libffi || true
+            brew install atomicparsley || true
+            brew install tree || true
+            brew install tesseract || true
+            brew install nmap || true
+            # https://github.com/jiaaro/pydub#installation
+            # libav
+            brew install libav || true
+            ####    OR    #####
+            # SOURCE: https://matham.github.io/ffpyplayer/installation.html#using-binary-wheels
+            # ffmpeg
+            brew install ffmpeg || true
+            brew install sdl2 || true
+            brew install sdl2_mixer || true
+            brew install graphicsmagick || true
+            brew install imagemagick || true
+
       - name: Install poetry
         run: |
           pip install poetry==1.0
           python3 -m venv .venv
           source .venv/bin/activate
+          pip install --upgrade pip wheel
           pip install ansible | tee -a depslog
           pip install mitogen | tee -a depslog
           cat depslog
@@ -108,5 +185,10 @@ jobs:
           brew install vim || true
           brew install direnv || true
           brew install zsh || true
+          brew install lesspipe || true
           source install.sh
           /usr/local/bin/zsh -l -c 'whence gpr'
+          # Verify path set correctly
+          # SOURCE: https://unix.stackexchange.com/questions/532148/what-is-the-difference-between-path-and-path-lowercase-versus-uppercase-with
+          /usr/local/bin/zsh -l -c 'typeset -p path'
+          # /usr/local/bin/zsh -l -c 'typeset -p path'

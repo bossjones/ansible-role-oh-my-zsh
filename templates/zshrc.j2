@@ -34,7 +34,11 @@ export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
 export GOPATH="{{bossjones__oh__my__zsh__gopath | default('~/go')}}"
 export TERM="{{ bossjones__oh__my__zsh__term }}"
 export EDITOR="{{ bossjones__oh__my__zsh__editor }}"
-export PATH="{{ bossjones__oh__my__zsh__path | join(":") }}"
+# set path using zsh lower case path var
+{% for p in bossjones__oh__my__zsh__path %}
+path+=({{ p }})
+{% endfor %}
+# export PATH="{{ bossjones__oh__my__zsh__path | join(":") }}"
 
 # added 12/17/2020 ( not sure if its going to cause trouble )
 # SOURCE: https://github.com/eddiezane/lunchy/issues/57

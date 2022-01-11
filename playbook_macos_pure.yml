@@ -21,11 +21,13 @@
   #   # NVM_LAZY_LOAD: yes
   #   NODE_VERSION_TO_INSTALL: 16.11.1
   vars:
-    bossjones__oh__my__zsh__pyenv_version: 2.2.2
+    bossjones__oh__my__zsh__pyenv_version: 2.2.3
     bossjones__oh__my__zsh__theme: "pure"
     NODE_VERSION_TO_INSTALL: 16.11.1
+    FZF_VERSION: 0.29.0
+    ASDF_VERSION: 0.9.0
     rbenv:
-      env: system
+      env: personal
       version: v1.1.2
       default_ruby: 2.7.2
       rubies:
@@ -103,12 +105,11 @@
     rbenv_user_profile: true
     bossjones__oh__my__zsh__enable_zlogin: "yes"
     bossjones__oh__my__zsh__enable_zlogout: "yes"
-    bossjones__oh__my__zsh__enable_zprofile: "no"
+    bossjones__oh__my__zsh__enable_zprofile: "yes"
     bossjones__oh__my__zsh__enable_zshenv: "yes"
-    bossjones__oh__my__zsh__change_default_shell: no
+    bossjones__oh__my__zsh__change_default_shell: yes
     bossjones__oh__my__zsh__path_to_shell: /usr/local/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
-      # - nvm
       # Solarized dircolors plugin for zsh
       - joel-porquet/zsh-dircolors-solarized
 
@@ -156,21 +157,23 @@
       # Plugin for lazy-loading pyenv in zsh.
       - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
 
-      - { name: vagrant, command: vagrant }
+      # - { name: vagrant, command: vagrant }
 
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
       - sindresorhus/pretty-time-zsh@main
 
       # Because your terminal should be able to perform tasks asynchronously without external tools!
-      - mafredri/zsh-async
+      # - mafredri/zsh-async
 
       - asdf
       # Pretty, minimal and fast ZSH prompt
       - sindresorhus/pure@main
 
+      # stuff that has to be last
+      - zdharma-continuum/fast-syntax-highlighting@master
+
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:
-      # - "~/.rbenv/shims"
       - $HOME/bin
       - $HOME/.bin
       - $HOME/.local/bin
@@ -200,6 +203,126 @@
     #   source "${ZDOTDIR:-$HOME}/.zprofile"
     # fi
 
+    bossjones__oh__my__zsh__zlogout: |-
+      # .zlogout
+
+    # borrowed from https://github.com/Gipetto/dot-files/blob/ed422b7c16c0d82b2c7f901c25c945afe13d570a/zsh/zprofile
+    # TODO: Lets also look at this: https://github.com/mattmc3/zdotdir
+    bossjones__oh__my__zsh__zprofile: |-
+      # .zprofile: similar to .zlogin but loaded before .zshrc( .zprofile and .zshrc are ignored in non-login non-interactive shells - so I learned a trick from Prezto that declares environment variables in .zprofile and uses .zshenv to source .zprofile (eg .zprofile and .zshenv) This way, non-login non-interactive shells will receive proper variable initialisations).
+      # See presto for orig - https://github.com/sorin-ionescu/prezto/blob/master/runcoms/zprofile
+
+      # XDG
+      # https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+      # https://wiki.archlinux.org/index.php/XDG_Base_Directory
+      # https://wiki.archlinux.org/index.php/XDG_user_directories
+
+      export XDG_CONFIG_HOME=~/.config
+      export XDG_CACHE_HOME=~/.cache
+      export XDG_DATA_HOME=~/.local/share
+      export XDG_RUNTIME_DIR=~/.xdg
+
+      if [[ "$OSTYPE" == darwin* ]]; then
+        export XDG_DESKTOP_DIR=~/Desktop
+        export XDG_DOCUMENTS_DIR=~/Documents
+        export XDG_DOWNLOAD_DIR=~/Downloads
+        export XDG_MUSIC_DIR=~/Music
+        export XDG_PICTURES_DIR=~/Pictures
+        export XDG_VIDEOS_DIR=~/Videos
+        export XDG_PROJECTS_DIR=~/Projects
+      fi
+
+      if [[ "$OSTYPE" == darwin* ]]; then
+        export BROWSER='open'
+      fi
+
+      # FIXME: bossjones added this section out of order ( I think it's probably important to have homebrew initialized before anything else )
+      # SOURCE: https://github.com/Gipetto/dot-files/blob/ed422b7c16c0d82b2c7f901c25c945afe13d570a/zsh/zprofile
+
+      local OPT_HOMEBREW="/opt/homebrew"
+      if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
+          eval "$($OPT_HOMEBREW/bin/brew shellenv)"
+      fi
+
+      if [[ -s "$HOMEBREW_PREFIX"/opt/asdf/libexec/asdf.sh ]]; then
+        . "$HOMEBREW_PREFIX"/opt/asdf/libexec/asdf.sh
+      elif [[ -s "$HOME/.asdf/asdf.sh" ]]; then
+        . "$HOME"/.asdf/asdf.sh
+      fi
+
+      # SOURCE: https://github.com/ajh/dotfiles/blob/master/configs/zsh/dot_zshrc
+      {{bossjones__oh__my__zsh__before_block}}
+
+      # FIXME: bossjones added this section out of order
+
+      # less pipe
+      # https://github.com/wofr06/lesspipe/blob/lesspipe/INSTALL
+      # Set the default Less options
+      # Mouse-wheel scrolling has been disabled by -X (disable screen clearing)
+      # Remove -X to enable it
+      export LESS='-g -i -M -R -S -w -z-4'
+
+      # Set the Less input preprocessor
+      # Try both `lesspipe` and `lesspipe.sh` as either might exist on a system
+      if (( $#commands[(i)lesspipe(|.sh)] )); then
+        export LESSOPEN="| /usr/bin/env $commands[(i)lesspipe(|.sh)] %s 2>&-"
+      fi
+
+      export EDITOR='vim'
+      export VISUAL='code'
+      export PAGER='less'
+
+      export TZ="America/New_York"
+      export LANG="en_US.UTF-8"
+      export LANGUAGE="en"
+      export LC_ALL="en_US.UTF-8"
+
+      # SOURCE: https://zsh.sourceforge.io/Doc/Release/Shell-Builtin-Commands.html
+      # The -g (global) means that any resulting parameter will not be restricted to local scope. Note that this does not necessarily mean that the parameter will be global, as the flag will apply to any existing parameter (even if unset) from an enclosing function. This flag does not affect the parameter after creation, hence it has no effect when listing existing parameters, nor does the flag +g have any effect except in combination with -m (see below).
+
+      # -U
+      # For arrays (but not for associative arrays), keep only the first occurrence of each duplicated value. This may also be set for tied parameters (see -T) or colon-separated special parameters like PATH or FIGNORE, etc. Note the flag takes effect on assignment, and the type of the variable being assigned to is determinative; for variables with shared values it is therefore recommended to set the flag for all interfaces, e.g. 'typeset -U PATH path'.
+
+      # This flag has a different meaning when used with -f; see below.
+      # Ensure path arrays do not contain duplicates
+      typeset -gU cdpath fpath mailpath path
+
+      # The $path array variable is tied to the $PATH scalar (string) variable. Any modification on one is reflected in the other.
+      path=(
+        $HOME/bin
+        $HOME/.bin
+        $HOME/.local/bin
+        $HOME/.pyenv/bin
+        $HOME/.rbenv/bin
+        $HOME/.fnm
+        /usr/local/opt/coreutils/libexec/gnubin
+        /usr/local/sbin
+        /usr/local/bin
+        /usr/sbin
+        /usr/bin
+        /sbin
+        /bin
+        $path
+      )
+      [[ -d $ZDOTDIR/bin ]] && path+=($ZDOTDIR/bin)
+
+      # https://apple.stackexchange.com/questions/427561/macos-zsh-sessions-zsh-history-and-setopt-append-history
+      # To disable Apple's shell state code, add to your .zshenv file:
+      # export SHELL_SESSIONS_DISABLE=1
+
+      # Then add to your .zshrc file:
+
+      # setopt sharehistory
+      # Also, make sure you unset all options incompatible with SHARE_HISTORY. Again, read https://zsh.sourceforge.io/Doc/Release/Options.html#History for more info.
+
+      # Finally, feel free to delete the .zsh_sessions dir created by Apple's code, as it will no longer be necessary.
+
+      ##################################################### ends here
+
+
+
+      # SOURCE: https://github.com/Gipetto/dot-files/blob/ed422b7c16c0d82b2c7f901c25c945afe13d570a/zsh/zprofile - END
+
     bossjones__oh__my__zsh__zshenv: |-
       # Since .zshenv is always sourced, it often contains exported variables that should be available to other programs. For example, $PATH, $EDITOR, and $PAGER are often set in .zshenv. Also, you can set $ZDOTDIR in .zshenv to specify an alternative location for the rest of your zsh configuration.
       # ~/.zshenv: system-wide .zshenv file for zsh(1).
@@ -216,15 +339,58 @@
       #
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
-      export RBENV_ROOT=~/.rbenv
-      export GOENV_ROOT=$HOME/.goenv
+      # # TODO: Do we want to keep this here?
+      # export RBENV_ROOT=~/.rbenv
+      # export GOENV_ROOT=$HOME/.goenv
 
-      if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
-      then
-        export PATH="/usr/local/bin:/usr/bin:/bin"
-        export PATH="~/.rbenv/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
-        export PATH="${GOENV_ROOT}/bin:${PATH}"
+      # if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
+      # then
+      #   export PATH="/usr/local/bin:/usr/bin:/bin"
+      #   export PATH="~/.rbenv/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+      #   export PATH="${GOENV_ROOT}/bin:${PATH}"
+      # fi
+
+
+      # SOURCE: https://github.com/mattmc3/zdotdir/blob/main/.zshenv - START
+      # ~/.zshenv should only be a one-liner that sources this file
+      # echo ". ~/.config/zsh/.zshenv" > ~/.zshenv
+
+      # XDG apps
+      # define variables/aliases for different apps to use XDG locations
+
+      # https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+      # https://wiki.archlinux.org/index.php/XDG_Base_Directory
+      # https://wiki.archlinux.org/index.php/XDG_user_directories
+
+      export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
+      export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+      export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+      export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$HOME/.xdg}
+
+      if [[ "$OSTYPE" == darwin* ]]; then
+        export XDG_DESKTOP_DIR=${XDG_DESKTOP_DIR:-$HOME/Desktop}
+        export XDG_DOCUMENTS_DIR=${XDG_DOCUMENTS_DIR:-$HOME/Documents}
+        export XDG_DOWNLOAD_DIR=${XDG_DOWNLOAD_DIR:-$HOME/Downloads}
+        export XDG_MUSIC_DIR=${XDG_MUSIC_DIR:-$HOME/Music}
+        export XDG_PICTURES_DIR=${XDG_PICTURES_DIR:-$HOME/Pictures}
+        export XDG_VIDEOS_DIR=${XDG_VIDEOS_DIR:-$HOME/Videos}
+        export XDG_PROJECTS_DIR=${XDG_PROJECTS_DIR:-$HOME/Projects}
       fi
+
+      # **********************************************************
+      # GUIDE TO READ SNIPPET OF CODE BELOW:
+      # **********************************************************
+      # SHLVL=1 means this is the first level of a zsh shell
+      # -o LOGIN means a shell built in option with that name is on
+      # -s file ~/.zprofile exists and is greater than zero
+      # Ensure that a non-login, non-interactive shell has a defined environment.
+      if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+        source "${ZDOTDIR:-$HOME}/.zprofile"
+      fi
+      # **********************************************************
+      # SOURCE: https://github.com/mattmc3/zdotdir/blob/main/.zshenv - END
+
+
       skip_global_compinit=1
 
     # /usr/local/rbenv/shims:/home/vagrant/bin:/home/vagrant/.local/bin:/home/vagrant/.pyenv/bin:/home/vagrant/.rbenv/bin:/home/vagrant/.fnm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
@@ -247,13 +413,45 @@
       #
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
-      source ~/.zshrc
+      # source ~/.zshrc
+
+      #
+      # Executes commands at login post-zshrc.
+      #
+      # Authors:
+      #   Sorin Ionescu <sorin.ionescu@gmail.com>
+      #
+
+      # Execute code that does not affect the current session in the background.
+      # VIA: https://github.com/sorin-ionescu/prezto/blob/704fc46c3f83ca1055becce65fb513a533f48982/runcoms/zlogin
+
+      {
+        # Compile the completion dump to increase startup speed.
+        zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
+        if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
+          zcompile "$zcompdump"
+        fi
+      } &!
+
+      # # Execute code only if STDERR is bound to a TTY.
+      # if [[ -o INTERACTIVE && -t 2 ]]; then
+
+      #   # Print a random, hopefully interesting, adage.
+      #   if (( $+commands[fortune] )); then
+      #     fortune -s
+      #     print
+      #   fi
+
+      # fi >&2
 
 
     bossjones__oh__my__zsh__before_scripts:
       - name: secrets.zsh
         content: |-
-          [ -f ~/.secret ] && . ~/.secret
+          # [ -f ~/.secret ] && . ~/.secret
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+          test -f "$HOME/.secret" && . "$HOME/.secret"
 
       - name: asdf.zsh
         content: |-
@@ -283,24 +481,42 @@
 
       - name: rust.zsh
         content: |-
-          if [ -d "$HOME/.cargo/bin" ]; then
+          # if [ -d "$HOME/.cargo/bin" ]; then
+          #   export PATH=$HOME/.cargo/bin:$PATH
+          # fi
+
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+
+          test -d "$HOME/.cargo/bin" && {
             export PATH=$HOME/.cargo/bin:$PATH
-          fi
+          }
+
       - name: go.zsh
         content: |-
-          if [ -d "/usr/local/go/bin" ]; then
-            export PATH=/usr/local/go/bin:$PATH
-          fi
-          export PATH=$GOPATH/bin:$PATH
-          alias cdgo='CDPATH=.:$GOPATH/src/github.com:$GOPATH/src/golang.org:$GOPATH/src'
+          # if [ -d "/usr/local/go/bin" ]; then
+          #   export PATH=/usr/local/go/bin:$PATH
+          # fi
 
-          if [ -d ~/.goenv ]; then
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+
+          test -d /usr/local/go && {
+            export PATH="/usr/local/go/bin:${PATH}"
+            export PATH=$GOPATH/bin:$PATH
+            alias cdgo='CDPATH=.:$GOPATH/src/github.com:$GOPATH/src/golang.org:$GOPATH/src'
+          }
+
+
+
+          test -d "$HOME/.goenv" && {
             export GOENV_ROOT="$HOME/.goenv"
             export PATH="$GOENV_ROOT/bin:$PATH"
             eval "$(goenv init -)"
             export PATH="$GOROOT/bin:$PATH"
             export PATH="$PATH:$GOPATH/bin"
-          fi
+          }
+
 
 
       - name: workon.zsh
@@ -310,19 +526,52 @@
 
       - name: fzf.zsh
         content: |-
-          [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
+          # [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
+
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+
+          test -f "$HOME/.fzf.zsh" && . "$HOME/.fzf.zsh"
 
       - name: pure.zsh
         content: |-
-          if [ -d "$HOME/.zsh/pure" ]; then
-            fpath+=$HOME/.zsh/pure
-          fi
+          # if [ -d "$HOME/.zsh/pure" ]; then
+          #   fpath+=$HOME/.zsh/pure
+          # fi
+
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+
+          # SOURCE: https://unix.stackexchange.com/questions/33255/how-to-define-and-load-your-own-shell-function-in-zsh
+          # https://zsh.sourceforge.io/Doc/Release/Functions.html
+          # # fpath info
+          # # In zsh, the function search path ($fpath) defines a set of directories, which contain files that can be marked to be loaded automatically when the function they contain is needed for the first time.
+
+          # Zsh has two modes of autoloading files: Zsh's native way and another mode that resembles ksh's autoloading. The latter is active if the KSH_AUTOLOAD option is set. Zsh's native mode is the default and I will not discuss the other way here (see "man zshmisc" and "man zshoptions" for details about ksh-style autoloading).
+
+          # Let's assume you got a file `~/.zfunc/hello' that contains the following line:
+
+          # printf 'Hello world.\n'
+          # All you need to do now is mark the function to be automatically loaded upon its first reference:
+
+          # autoload -Uz hello
+
+          # "What is the -Uz about?", you ask? Well, that's just a set of options that will cause `autoload' to do the right thing, no matter what options are being set otherwise. The `U' disables alias expansion while the function is being loaded and the `z' forces zsh-style autoloading even if `KSH_AUTOLOAD' is set for whatever reason.
+
+          # After that has been taken care of, you can use your new `hello' function:
+
+          # fpath+=$HOME/.zsh/pure
+          test -d "${HOME}/.zsh/pure" && {
+            fpath=(${HOME}/.zsh/pure $fpath)
+          }
 
       - name: poetry.zsh
         content: |-
-          if [ -d "$HOME/.asdf/installs/poetry/1.0.10/env" ]; then
-            . $HOME/.asdf/installs/poetry/1.0.10/env
-          fi
+          # if [ -d "$HOME/.asdf/installs/poetry/1.0.10/env" ]; then
+          #   . $HOME/.asdf/installs/poetry/1.0.10/env
+          # fi
+
+          # test -f "$HOME/.fzf.zsh" && . "$HOME/.fzf.zsh"
 
     bossjones__oh__my__zsh__after_scripts:
 
@@ -354,24 +603,7 @@
 
       - name: nvm.zsh
         content: |-
-          # # nvm is installed via homebrew. Here are instructions:
-          # #
-          # # You should create NVM's working directory if it doesn't exist:
-          # #
-          # #   mkdir ~/.nvm
-          # #
-          # # Add the following to ~/.zshrc or your desired shell
-          # # configuration file:
-          # #
-          # #   export NVM_DIR="$HOME/.nvm"
-          # #   . "/usr/local/opt/nvm/nvm.sh"
-          # if [ -d "$HOME/.nvm" ]; then
-          #   export NVM_DIR="$HOME/.nvm"
-          #   . "$HOME/.nvm/nvm.sh"
-          # fi
-          # if [ -f "/usr/local/opt/nvm/nvm.sh" ]; then
-          #   . "/usr/local/opt/nvm/nvm.sh"
-          # fi
+          # removed nvm
 
       - name: yq.zsh
         content: |-
@@ -387,14 +619,27 @@
       - name: fnm.zsh
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
-          if [ -n "$(which fnm)" ]; then
-              eval "$(fnm env)"
-              if [ "$(fnm ls | grep -i 16.11.1 | wc -l | awk '{print $1}')" = "0" ]; then
-                fnm install {{NODE_VERSION_TO_INSTALL}} || true
-                fnm use {{NODE_VERSION_TO_INSTALL}} || true
-                fnm default {{NODE_VERSION_TO_INSTALL}} || true
-                fnm current
-              fi
+          # FROM ONE OF THE OH-MY-ZSH maintainers https://github.com/mcornella/dotfiles/blob/main/zshenv
+          test -d "$HOME/.fnm" && {
+            export PATH="$PATH:$HOME/.fnm"
+            eval "$(fnm env --shell zsh)"
+            test -f "$HOME/.zsh/completions/_fnm" \
+            || fnm completions --shell zsh > "$HOME/.zsh/completions/_fnm"
+          }
+
+          # only run this on login / interactive shells
+          if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+
+            if [ -n "$(which fnm)" ]; then
+                eval "$(fnm env)"
+                if [ "$(fnm ls | grep -i 16.11.1 | wc -l | awk '{print $1}')" = "0" ]; then
+                  fnm install {{NODE_VERSION_TO_INSTALL}} || true
+                  fnm use {{NODE_VERSION_TO_INSTALL}} || true
+                  fnm default {{NODE_VERSION_TO_INSTALL}} || true
+                  fnm current
+                fi
+            fi
+
           fi
 
 
@@ -462,7 +707,7 @@
 
       - name: fzf.zsh
         content: |
-          [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
+          test -f "$HOME/.fzf.zsh" && . "$HOME/.fzf.zsh"
 
           export FZF_TMUX_OPTS="-d 15"
 
@@ -524,10 +769,21 @@
 
       - name: rbenv.zsh
         content: |
-          if [ -e ~/.rbenv ]; then
-            export PATH="~/.rbenv/shims:$PATH"
-          fi
-          if [[ -x $(which -p rbenv) ]]; then
+          # if [ -e ~/.rbenv ]; then
+          #   export PATH="~/.rbenv/shims:$PATH"
+          # fi
+
+          # NOTE: Anything with an export, lets put in curly brackets
+          test -e "$HOME/.rbenv" && {
+            export PATH="$HOME/.rbenv/shims:$PATH"
+          }
+
+          # SOURCE: https://github.com/rbenv/rbenv/issues/418
+          # NOTE: theres a which binary and a which shell builtin. by setting command, we are using the builtin.
+          # Like @graywh said: which can be either a shell builtin or a command in your PATH. To see which you are using: type which
+          # What you are seeing as a result for which rbenv is correct. If you want to detect the path to the rbenv executable, you can use command which rbenv.
+
+          if [[ -x $(command which rbenv) ]]; then
             eval "$(rbenv init -)"
           fi
 
@@ -544,9 +800,13 @@
 
       - name: path.zsh
         content: |
-          if [ -d "$HOME/bin" ]; then
+          # if [ -d "$HOME/bin" ]; then
+          #   export PATH=$HOME/bin:$PATH
+          # fi
+
+          test -d "$HOME/bin" && {
             export PATH=$HOME/bin:$PATH
-          fi
+          }
 
       - name: cheat.zsh
         content: |
@@ -1149,13 +1409,21 @@
 
       - name: pyenv.zsh
         content: |
-          if [ -e ~/.pyenv ]; then
+          # if [ -e ~/.pyenv ]; then
+          #   export PYENV_ROOT=~/.pyenv
+          #   export PATH="$PYENV_ROOT/bin:$PATH"
+          #   eval "$(pyenv init --path)"
+          #   eval "$(pyenv init -)"
+          #   pyenv virtualenvwrapper_lazy
+          # fi
+
+          test -e "$HOME/.pyenv" && {
             export PYENV_ROOT=~/.pyenv
             export PATH="$PYENV_ROOT/bin:$PATH"
             eval "$(pyenv init --path)"
             eval "$(pyenv init -)"
             pyenv virtualenvwrapper_lazy
-          fi
+          }
 
           enable_compile_flags() {
             # SOURCE: https://github.com/jiansoung/issues-list/issues/13
@@ -2093,16 +2361,28 @@
       # zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)*==34=34}:${(s.:.)LS_COLORS}")';
 
 
-      if [ -n "$(which direnv)" ]; then
+      if [[ -n "$(command which direnv)" ]]; then
           eval "$(direnv hook zsh)"
       fi
 
-      [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+      # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+      test -f "$HOME/.fzf.zsh" && . "$HOME/.fzf.zsh"
 
 
       # remove dupes from $PATH using a zsh builtin
       # https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
-      typeset -aU path;
+      # typeset -aU path;
+
+      # SOURCE: https://github.com/mcornella/dotfiles/blob/main/zshenv
+      # remove duplicate entries from PATH
+      [ -n "$ZSH_VERSION" ] && {
+        typeset -U path
+        fpath+=("$HOME/.zsh/completions")
+      }
+
+      # export PATH for other sessions
+      export PATH
+      # SOURCE: https://github.com/mcornella/dotfiles/blob/main/zshenv - end
 
       # # Load iTerm shell integrations if found.
       # test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
@@ -2137,6 +2417,8 @@
         - .bin
         - bin
         - .local/bin
+        - ~/.oh-my-zsh/custom/plugins
+        - ~/.zsh/completion
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
@@ -2222,11 +2504,75 @@
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
+
+    - name: Clone unixorn git-extra-commands
+      git:
+        repo: https://github.com/unixorn/git-extra-commands.git
+        dest: "~/.oh-my-zsh/custom/plugins/git-extra-commands"
+        version: "main"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_git_extra_commands
+
+      # mkdir -p "$HOME/.zsh"
+      # git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
+    - name: Clone pure
+      git:
+        repo: https://github.com/sindresorhus/pure.git
+        dest: "~/.zsh/pure"
+        version: "main"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_pure
+
+    - name: Clone zsh-peco-history
+      git:
+        repo: https://github.com/jimeh/zsh-peco-history.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-peco-history"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_peco_history
+
+    - name: Clone chrissicool zsh-256color
+      git:
+        repo: https://github.com/chrissicool/zsh-256color.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-256color"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_256color
+
+    # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    - name: Clone zsh-users zsh-syntax-highlighting
+      git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_syntax_highlighting
+
+    - name: Clone asdf
+      git:
+        repo: https://github.com/asdf-vm/asdf.git
+        dest: "~/.asdf"
+        version: "{{ ASDF_VERSION }}"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_asdf
+
     - name: Clone fzf
       git:
         repo: https://github.com/junegunn/fzf.git
         dest: "~/.fzf"
-        version: "0.22.0"
+        version: "{{ FZF_VERSION }}"
         force: yes
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
