@@ -300,3 +300,7 @@ op-add:
 op-get:
 	op get document "~/secret-dotfiles.tar.gz" --output ~/secret-dotfiles.tar.gz
 	tar xvf ~/secret-dotfiles.tar.gz
+
+.PHONY: provision-laptop
+provision-laptop:
+	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=malcolm bossjones__oh__my__zsh__group=staff"
