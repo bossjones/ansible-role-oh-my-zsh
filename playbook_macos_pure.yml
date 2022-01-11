@@ -437,6 +437,13 @@
       #   fi
       # } &!
 
+      # # Within zsh the command &! is a shortcut for disown, i.e. the program won't get killed upon exiting the invoking shell.
+      # # https://stackoverflow.com/questions/44893896/what-does-ampersand-and-exclamation-mean-in-linux-shell/44894182
+      # {
+      #   autoload -Uz compinit
+      #   compinit -u
+      # } &!
+
       # # Execute code only if STDERR is bound to a TTY.
       # if [[ -o INTERACTIVE && -t 2 ]]; then
 
@@ -2206,6 +2213,8 @@
 
 
     bossjones__oh__my__zsh__zshrc_local: |-
+      # TODO: add this in!!!!!!!!!! 1/11/2021
+      # fpath=(/usr/local/share/zsh-completions $fpath)
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
       # export RBENV_ROOT=~/.rbenv
       export RBENV_VERSION={{rbenv.default_ruby}}
