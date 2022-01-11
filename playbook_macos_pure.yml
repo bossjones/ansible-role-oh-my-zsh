@@ -480,6 +480,38 @@
       #         # compinit
       #     fi
 
+      - name: rbenv.zsh
+        content: |
+
+          export OPT_HOMEBREW="/opt/homebrew"
+          if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
+              eval "$($OPT_HOMEBREW/bin/brew shellenv)"
+          fi
+
+          if [[ -s "$HOMEBREW_PREFIX"/opt/rbenv/libexec/rbenv ]]; then
+              eval "$(${HOMEBREW_PREFIX}/opt/rbenv/libexec/rbenv init -)"
+              fpath=(${HOMEBREW_PREFIX}/opt/rbenv/completions $fpath)
+              # autoload -Uz compinit
+              # compinit
+          fi
+
+          # if [ -e ~/.rbenv ]; then
+          #   export PATH="~/.rbenv/shims:$PATH"
+          # fi
+
+          # # NOTE: Anything with an export, lets put in curly brackets
+          # test -e "$HOME/.rbenv" && {
+          #   export PATH="$HOME/.rbenv/shims:$PATH"
+          # }
+
+          # # SOURCE: https://github.com/rbenv/rbenv/issues/418
+          # # NOTE: theres a which binary and a which shell builtin. by setting command, we are using the builtin.
+          # # Like @graywh said: which can be either a shell builtin or a command in your PATH. To see which you are using: type which
+          # # What you are seeing as a result for which rbenv is correct. If you want to detect the path to the rbenv executable, you can use command which rbenv.
+
+          # if [[ -x $(command which rbenv) ]]; then
+          #   eval "$(rbenv init -)"
+          # fi
 
       - name: rust.zsh
         content: |-
@@ -503,8 +535,8 @@
           # NOTE: I modified this after seeing how he treats certain conditionals
           # https://github.com/mcornella/dotfiles/blob/main/zshenv
 
-          test -d /usr/local/go && {
-            export PATH="/usr/local/go/bin:${PATH}"
+          test -d "$(brew --prefix go)" && {
+            export PATH="$(brew --prefix go)/bin:${PATH}"
             export PATH=$GOPATH/bin:$PATH
             alias cdgo='CDPATH=.:$GOPATH/src/github.com:$GOPATH/src/golang.org:$GOPATH/src'
           }
@@ -632,8 +664,8 @@
           # only run this on login / interactive shells
           if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
 
-            if [ -n "$(which fnm)" ]; then
-                eval "$(fnm env)"
+            if [ -n "$(command which fnm)" ]; then
+                eval "$(fnm env --shell zsh)"
                 if [ "$(fnm ls | grep -i 16.11.1 | wc -l | awk '{print $1}')" = "0" ]; then
                   fnm install {{NODE_VERSION_TO_INSTALL}} || true
                   fnm use {{NODE_VERSION_TO_INSTALL}} || true
@@ -768,39 +800,6 @@
           #  added to the $HISTFILE incrementally (as soon as they are entered),
           #  rather than waiting until the shell exits.
           unsetopt INC_APPEND_HISTORY
-
-      - name: rbenv.zsh
-        content: |
-
-          export OPT_HOMEBREW="/opt/homebrew"
-          if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
-              eval "$($OPT_HOMEBREW/bin/brew shellenv)"
-          fi
-
-          if [[ -s "$HOMEBREW_PREFIX"/opt/rbenv/libexec/rbenv ]]; then
-              eval "$(${HOMEBREW_PREFIX}/opt/rbenv/libexec/rbenv init -)"
-              fpath=(${HOMEBREW_PREFIX}/opt/rbenv/completions $fpath)
-              # autoload -Uz compinit
-              # compinit
-          fi
-
-          # if [ -e ~/.rbenv ]; then
-          #   export PATH="~/.rbenv/shims:$PATH"
-          # fi
-
-          # # NOTE: Anything with an export, lets put in curly brackets
-          # test -e "$HOME/.rbenv" && {
-          #   export PATH="$HOME/.rbenv/shims:$PATH"
-          # }
-
-          # # SOURCE: https://github.com/rbenv/rbenv/issues/418
-          # # NOTE: theres a which binary and a which shell builtin. by setting command, we are using the builtin.
-          # # Like @graywh said: which can be either a shell builtin or a command in your PATH. To see which you are using: type which
-          # # What you are seeing as a result for which rbenv is correct. If you want to detect the path to the rbenv executable, you can use command which rbenv.
-
-          # if [[ -x $(command which rbenv) ]]; then
-          #   eval "$(rbenv init -)"
-          # fi
 
       - name: man.zsh
         content: |
@@ -1255,7 +1254,7 @@
               rm -fv square.txt || true
               touch square.txt
               current_dir=$(PWD)
-              # ffmpeg -i "${filename}" -vcodec h264 -acodec mp2 "mp4-$(basename -- "${filename}")"
+
               [ "$(ls *.MOV | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*MOV*; do echo ffmpeg-mov-to-mp4 $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)"); done >> square.txt
               [ "$(ls *.mov | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*mov*; do echo ffmpeg-mov-to-mp4 $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)"); done >> square.txt
               cat square.txt
@@ -1638,19 +1637,6 @@
               cat loop.txt
           }
 
-          # ffmpeg-generate-ig-square() {
-          #     export font_location='/Volumes/Macintosh HD/System/Library/Fonts/Helvetica.ttc'
-          #     export watermark_text=${1}
-          #     rm -fv square.txt
-          #     touch square.txt
-          #     [ "$(ls *.jpg | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*jpg*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1 drawtext=\"fontfile=$font_location:text='${watermark_text}':fontcolor=white:fontsize=14:box=1:boxcolor=black@0.5:boxborderw=5:x=(w-text_w)-10:y=(h-text_h)-10\"" -c:a aac -q:a 128k "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-          #     [ "$(ls *.jpeg | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*jpeg*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1 drawtext=\"fontfile=$font_location:text='${watermark_text}':fontcolor=white:fontsize=14:box=1:boxcolor=black@0.5:boxborderw=5:x=(w-text_w)-10:y=(h-text_h)-10\"" -c:a aac -q:a 128k "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-          #     [ "$(ls *.png | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*png*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1 drawtext=\"fontfile=$font_location:text='${watermark_text}':fontcolor=white:fontsize=14:box=1:boxcolor=black@0.5:boxborderw=5:x=(w-text_w)-10:y=(h-text_h)-10\"" -c:a aac -q:a 128k "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-          #     cat square.txt
-          #     bash square.txt
-          #     rm square.txt
-          # }
-
           ffmpeg-generate-ig-square() {
               rm -fv square.txt
               touch square.txt
@@ -1668,10 +1654,6 @@
               rm -fv square.txt
               touch square.txt
               [ "$(ls *.mp4 | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*mp4*; do echo ffmpeg -hide_banner -loglevel warning -i "${filename}" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1" "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-              # [ "$(ls *.jpeg | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*jpeg*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1" "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-              # [ "$(ls *.png | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*png*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1" "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-              # gsed -i "s,\-i ,\-i ',g" square.txt
-              # gsed -i "s, \-vf ,' \-vf ',g" square.txt
               cat square.txt
               bash square.txt
               rm square.txt
@@ -1698,7 +1680,7 @@
               rm -fv square.txt || true
               touch square.txt
               current_dir=$(PWD)
-              # ffmpeg -i "${filename}" -vcodec h264 -acodec mp2 "mp4-$(basename -- "${filename}")"
+
               [ "$(ls *.MOV | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*MOV*; do echo ffmpeg-mov-to-mp4 $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)"); done >> square.txt
               [ "$(ls *.mov | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*mov*; do echo ffmpeg-mov-to-mp4 $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)"); done >> square.txt
               cat square.txt
@@ -1714,7 +1696,7 @@
               rm -fv square.txt || true
               touch square.txt
               current_dir=$(PWD)
-              # ffmpeg -i "${filename}" -vcodec h264 -acodec mp2 "mp4-$(basename -- "${filename}")"
+
               [ "$(ls *.mp4 | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*mp4*; do echo ffmpeg-speed-up -f $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)").mp4; done >> square.txt
               cat square.txt
               bash square.txt
@@ -1845,50 +1827,6 @@
               IFS="$OIFS"
           }
 
-
-
-
-
-
-          # ffmpeg-loop-one() {
-
-          #     # NOTE: https://unix.stackexchange.com/questions/9496/looping-through-files-with-spaces-in-the-names
-          #     # SOURCE: https://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
-
-          #     OIFS="$IFS"
-          #     IFS=$'\n'
-
-          #     # https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
-          #     # set -euox pipefail
-          #     # set -e
-
-
-          #     local input_file="${1}"
-          #     local full_path_img_input_file="$(pwd)/${input_file}"
-
-          #     filename=$(basename -- "$input_file")
-          #     extension="${filename##*.}"
-          #     filename="${filename%.*}"
-
-          #     # local full_path_output_file="meme_${filename}.mp4"
-
-          #     export full_path_output_file="[L]${filename}.${extension}"
-
-          #     check_if_we_need_to_loop "${full_path_img_input_file}"
-
-          #     if [ "$loop_video_flag" = true ] ; then
-          #         echo -e " ${YELLOW}[ffmpeg-loop-one]${NOCOLOR} loop_video_flag=${loop_video_flag}, looping .... ${YELLOW}cmd: ffmpeg-loop -f $input_file -c $filename.${extension}${NOCOLOR}"
-          #         ffmpeg-loop -f $input_file -c $filename.${extension}
-          #         local input_file="loop-$filename.${extension}"
-          #         local full_path_input_file="${input_file}.${extension}"
-          #         echo -e " ${YELLOW}[ffmpeg-loop-one] verify variable${NOCOLOR} ${GREEN}full_path_input_file=${full_path_input_file}${NOCOLOR}"
-          #         echo -e " ${YELLOW}[ffmpeg-loop-one] running${NOCOLOR} ${GREEN}ls -lta $input_file${NOCOLOR}\n"
-          #         ls -lta $input_file
-          #     fi
-
-          #     IFS="$OIFS"
-          # }
-
           ffmpeg-loop-batch() {
               OIFS="$IFS"
               IFS=$'\n'
@@ -2015,7 +1953,7 @@
               ffmpeg-tools -c dl-story --user machonutz || true
               # ffmpeg-tools -c dl-story --user kirtfloydtrini || true
               # ffmpeg-tools -c dl-story --user kirillagain || true
-              ffmpeg-tools -c dl-story --user hoe_wives_vibes__ || true
+              # ffmpeg-tools -c dl-story --user hoe_wives_vibes__ || true
               ffmpeg-tools -c dl-story --user theraunchyfemale2 || true
               ffmpeg-tools -c dl-story --user main_hoe_memes || true
               ffmpeg-tools -c dl-story --user mistress_carnage_cosplay || true
