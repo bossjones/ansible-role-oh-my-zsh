@@ -2475,6 +2475,11 @@
         state: present
       with_items:
         - font-fira-code
+        - font-fira-code-nerd-font
+        - font-hack-nerd-font
+        - font-inconsolata-nerd-font
+        - font-meslo-lg-nerd-font
+        - font-sauce-code-pro-nerd-font
       # brew don't work from root user on macOS
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
@@ -2485,21 +2490,69 @@
         name: '{{ item }}'
         state: latest
       with_items:
-        - direnv
         - asdf
-        - peco
+        - atomicparsley
+        - cmake
         - coreutils
+        - direnv
+        - doxygen
+        - eigen
+        - ffmpeg
         - findutils
-        - gnu-tar
-        - gnu-sed
-        - gawk
-        - gnutls
-        - gnu-indent
-        - gnu-getopt
-        - grep
-        - reattach-to-user-namespace
         - fpp
+        - fzf
+        - gawk
+        - gnu-getopt
+        - gnu-indent
+        - gnu-sed
+        - gnu-tar
+        - gnutls
+        - graphicsmagick
+        - grep
+        - hdf5
+        - icu4c
+        - imagemagick
+        - jpeg
+        - jq
+        - lesspipe
+        - libav
+        - libffi
+        - libmagic
+        - libomp
+        - libpng
+        - libtiff
+        - libxslt
+        - moreutils
+        - nmap
+        - openblas
+        - openexr
+        - openmpi
+        - openssl
+        - peco
+        - perl
+        - pkg-config
+        - pyenv
+        - pyenv-virtualenv
+        - pyenv-virtualenvwrapper
+        - rbenv
+        - readline
+        - reattach-to-user-namespace
+        - sdl2
+        - sdl2_mixer
+        - sqlite3
+        - tbb
+        - tcl-tk
+        - tesseract
+        - the_silver_searcher
+        - tmux
+        - tree
         - urlview
+        - vim
+        - wget
+        - xz
+        - zlib
+        - zsh
+        # - python@3.8
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
