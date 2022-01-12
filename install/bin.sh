@@ -27,3 +27,4 @@ ln -sfv $(PWD)/bin/autotrim ~/bin/
 ln -sfv $(PWD)/bin/smartcrop ~/bin/
 ln -sfv $(PWD)/bin/open-browser-generic ~/bin/
 ln -sfv $(PWD)/bin/exponential_backoff ~/bin/
+ln -sfv $(PWD)/cfg/.tmuxinator ~
