@@ -1,29 +1,18 @@
 # USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=powerlevel"
 # USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=pure"
+# sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=pure"
 ---
-
-# # rbenv
-# git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
-# echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
-# echo 'eval "$(rbenv init -)"' >> ~/.zshrc
-# git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-
-# # ruby
-# sudo apt-get install -y build-essential bison ruby-dev rake zlib1g-dev \
-#     libyaml-dev libssl-dev libreadline-dev libncurses5-dev llvm llvm-dev \
-#     libeditline-dev libedit-dev
-# rbenv install 2.2.3
 
 - hosts: localhost
   become: yes
   become_method: sudo
   # environment:
   #   # NVM_LAZY_LOAD: yes
-  #   NODE_VERSION_TO_INSTALL: 16.11.1
+  #   NODE_VERSION_TO_INSTALL: 16.13.1
   vars:
     bossjones__oh__my__zsh__pyenv_version: 2.2.3
     bossjones__oh__my__zsh__theme: "pure"
-    NODE_VERSION_TO_INSTALL: 16.11.1
+    NODE_VERSION_TO_INSTALL: 16.13.1
     FZF_VERSION: 0.29.0
     ASDF_VERSION: 0.9.0
     rbenv:
@@ -36,8 +25,6 @@
     # Need something like this
     #  /usr/local/opt/unzip/bin:$HOME/.rbenv/shims:~/.rbenv/shims:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/shims:/usr/local/Cellar/pyenv/2.2.2/libexec:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/bin:$HOME/.pyenv/plugins/pyenv-update/bin:$HOME/.pyenv/plugins/pyenv-pip-update/bin:$HOME/.pyenv/plugins/pyenv-pip-migrate/bin:$HOME/.pyenv/plugins/pyenv-doctor/bin:/usr/local/Cellar/pyenv/2.2.2/plugins/python-build/bin:$HOME/.pyenv/shims:$HOME/.pyenv/bin:$HOME/bin:$HOME/.asdf/shims:$HOME/.asdf/bin:~/go/bin:$HOME/.bin:$HOME/.local/bin:$HOME/.rbenv/bin:$HOME/.fnm:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$HOME/.fzf/bin
 
-    bossjones__oh__my__zsh__static_paths_for_proper_install_of_antigen: "/usr/local/opt/unzip/bin:$HOME/.rbenv/shims:~/.rbenv/shims:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/shims:/usr/local/Cellar/pyenv/{{bossjones__oh__my__zsh__pyenv_version}}/libexec:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/bin:$HOME/.pyenv/plugins/pyenv-update/bin:$HOME/.pyenv/plugins/pyenv-pip-update/bin:$HOME/.pyenv/plugins/pyenv-pip-migrate/bin:$HOME/.pyenv/plugins/pyenv-doctor/bin:/usr/local/Cellar/pyenv/2.2.2/plugins/python-build/bin:$HOME/.pyenv/shims:$HOME/.pyenv/bin:$HOME/bin:$HOME/.asdf/shims:$HOME/.asdf/bin:~/go/bin:$HOME/.bin:$HOME/.local/bin:$HOME/.rbenv/bin:$HOME/.fnm:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$HOME/.fzf/bin"
-    bossjones__oh__my__zsh__goenv_root: "$HOME/.goenv"
     rbenv_clean_up: false
 
     rbenv_repo: "https://github.com/rbenv/rbenv.git"
@@ -107,8 +94,8 @@
     bossjones__oh__my__zsh__enable_zlogout: "yes"
     bossjones__oh__my__zsh__enable_zprofile: "yes"
     bossjones__oh__my__zsh__enable_zshenv: "yes"
-    bossjones__oh__my__zsh__change_default_shell: yes
-    bossjones__oh__my__zsh__path_to_shell: /usr/local/bin/zsh
+    bossjones__oh__my__zsh__change_default_shell: false
+    bossjones__oh__my__zsh__path_to_shell: /opt/homebrew/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
       # Solarized dircolors plugin for zsh
       - joel-porquet/zsh-dircolors-solarized
@@ -171,6 +158,7 @@
 
       # stuff that has to be last
       - zdharma-continuum/fast-syntax-highlighting@master
+      - fnm
 
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:
@@ -255,6 +243,20 @@
 
       if [[ -d "$HOMEBREW_PREFIX"/opt/coreutils/libexec/gnubin ]]; then
         path=(${HOMEBREW_PREFIX}/opt/coreutils/libexec/gnubin $path)
+      fi
+
+      if [[ -s "$HOMEBREW_PREFIX"/opt/pyenv/libexec/pyenv ]]; then
+            eval "$(${HOMEBREW_PREFIX}/opt/pyenv/libexec/pyenv init --path)"
+            eval "$(${HOMEBREW_PREFIX}/opt/pyenv/libexec/pyenv init -)"
+            fpath=(${HOMEBREW_PREFIX}/opt/pyenv/completions $fpath)
+            pyenv virtualenvwrapper_lazy
+
+          elif [[ -s "$HOME/.pyenv/bin/pyenv" ]]; then
+            export PYENV_ROOT=~/.pyenv
+            export PATH="$PYENV_ROOT/bin:$PATH"
+            eval "$(pyenv init --path)"
+            eval "$(pyenv init -)"
+            pyenv virtualenvwrapper_lazy
       fi
 
       # SOURCE: https://github.com/ajh/dotfiles/blob/master/configs/zsh/dot_zshrc
@@ -618,6 +620,9 @@
           # test -f "$HOME/.fzf.zsh" && . "$HOME/.fzf.zsh"
 
     bossjones__oh__my__zsh__after_scripts:
+      - name: custom_plugins.zsh
+        content: |
+          plugins+=(git-extra-commands zsh-256color zsh-peco-history pyenv rbenv fd fzf zsh-syntax-highlighting)
 
       # - name: asdf.zsh
       #   content: |-
@@ -660,28 +665,69 @@
           fi
 
 
+      # - name: fnm | download
+      # shell: |
+      #   export NODE_VERSION_TO_INSTALL=16.13.1
+      #   install-fnm.sh
+      #   export PATH=~/.fnm:$PATH
+      #   eval "`fnm env --use-on-cd`"
+        # if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
+        #   fnm install {{NODE_VERSION_TO_INSTALL}} || true
+        #   fnm use {{NODE_VERSION_TO_INSTALL}} || true
+        #   fnm default {{NODE_VERSION_TO_INSTALL}} || true
+        #   fnm current || true
+        #   npm install -g pure-prompt || true
+        #   npm install -g pretty-time-zsh || true
+        # fi
+      # args:
+      #   executable: /bin/bash
+      # changed_when: false
+      # become: yes
+      # become_user: "{{ bossjones__oh__my__zsh__user }}"
+
       - name: fnm.zsh
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
           # FROM ONE OF THE OH-MY-ZSH maintainers https://github.com/mcornella/dotfiles/blob/main/zshenv
+          # brew --prefix fnm
+
+          local OPT_HOMEBREW="/opt/homebrew"
+          if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
+              eval "$($OPT_HOMEBREW/bin/brew shellenv)"
+          fi
+
+          if [[ -s "$HOMEBREW_PREFIX"/opt/fnm/bin/fnm ]]; then
+            eval "$(${HOMEBREW_PREFIX}/opt/fnm/bin/fnm env --use-on-cd)"
+          fi
+
           test -d "$HOME/.fnm" && {
-            export PATH="$PATH:$HOME/.fnm"
-            eval "$(fnm env --shell zsh)"
+            export PATH=~/.fnm:$PATH
+            # export PATH="$PATH:$HOME/.fnm"
+            eval "$(fnm env --use-on-cd)"
             test -f "$HOME/.zsh/completions/_fnm" \
             || fnm completions --shell zsh > "$HOME/.zsh/completions/_fnm"
+            fpath+=~/.config/zsh/completions/_fnm
           }
 
           # only run this on login / interactive shells
           if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
 
             if [ -n "$(command which fnm)" ]; then
-                eval "$(fnm env --shell zsh)"
-                if [ "$(fnm ls | grep -i 16.11.1 | wc -l | awk '{print $1}')" = "0" ]; then
+                eval "$(fnm env --use-on-cd)"
+                if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
                   fnm install {{NODE_VERSION_TO_INSTALL}} || true
                   fnm use {{NODE_VERSION_TO_INSTALL}} || true
                   fnm default {{NODE_VERSION_TO_INSTALL}} || true
-                  fnm current
+                  fnm current || true
+                  npm install -g pure-prompt || true
+                  npm install -g pretty-time-zsh || true
                 fi
+                # if [ "$(fnm ls | grep -i 16.13.1 | wc -l | awk '{print $1}')" = "0" ]; then
+                #   fnm install {{NODE_VERSION_TO_INSTALL}} || true
+                #   fnm use {{NODE_VERSION_TO_INSTALL}} || true
+                #   fnm default {{NODE_VERSION_TO_INSTALL}} || true
+                #   fnm current
+                # fi
             fi
 
           fi
@@ -2213,8 +2259,6 @@
 
 
     bossjones__oh__my__zsh__zshrc_local: |-
-      # TODO: add this in!!!!!!!!!! 1/11/2021
-      # fpath=(/usr/local/share/zsh-completions $fpath)
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
       # export RBENV_ROOT=~/.rbenv
       export RBENV_VERSION={{rbenv.default_ruby}}
@@ -2342,8 +2386,8 @@
         - .bin
         - bin
         - .local/bin
-        - ~/.oh-my-zsh/custom/plugins
-        - ~/.zsh/completion
+        - .oh-my-zsh/custom/plugins
+        - .zsh/completion
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
@@ -2381,8 +2425,12 @@
     - name: Install Fonts
       shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
       # when: fontCloned is success
+      check_mode: no
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
+      ignore_errors: yes
+      changed_when: false
+      failed_when: false
       when: (fontCloned is success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     - name: 'brew tap homebrew/cask-fonts'
@@ -2538,6 +2586,18 @@
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       register: bossjones__oh__my__zsh__register_zsh_syntax_highlighting
 
+      # git clone https://github.com/popstas/zsh-command-time.git ~/.oh-my-zsh/custom/plugins/command-time
+    # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    - name: Clone zsh-users zsh-command-time
+      git:
+        repo: https://github.com/popstas/zsh-command-time.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-command-time"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_command_time
+
     # - name: Clone asdf
     #   git:
     #     repo: https://github.com/asdf-vm/asdf.git
@@ -2560,8 +2620,12 @@
 
     - name: Install fzf
       shell: ./install --all
+      check_mode: no
       args:
         chdir: "~/.fzf"
+      ignore_errors: yes
+      changed_when: false
+      failed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
@@ -2570,8 +2634,11 @@
         curl -L 'https://raw.githubusercontent.com/jan-warchol/dotfiles/master/bin/fzf-drafts' > ~/bin/fzf-drafts;
         chmod +x ~/bin/fzf-drafts;
       args:
-        executable: /bin/bash
+        executable: /bin/zsh
+      ignore_errors: yes
       changed_when: false
+      failed_when: false
+      check_mode: no
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
@@ -2580,7 +2647,7 @@
       shell: |
         compaudit | wc -l
       args:
-        executable: /usr/local/bin/zsh
+        executable: "{{ bossjones__oh__my__zsh__path_to_shell }}"
       register: compaudit_word_count
       # changed_when: false
       become: yes
@@ -2588,6 +2655,7 @@
       ignore_errors: yes
       changed_when: false
       failed_when: false
+      check_mode: no
 
     - name: compaudit | fix
       shell: |
@@ -2595,10 +2663,11 @@
           compaudit | xargs chown "{{ bossjones__oh__my__zsh__user }}"
           rm ~/.zcompdump*
       args:
-        executable: /usr/local/bin/zsh
+        executable: "{{ bossjones__oh__my__zsh__path_to_shell }}"
       ignore_errors: yes
       changed_when: false
       failed_when: false
+      check_mode: no
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: (compaudit_word_count|bool) and compaudit_word_count.stdout not "0"
@@ -2611,8 +2680,8 @@
         group: "{{ bossjones__oh__my__zsh__group }}"
         recurse: yes
       loop:
-        - /usr/local/share/zsh/site-functions
-        - /usr/local/share/zsh
+        - /opt/homebrew/share/zsh/site-functions
+        - /opt/homebrew/share/zsh
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: ansible_facts['os_family'] == 'Darwin'

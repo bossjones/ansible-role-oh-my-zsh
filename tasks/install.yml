@@ -19,7 +19,7 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - Schniz/tap/fnm
+    - fnm
     # - fonts-powerline
   # brew don't work from root user on macOS
   become: yes
@@ -46,20 +46,20 @@
   become_user: "{{ bossjones__oh__my__zsh__user }}"
   when: bossjones__oh__my__zsh__mc_solarized_skin and not bossjones__oh__my__zsh__shared
 
-- name: Check fzf installed
-  command: which fzf
-  changed_when: false
-  failed_when: false
-  check_mode: no
-  register: bossjones__oh__my__zsh__register_fzf_command
+# - name: Check fzf installed
+#   command: which fzf
+#   changed_when: false
+#   failed_when: false
+#   check_mode: no
+#   register: bossjones__oh__my__zsh__register_fzf_command
 
-- name: Download fzf
-  unarchive:
-    src: "{{ bossjones__oh__my__zsh__fzf_url }}"
-    dest: /usr/local/bin
-    remote_src: yes
-    creates: /usr/local/bin/fzf
-  when: bossjones__oh__my__zsh__register_fzf_command.rc == 1 and bossjones__oh__my__zsh__install_fzf == "yes"
+# - name: Download fzf
+#   unarchive:
+#     src: "{{ bossjones__oh__my__zsh__fzf_url }}"
+#     dest: /usr/local/bin
+#     remote_src: yes
+#     creates: /usr/local/bin/fzf
+#   when: bossjones__oh__my__zsh__register_fzf_command.rc == 1 and bossjones__oh__my__zsh__install_fzf == "yes"
 
 - name: Set directory permissions
   file:
