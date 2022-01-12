@@ -259,7 +259,6 @@ bossjones__oh__my__zsh__path:
   - $HOME/.local/bin
   - $HOME/.pyenv/bin
   - $HOME/.rbenv/bin
-  - /usr/local/opt/coreutils/libexec/gnubin
   - /usr/local/sbin
   - /usr/local/bin
   - /usr/sbin
@@ -449,46 +448,11 @@ bossjones__oh__my__zsh__before_scripts:
       fi
 
 bossjones__oh__my__zsh__after_scripts:
-  # - name: glob.zsh
-  #   content: |-
-  #     # see `man zshoptions`
-  #     setopt EXTENDED_GLOB
-
-  # - name: nvm.zsh
-  #   content: |-
-  #     # nvm is installed via homebrew. Here are instructions:
-  #     #
-  #     # You should create NVM's working directory if it doesn't exist:
-  #     #
-  #     #   mkdir ~/.nvm
-  #     #
-  #     # Add the following to ~/.zshrc or your desired shell
-  #     # configuration file:
-  #     #
-  #     #   export NVM_DIR="$HOME/.nvm"
-  #     #   . "/usr/local/opt/nvm/nvm.sh"
-
-  #     if [ -d "$HOME/.nvm" ]; then
-  #       export NVM_DIR="$HOME/.nvm"
-  #       . "$HOME/.nvm/nvm.sh"
-  #     fi
-  #     if [ -f "/usr/local/opt/nvm/nvm.sh" ]; then
-  #       . "/usr/local/opt/nvm/nvm.sh"
-  #     fi
   - name: path.zsh
     content: |-
       if [ -d "$HOME/bin" ]; then
         export PATH=$HOME/bin:$PATH
       fi
-  # - name: rbenv.zsh
-  #   content: |-
-  #     if [ -e ~/.rbenv ]; then
-  #       export PATH="$HOME/.rbenv/bin:$PATH"
-  #       # export PATH="$HOME/.gem/ruby/2.6.0/bin:$PATH"
-  #     fi
-  #     if [[ -x $(command which rbenv) ]]; then
-  #       eval "$(rbenv init -)"
-  #     fi
   # - name: osx_common.zsh
   #   content: |-
   #     # SOURCE: https://github.com/balakrishnanc/dotfiles/blob/bff74304808b68ffbc571b2d13d3b8077ce65c4e/zsh/common-macos.sh

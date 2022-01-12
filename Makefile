@@ -304,3 +304,6 @@ op-get:
 .PHONY: provision-laptop
 provision-laptop:
 	ansible-playbook -vvvvv --ask-become-pass -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=malcolm bossjones__oh__my__zsh__group=staff"
+
+bin_install:
+	bash $(PWD)/install/bin.sh

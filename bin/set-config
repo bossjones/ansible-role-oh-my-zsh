@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+KEY="$1"
+VALUE="$2"
+FILE="$3"
+
+touch "$FILE"
+
+unamestr=$(uname)
+
+if [[ $unamestr == "Darwin" ]]; then
+  SED_CMD=$(which gsed || which sed)
+elif [[ $unamestr == "Linux"  && -f $(which apt-get) ]]; then
+  SED_CMD=$(which sed)
+elif [[ $unamestr == "Linux"  && -f $(which dnf) ]]; then
+  SED_CMD=$(which sed)
+fi
+
+if grep -q "$1=" "$FILE"; then
+  if [[ $unamestr == "Darwin" ]]; then
+    if [[ $SED_CMD == "/usr/local/bin/gsed" ]]; then
+      $SED_CMD -i "s@$KEY=.*@$KEY=\"$VALUE\"@" "$FILE"
+    else
+      $SED_CMD -i '.bak' "s@$KEY=.*@$KEY=\"$VALUE\"@" "$FILE"
+    fi
+  else
+    $SED_CMD "s@$KEY=.*@$KEY=\"$VALUE\"@" -i "$FILE"
+  fi
+else
+  echo "export $KEY=\"$VALUE\"" >> "$FILE"
+fi

@@ -22,9 +22,6 @@
       rubies:
         - version: 2.7.2
 
-    # Need something like this
-    #  /usr/local/opt/unzip/bin:$HOME/.rbenv/shims:~/.rbenv/shims:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/shims:/usr/local/Cellar/pyenv/2.2.2/libexec:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/bin:$HOME/.pyenv/plugins/pyenv-update/bin:$HOME/.pyenv/plugins/pyenv-pip-update/bin:$HOME/.pyenv/plugins/pyenv-pip-migrate/bin:$HOME/.pyenv/plugins/pyenv-doctor/bin:/usr/local/Cellar/pyenv/2.2.2/plugins/python-build/bin:$HOME/.pyenv/shims:$HOME/.pyenv/bin:$HOME/bin:$HOME/.asdf/shims:$HOME/.asdf/bin:~/go/bin:$HOME/.bin:$HOME/.local/bin:$HOME/.rbenv/bin:$HOME/.fnm:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$HOME/.fzf/bin
-
     rbenv_clean_up: false
 
     rbenv_repo: "https://github.com/rbenv/rbenv.git"
@@ -165,31 +162,13 @@
       - $HOME/bin
       - $HOME/.bin
       - $HOME/.local/bin
-      # - $HOME/.pyenv/bin
-      # - $HOME/.rbenv/bin
       - $HOME/.fnm
-      # - /usr/local/opt/coreutils/libexec/gnubin
       - /usr/local/sbin
       - /usr/local/bin
       - /usr/sbin
       - /usr/bin
       - /sbin
       - /bin
-      # - /usr/games
-      # - /usr/local/games
-
-    # SOURCE: https://github.com/sorin-ionescu/prezto/blob/4f19700919c8ebbaf75755fc0d03716d13183f49/runcoms/zshenv
-    # #
-    # # Defines environment variables.
-    # #
-    # # Authors:
-    # #   Sorin Ionescu <sorin.ionescu@gmail.com>
-    # #
-
-    # # Ensure that a non-login, non-interactive shell has a defined environment.
-    # if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
-    #   source "${ZDOTDIR:-$HOME}/.zprofile"
-    # fi
 
     bossjones__oh__my__zsh__zlogout: |-
       # .zlogout
@@ -622,33 +601,7 @@
     bossjones__oh__my__zsh__after_scripts:
       - name: custom_plugins.zsh
         content: |
-          plugins+=(git-extra-commands zsh-256color zsh-peco-history pyenv rbenv fd fzf zsh-syntax-highlighting)
-
-      # - name: asdf.zsh
-      #   content: |-
-      #     ASDF_DIR="${ASDF_DIR:-$HOME/.asdf}"
-      #     ASDF_COMPLETIONS="$ASDF_DIR/completions"
-
-      #     # if [ -d "$HOME/.asdf" ]; then
-
-      #     #   . $HOME/.asdf/asdf.sh
-      #     # fi
-
-      #     # Load command
-      #     if [[ -f "$ASDF_DIR/asdf.sh" ]]; then
-      #         . "$ASDF_DIR/asdf.sh"
-
-      #         fpath=(${ASDF_DIR}/completions $fpath)
-
-      #         # Load completions
-      #         if [[ -f "$ASDF_COMPLETIONS/asdf.bash" ]]; then
-      #             . "$ASDF_COMPLETIONS/asdf.bash"
-      #         fi
-
-      #         # autoload -Uz compinit
-      #         # compinit
-      #     fi
-
+          plugins+=(git-extra-commands zsh-256color zsh-peco-history pyenv rbenv fd fzf zsh-syntax-highlighting tmux rbenv)
 
       - name: nvm.zsh
         content: |-
@@ -663,27 +616,6 @@
           if [ -e /usr/local/bin/yq ]; then
               yq shell-completion zsh > "${fpath[1]}/_yq"
           fi
-
-
-      # - name: fnm | download
-      # shell: |
-      #   export NODE_VERSION_TO_INSTALL=16.13.1
-      #   install-fnm.sh
-      #   export PATH=~/.fnm:$PATH
-      #   eval "`fnm env --use-on-cd`"
-        # if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
-        #   fnm install {{NODE_VERSION_TO_INSTALL}} || true
-        #   fnm use {{NODE_VERSION_TO_INSTALL}} || true
-        #   fnm default {{NODE_VERSION_TO_INSTALL}} || true
-        #   fnm current || true
-        #   npm install -g pure-prompt || true
-        #   npm install -g pretty-time-zsh || true
-        # fi
-      # args:
-      #   executable: /bin/bash
-      # changed_when: false
-      # become: yes
-      # become_user: "{{ bossjones__oh__my__zsh__user }}"
 
       - name: fnm.zsh
         content: |-
@@ -722,12 +654,6 @@
                   npm install -g pure-prompt || true
                   npm install -g pretty-time-zsh || true
                 fi
-                # if [ "$(fnm ls | grep -i 16.13.1 | wc -l | awk '{print $1}')" = "0" ]; then
-                #   fnm install {{NODE_VERSION_TO_INSTALL}} || true
-                #   fnm use {{NODE_VERSION_TO_INSTALL}} || true
-                #   fnm default {{NODE_VERSION_TO_INSTALL}} || true
-                #   fnm current
-                # fi
             fi
 
           fi
