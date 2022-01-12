@@ -28,3 +28,21 @@ ln -sfv $(PWD)/bin/smartcrop ~/bin/
 ln -sfv $(PWD)/bin/open-browser-generic ~/bin/
 ln -sfv $(PWD)/bin/exponential_backoff ~/bin/
 ln -sfv $(PWD)/cfg/.tmuxinator ~
+
+# extra goodness from techtop
+brew tap johanhaleby/kubetail || true
+brew install kubetail || true
+brew install atomicparsley || true
+brew install aws-iam-authenticator || true
+brew install autossh || true
+brew install cidr2range || true
+brew install dust || true
+brew install fdupes || true
+brew install kubernetes-cli || true
+brew install kubectx || true
+brew install psgrep || true
+brew install pstree || true
+brew install terminal-notifier || true
+brew install hacker1024/hacker1024/coretemp || true
+brew install sonobuoy || true
+brew install screenfetch || true
