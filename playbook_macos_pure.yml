@@ -1,29 +1,20 @@
 # USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=powerlevel"
 # USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=pure"
+# sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=pure"
 ---
-
-# # rbenv
-# git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
-# echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
-# echo 'eval "$(rbenv init -)"' >> ~/.zshrc
-# git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-
-# # ruby
-# sudo apt-get install -y build-essential bison ruby-dev rake zlib1g-dev \
-#     libyaml-dev libssl-dev libreadline-dev libncurses5-dev llvm llvm-dev \
-#     libeditline-dev libedit-dev
-# rbenv install 2.2.3
 
 - hosts: localhost
   become: yes
   become_method: sudo
   # environment:
   #   # NVM_LAZY_LOAD: yes
-  #   NODE_VERSION_TO_INSTALL: 16.11.1
+  #   NODE_VERSION_TO_INSTALL: 16.13.1
   vars:
-    bossjones__oh__my__zsh__pyenv_version: 2.2.2
+    bossjones__oh__my__zsh__pyenv_version: 2.2.3
     bossjones__oh__my__zsh__theme: "pure"
-    NODE_VERSION_TO_INSTALL: 16.11.1
+    NODE_VERSION_TO_INSTALL: 16.13.1
+    FZF_VERSION: 0.29.0
+    ASDF_VERSION: 0.9.0
     rbenv:
       env: system
       version: v1.1.2
@@ -31,11 +22,6 @@
       rubies:
         - version: 2.7.2
 
-    # Need something like this
-    #  /usr/local/opt/unzip/bin:$HOME/.rbenv/shims:~/.rbenv/shims:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/shims:/usr/local/Cellar/pyenv/2.2.2/libexec:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/bin:$HOME/.pyenv/plugins/pyenv-update/bin:$HOME/.pyenv/plugins/pyenv-pip-update/bin:$HOME/.pyenv/plugins/pyenv-pip-migrate/bin:$HOME/.pyenv/plugins/pyenv-doctor/bin:/usr/local/Cellar/pyenv/2.2.2/plugins/python-build/bin:$HOME/.pyenv/shims:$HOME/.pyenv/bin:$HOME/bin:$HOME/.asdf/shims:$HOME/.asdf/bin:~/go/bin:$HOME/.bin:$HOME/.local/bin:$HOME/.rbenv/bin:$HOME/.fnm:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$HOME/.fzf/bin
-
-    bossjones__oh__my__zsh__static_paths_for_proper_install_of_antigen: "/usr/local/opt/unzip/bin:$HOME/.rbenv/shims:~/.rbenv/shims:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/shims:/usr/local/Cellar/pyenv/{{bossjones__oh__my__zsh__pyenv_version}}/libexec:$HOME/.pyenv/plugins/pyenv-virtualenvwrapper/bin:$HOME/.pyenv/plugins/pyenv-update/bin:$HOME/.pyenv/plugins/pyenv-pip-update/bin:$HOME/.pyenv/plugins/pyenv-pip-migrate/bin:$HOME/.pyenv/plugins/pyenv-doctor/bin:/usr/local/Cellar/pyenv/2.2.2/plugins/python-build/bin:$HOME/.pyenv/shims:$HOME/.pyenv/bin:$HOME/bin:$HOME/.asdf/shims:$HOME/.asdf/bin:~/go/bin:$HOME/.bin:$HOME/.local/bin:$HOME/.rbenv/bin:$HOME/.fnm:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$HOME/.fzf/bin"
-    bossjones__oh__my__zsh__goenv_root: "$HOME/.goenv"
     rbenv_clean_up: false
 
     rbenv_repo: "https://github.com/rbenv/rbenv.git"
@@ -103,12 +89,11 @@
     rbenv_user_profile: true
     bossjones__oh__my__zsh__enable_zlogin: "yes"
     bossjones__oh__my__zsh__enable_zlogout: "yes"
-    bossjones__oh__my__zsh__enable_zprofile: "no"
+    bossjones__oh__my__zsh__enable_zprofile: "yes"
     bossjones__oh__my__zsh__enable_zshenv: "yes"
-    bossjones__oh__my__zsh__change_default_shell: no
-    bossjones__oh__my__zsh__path_to_shell: /usr/local/bin/zsh
+    bossjones__oh__my__zsh__change_default_shell: false
+    bossjones__oh__my__zsh__path_to_shell: /opt/homebrew/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
-      # - nvm
       # Solarized dircolors plugin for zsh
       - joel-porquet/zsh-dircolors-solarized
 
@@ -156,49 +141,172 @@
       # Plugin for lazy-loading pyenv in zsh.
       - { name: erikced/zsh-pyenv-lazy-load, command: pyenv }
 
-      - { name: vagrant, command: vagrant }
+      # - { name: vagrant, command: vagrant }
 
       # Convert seconds to a human readable string: 165392 → 1d 21h 56m 32s
       - sindresorhus/pretty-time-zsh@main
 
       # Because your terminal should be able to perform tasks asynchronously without external tools!
-      - mafredri/zsh-async
+      # - mafredri/zsh-async
 
       - asdf
       # Pretty, minimal and fast ZSH prompt
       - sindresorhus/pure@main
 
+      # stuff that has to be last
+      - zdharma-continuum/fast-syntax-highlighting@master
+      - fnm
+
     bossjones__oh__my__zsh__autosuggestions_bind_key: "^U"
     bossjones__oh__my__zsh__path:
-      # - "~/.rbenv/shims"
       - $HOME/bin
       - $HOME/.bin
       - $HOME/.local/bin
-      - $HOME/.pyenv/bin
-      - $HOME/.rbenv/bin
       - $HOME/.fnm
-      - /usr/local/opt/coreutils/libexec/gnubin
       - /usr/local/sbin
       - /usr/local/bin
       - /usr/sbin
       - /usr/bin
       - /sbin
       - /bin
-      # - /usr/games
-      # - /usr/local/games
 
-    # SOURCE: https://github.com/sorin-ionescu/prezto/blob/4f19700919c8ebbaf75755fc0d03716d13183f49/runcoms/zshenv
-    # #
-    # # Defines environment variables.
-    # #
-    # # Authors:
-    # #   Sorin Ionescu <sorin.ionescu@gmail.com>
-    # #
+    bossjones__oh__my__zsh__zlogout: |-
+      # .zlogout
 
-    # # Ensure that a non-login, non-interactive shell has a defined environment.
-    # if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
-    #   source "${ZDOTDIR:-$HOME}/.zprofile"
-    # fi
+    # borrowed from https://github.com/Gipetto/dot-files/blob/ed422b7c16c0d82b2c7f901c25c945afe13d570a/zsh/zprofile
+    # TODO: Lets also look at this: https://github.com/mattmc3/zdotdir
+    bossjones__oh__my__zsh__zprofile: |-
+      # .zprofile: similar to .zlogin but loaded before .zshrc( .zprofile and .zshrc are ignored in non-login non-interactive shells - so I learned a trick from Prezto that declares environment variables in .zprofile and uses .zshenv to source .zprofile (eg .zprofile and .zshenv) This way, non-login non-interactive shells will receive proper variable initialisations).
+      # See presto for orig - https://github.com/sorin-ionescu/prezto/blob/master/runcoms/zprofile
+
+      # XDG
+      # https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+      # https://wiki.archlinux.org/index.php/XDG_Base_Directory
+      # https://wiki.archlinux.org/index.php/XDG_user_directories
+
+      export XDG_CONFIG_HOME=~/.config
+      export XDG_CACHE_HOME=~/.cache
+      export XDG_DATA_HOME=~/.local/share
+      export XDG_RUNTIME_DIR=~/.xdg
+
+      if [[ "$OSTYPE" == darwin* ]]; then
+        export XDG_DESKTOP_DIR=~/Desktop
+        export XDG_DOCUMENTS_DIR=~/Documents
+        export XDG_DOWNLOAD_DIR=~/Downloads
+        export XDG_MUSIC_DIR=~/Music
+        export XDG_PICTURES_DIR=~/Pictures
+        export XDG_VIDEOS_DIR=~/Videos
+        export XDG_PROJECTS_DIR=~/Projects
+      fi
+
+      if [[ "$OSTYPE" == darwin* ]]; then
+        export BROWSER='open'
+      fi
+
+      # FIXME: bossjones added this section out of order ( I think it's probably important to have homebrew initialized before anything else )
+      # SOURCE: https://github.com/Gipetto/dot-files/blob/ed422b7c16c0d82b2c7f901c25c945afe13d570a/zsh/zprofile
+
+      local OPT_HOMEBREW="/opt/homebrew"
+      if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
+          eval "$($OPT_HOMEBREW/bin/brew shellenv)"
+      fi
+
+      if [[ -s "$HOMEBREW_PREFIX"/opt/asdf/libexec/asdf.sh ]]; then
+        ASDF_DIR="${HOMEBREW_PREFIX}/opt/asdf/libexec"
+        ASDF_COMPLETIONS="$ASDF_DIR/completions"
+        . "$HOMEBREW_PREFIX"/opt/asdf/libexec/asdf.sh
+        fpath=(${ASDF_DIR}/completions $fpath)
+      elif [[ -s "$HOME/.asdf/asdf.sh" ]]; then
+        . "$HOME"/.asdf/asdf.sh
+      fi
+
+      if [[ -d "$HOMEBREW_PREFIX"/opt/coreutils/libexec/gnubin ]]; then
+        path=(${HOMEBREW_PREFIX}/opt/coreutils/libexec/gnubin $path)
+      fi
+
+      if [[ -s "$HOMEBREW_PREFIX"/opt/pyenv/libexec/pyenv ]]; then
+            eval "$(${HOMEBREW_PREFIX}/opt/pyenv/libexec/pyenv init --path)"
+            eval "$(${HOMEBREW_PREFIX}/opt/pyenv/libexec/pyenv init -)"
+            fpath=(${HOMEBREW_PREFIX}/opt/pyenv/completions $fpath)
+            pyenv virtualenvwrapper_lazy
+
+          elif [[ -s "$HOME/.pyenv/bin/pyenv" ]]; then
+            export PYENV_ROOT=~/.pyenv
+            export PATH="$PYENV_ROOT/bin:$PATH"
+            eval "$(pyenv init --path)"
+            eval "$(pyenv init -)"
+            pyenv virtualenvwrapper_lazy
+      fi
+
+      # SOURCE: https://github.com/ajh/dotfiles/blob/master/configs/zsh/dot_zshrc
+      {{bossjones__oh__my__zsh__before_block}}
+
+      # FIXME: bossjones added this section out of order
+
+      # less pipe
+      # https://github.com/wofr06/lesspipe/blob/lesspipe/INSTALL
+      # Set the default Less options
+      # Mouse-wheel scrolling has been disabled by -X (disable screen clearing)
+      # Remove -X to enable it
+      export LESS='-g -i -M -R -S -w -z-4'
+
+      # Set the Less input preprocessor
+      # Try both `lesspipe` and `lesspipe.sh` as either might exist on a system
+      if (( $#commands[(i)lesspipe(|.sh)] )); then
+        export LESSOPEN="| /usr/bin/env $commands[(i)lesspipe(|.sh)] %s 2>&-"
+      fi
+
+      export EDITOR='vim'
+      export VISUAL='code'
+      export PAGER='less'
+
+      export TZ="America/New_York"
+      export LANG="en_US.UTF-8"
+      export LANGUAGE="en"
+      export LC_ALL="en_US.UTF-8"
+
+      # SOURCE: https://zsh.sourceforge.io/Doc/Release/Shell-Builtin-Commands.html
+      # The -g (global) means that any resulting parameter will not be restricted to local scope. Note that this does not necessarily mean that the parameter will be global, as the flag will apply to any existing parameter (even if unset) from an enclosing function. This flag does not affect the parameter after creation, hence it has no effect when listing existing parameters, nor does the flag +g have any effect except in combination with -m (see below).
+
+      # -U
+      # For arrays (but not for associative arrays), keep only the first occurrence of each duplicated value. This may also be set for tied parameters (see -T) or colon-separated special parameters like PATH or FIGNORE, etc. Note the flag takes effect on assignment, and the type of the variable being assigned to is determinative; for variables with shared values it is therefore recommended to set the flag for all interfaces, e.g. 'typeset -U PATH path'.
+
+      # This flag has a different meaning when used with -f; see below.
+      # Ensure path arrays do not contain duplicates
+      typeset -gU cdpath fpath mailpath path
+
+      # The $path array variable is tied to the $PATH scalar (string) variable. Any modification on one is reflected in the other.
+      path=(
+        $HOME/bin
+        $HOME/.bin
+        $HOME/.local/bin
+        $HOME/.fnm
+        /usr/local/sbin
+        /usr/local/bin
+        /usr/sbin
+        /usr/bin
+        /sbin
+        /bin
+        $path
+      )
+      [[ -d $ZDOTDIR/bin ]] && path+=($ZDOTDIR/bin)
+
+      # https://apple.stackexchange.com/questions/427561/macos-zsh-sessions-zsh-history-and-setopt-append-history
+      # To disable Apple's shell state code, add to your .zshenv file:
+      # export SHELL_SESSIONS_DISABLE=1
+
+      # Then add to your .zshrc file:
+
+      # setopt sharehistory
+      # Also, make sure you unset all options incompatible with SHARE_HISTORY. Again, read https://zsh.sourceforge.io/Doc/Release/Options.html#History for more info.
+
+      # Finally, feel free to delete the .zsh_sessions dir created by Apple's code, as it will no longer be necessary.
+
+      ##################################################### ends here
+
+
+
+      # SOURCE: https://github.com/Gipetto/dot-files/blob/ed422b7c16c0d82b2c7f901c25c945afe13d570a/zsh/zprofile - END
 
     bossjones__oh__my__zsh__zshenv: |-
       # Since .zshenv is always sourced, it often contains exported variables that should be available to other programs. For example, $PATH, $EDITOR, and $PAGER are often set in .zshenv. Also, you can set $ZDOTDIR in .zshenv to specify an alternative location for the rest of your zsh configuration.
@@ -216,15 +324,58 @@
       #
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
-      export RBENV_ROOT=~/.rbenv
-      export GOENV_ROOT=$HOME/.goenv
+      # # TODO: Do we want to keep this here?
+      # export RBENV_ROOT=~/.rbenv
+      # export GOENV_ROOT=$HOME/.goenv
 
-      if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
-      then
-        export PATH="/usr/local/bin:/usr/bin:/bin"
-        export PATH="~/.rbenv/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
-        export PATH="${GOENV_ROOT}/bin:${PATH}"
+      # if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
+      # then
+      #   export PATH="/usr/local/bin:/usr/bin:/bin"
+      #   export PATH="~/.rbenv/shims:$HOME/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+      #   export PATH="${GOENV_ROOT}/bin:${PATH}"
+      # fi
+
+
+      # SOURCE: https://github.com/mattmc3/zdotdir/blob/main/.zshenv - START
+      # ~/.zshenv should only be a one-liner that sources this file
+      # echo ". ~/.config/zsh/.zshenv" > ~/.zshenv
+
+      # XDG apps
+      # define variables/aliases for different apps to use XDG locations
+
+      # https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+      # https://wiki.archlinux.org/index.php/XDG_Base_Directory
+      # https://wiki.archlinux.org/index.php/XDG_user_directories
+
+      export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
+      export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+      export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+      export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$HOME/.xdg}
+
+      if [[ "$OSTYPE" == darwin* ]]; then
+        export XDG_DESKTOP_DIR=${XDG_DESKTOP_DIR:-$HOME/Desktop}
+        export XDG_DOCUMENTS_DIR=${XDG_DOCUMENTS_DIR:-$HOME/Documents}
+        export XDG_DOWNLOAD_DIR=${XDG_DOWNLOAD_DIR:-$HOME/Downloads}
+        export XDG_MUSIC_DIR=${XDG_MUSIC_DIR:-$HOME/Music}
+        export XDG_PICTURES_DIR=${XDG_PICTURES_DIR:-$HOME/Pictures}
+        export XDG_VIDEOS_DIR=${XDG_VIDEOS_DIR:-$HOME/Videos}
+        export XDG_PROJECTS_DIR=${XDG_PROJECTS_DIR:-$HOME/Projects}
       fi
+
+      # **********************************************************
+      # GUIDE TO READ SNIPPET OF CODE BELOW:
+      # **********************************************************
+      # SHLVL=1 means this is the first level of a zsh shell
+      # -o LOGIN means a shell built in option with that name is on
+      # -s file ~/.zprofile exists and is greater than zero
+      # Ensure that a non-login, non-interactive shell has a defined environment.
+      if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+        source "${ZDOTDIR:-$HOME}/.zprofile"
+      fi
+      # **********************************************************
+      # SOURCE: https://github.com/mattmc3/zdotdir/blob/main/.zshenv - END
+
+
       skip_global_compinit=1
 
     # /usr/local/rbenv/shims:/home/vagrant/bin:/home/vagrant/.local/bin:/home/vagrant/.pyenv/bin:/home/vagrant/.rbenv/bin:/home/vagrant/.fnm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
@@ -247,60 +398,150 @@
       #
       # Global Order: zshenv, zprofile, zshrc, zlogin
 
-      source ~/.zshrc
+      # source ~/.zshrc
+
+      #
+      # Executes commands at login post-zshrc.
+      #
+      # Authors:
+      #   Sorin Ionescu <sorin.ionescu@gmail.com>
+      #
+
+      # Execute code that does not affect the current session in the background.
+      # VIA: https://github.com/sorin-ionescu/prezto/blob/704fc46c3f83ca1055becce65fb513a533f48982/runcoms/zlogin
+
+      # {
+      #   # Compile the completion dump to increase startup speed.
+      #   zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
+      #   if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
+      #     zcompile "$zcompdump"
+      #   fi
+      # } &!
+
+      # # Within zsh the command &! is a shortcut for disown, i.e. the program won't get killed upon exiting the invoking shell.
+      # # https://stackoverflow.com/questions/44893896/what-does-ampersand-and-exclamation-mean-in-linux-shell/44894182
+      # {
+      #   autoload -Uz compinit
+      #   compinit -u
+      # } &!
+
+      # # Execute code only if STDERR is bound to a TTY.
+      # if [[ -o INTERACTIVE && -t 2 ]]; then
+
+      #   # Print a random, hopefully interesting, adage.
+      #   if (( $+commands[fortune] )); then
+      #     fortune -s
+      #     print
+      #   fi
+
+      # fi >&2
 
 
     bossjones__oh__my__zsh__before_scripts:
       - name: secrets.zsh
         content: |-
-          [ -f ~/.secret ] && . ~/.secret
+          # [ -f ~/.secret ] && . ~/.secret
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+          test -f "$HOME/.secret" && . "$HOME/.secret"
 
-      - name: asdf.zsh
-        content: |-
-          ASDF_DIR="${ASDF_DIR:-$HOME/.asdf}"
-          ASDF_COMPLETIONS="$ASDF_DIR/completions"
+      # NOTE: Since this is a mac, we want to use the homebrew version of
+      # - name: asdf.zsh
+      #   content: |-
+      #     ASDF_DIR="${ASDF_DIR:-$HOME/.asdf}"
+      #     ASDF_COMPLETIONS="$ASDF_DIR/completions"
 
-          # if [ -d "$HOME/.asdf" ]; then
+      #     # if [ -d "$HOME/.asdf" ]; then
 
-          #   . $HOME/.asdf/asdf.sh
-          # fi
+      #     #   . $HOME/.asdf/asdf.sh
+      #     # fi
 
-          # Load command
-          if [[ -f "$ASDF_DIR/asdf.sh" ]]; then
-              . "$ASDF_DIR/asdf.sh"
+      #     # Load command
+      #     if [[ -f "$ASDF_DIR/asdf.sh" ]]; then
+      #         . "$ASDF_DIR/asdf.sh"
 
-              fpath=(${ASDF_DIR}/completions $fpath)
+      #         fpath=(${ASDF_DIR}/completions $fpath)
 
-              # Load completions
-              if [[ -f "$ASDF_COMPLETIONS/asdf.bash" ]]; then
-                  . "$ASDF_COMPLETIONS/asdf.bash"
-              fi
+      #         # Load completions
+      #         if [[ -f "$ASDF_COMPLETIONS/asdf.bash" ]]; then
+      #             . "$ASDF_COMPLETIONS/asdf.bash"
+      #         fi
 
+      #         # autoload -Uz compinit
+      #         # compinit
+      #     fi
+
+      - name: rbenv.zsh
+        content: |
+
+          export OPT_HOMEBREW="/opt/homebrew"
+          if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
+              eval "$($OPT_HOMEBREW/bin/brew shellenv)"
+          fi
+
+          if [[ -s "$HOMEBREW_PREFIX"/opt/rbenv/libexec/rbenv ]]; then
+              eval "$(${HOMEBREW_PREFIX}/opt/rbenv/libexec/rbenv init -)"
+              fpath=(${HOMEBREW_PREFIX}/opt/rbenv/completions $fpath)
               # autoload -Uz compinit
               # compinit
           fi
 
+          # if [ -e ~/.rbenv ]; then
+          #   export PATH="~/.rbenv/shims:$PATH"
+          # fi
+
+          # # NOTE: Anything with an export, lets put in curly brackets
+          # test -e "$HOME/.rbenv" && {
+          #   export PATH="$HOME/.rbenv/shims:$PATH"
+          # }
+
+          # # SOURCE: https://github.com/rbenv/rbenv/issues/418
+          # # NOTE: theres a which binary and a which shell builtin. by setting command, we are using the builtin.
+          # # Like @graywh said: which can be either a shell builtin or a command in your PATH. To see which you are using: type which
+          # # What you are seeing as a result for which rbenv is correct. If you want to detect the path to the rbenv executable, you can use command which rbenv.
+
+          # if [[ -x $(command which rbenv) ]]; then
+          #   eval "$(rbenv init -)"
+          # fi
 
       - name: rust.zsh
         content: |-
-          if [ -d "$HOME/.cargo/bin" ]; then
+          # if [ -d "$HOME/.cargo/bin" ]; then
+          #   export PATH=$HOME/.cargo/bin:$PATH
+          # fi
+
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+
+          test -d "$HOME/.cargo/bin" && {
             export PATH=$HOME/.cargo/bin:$PATH
-          fi
+          }
+
       - name: go.zsh
         content: |-
-          if [ -d "/usr/local/go/bin" ]; then
-            export PATH=/usr/local/go/bin:$PATH
-          fi
-          export PATH=$GOPATH/bin:$PATH
-          alias cdgo='CDPATH=.:$GOPATH/src/github.com:$GOPATH/src/golang.org:$GOPATH/src'
+          # if [ -d "/usr/local/go/bin" ]; then
+          #   export PATH=/usr/local/go/bin:$PATH
+          # fi
 
-          if [ -d ~/.goenv ]; then
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+
+          test -d "$(brew --prefix go)" && {
+            export PATH="$(brew --prefix go)/bin:${PATH}"
+            export PATH=$GOPATH/bin:$PATH
+            alias cdgo='CDPATH=.:$GOPATH/src/github.com:$GOPATH/src/golang.org:$GOPATH/src'
+          }
+
+
+
+          test -d "$HOME/.goenv" && {
             export GOENV_ROOT="$HOME/.goenv"
             export PATH="$GOENV_ROOT/bin:$PATH"
             eval "$(goenv init -)"
             export PATH="$GOROOT/bin:$PATH"
             export PATH="$PATH:$GOPATH/bin"
-          fi
+          }
+
 
 
       - name: workon.zsh
@@ -310,68 +551,61 @@
 
       - name: fzf.zsh
         content: |-
-          [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
+          # [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
+
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+
+          test -f "$HOME/.fzf.zsh" && . "$HOME/.fzf.zsh"
 
       - name: pure.zsh
         content: |-
-          if [ -d "$HOME/.zsh/pure" ]; then
-            fpath+=$HOME/.zsh/pure
-          fi
+          # if [ -d "$HOME/.zsh/pure" ]; then
+          #   fpath+=$HOME/.zsh/pure
+          # fi
+
+          # NOTE: I modified this after seeing how he treats certain conditionals
+          # https://github.com/mcornella/dotfiles/blob/main/zshenv
+
+          # SOURCE: https://unix.stackexchange.com/questions/33255/how-to-define-and-load-your-own-shell-function-in-zsh
+          # https://zsh.sourceforge.io/Doc/Release/Functions.html
+          # # fpath info
+          # # In zsh, the function search path ($fpath) defines a set of directories, which contain files that can be marked to be loaded automatically when the function they contain is needed for the first time.
+
+          # Zsh has two modes of autoloading files: Zsh's native way and another mode that resembles ksh's autoloading. The latter is active if the KSH_AUTOLOAD option is set. Zsh's native mode is the default and I will not discuss the other way here (see "man zshmisc" and "man zshoptions" for details about ksh-style autoloading).
+
+          # Let's assume you got a file `~/.zfunc/hello' that contains the following line:
+
+          # printf 'Hello world.\n'
+          # All you need to do now is mark the function to be automatically loaded upon its first reference:
+
+          # autoload -Uz hello
+
+          # "What is the -Uz about?", you ask? Well, that's just a set of options that will cause `autoload' to do the right thing, no matter what options are being set otherwise. The `U' disables alias expansion while the function is being loaded and the `z' forces zsh-style autoloading even if `KSH_AUTOLOAD' is set for whatever reason.
+
+          # After that has been taken care of, you can use your new `hello' function:
+
+          # fpath+=$HOME/.zsh/pure
+          test -d "${HOME}/.zsh/pure" && {
+            fpath=(${HOME}/.zsh/pure $fpath)
+          }
 
       - name: poetry.zsh
         content: |-
-          if [ -d "$HOME/.asdf/installs/poetry/1.0.10/env" ]; then
-            . $HOME/.asdf/installs/poetry/1.0.10/env
-          fi
-
-    bossjones__oh__my__zsh__after_scripts:
-
-      - name: asdf.zsh
-        content: |-
-          ASDF_DIR="${ASDF_DIR:-$HOME/.asdf}"
-          ASDF_COMPLETIONS="$ASDF_DIR/completions"
-
-          # if [ -d "$HOME/.asdf" ]; then
-
-          #   . $HOME/.asdf/asdf.sh
+          # if [ -d "$HOME/.asdf/installs/poetry/1.0.10/env" ]; then
+          #   . $HOME/.asdf/installs/poetry/1.0.10/env
           # fi
 
-          # Load command
-          if [[ -f "$ASDF_DIR/asdf.sh" ]]; then
-              . "$ASDF_DIR/asdf.sh"
+          # test -f "$HOME/.fzf.zsh" && . "$HOME/.fzf.zsh"
 
-              fpath=(${ASDF_DIR}/completions $fpath)
-
-              # Load completions
-              if [[ -f "$ASDF_COMPLETIONS/asdf.bash" ]]; then
-                  . "$ASDF_COMPLETIONS/asdf.bash"
-              fi
-
-              # autoload -Uz compinit
-              # compinit
-          fi
-
+    bossjones__oh__my__zsh__after_scripts:
+      - name: custom_plugins.zsh
+        content: |
+          plugins+=(git-extra-commands zsh-256color zsh-peco-history pyenv rbenv fd fzf zsh-syntax-highlighting tmux rbenv)
 
       - name: nvm.zsh
         content: |-
-          # # nvm is installed via homebrew. Here are instructions:
-          # #
-          # # You should create NVM's working directory if it doesn't exist:
-          # #
-          # #   mkdir ~/.nvm
-          # #
-          # # Add the following to ~/.zshrc or your desired shell
-          # # configuration file:
-          # #
-          # #   export NVM_DIR="$HOME/.nvm"
-          # #   . "/usr/local/opt/nvm/nvm.sh"
-          # if [ -d "$HOME/.nvm" ]; then
-          #   export NVM_DIR="$HOME/.nvm"
-          #   . "$HOME/.nvm/nvm.sh"
-          # fi
-          # if [ -f "/usr/local/opt/nvm/nvm.sh" ]; then
-          #   . "/usr/local/opt/nvm/nvm.sh"
-          # fi
+          # removed nvm
 
       - name: yq.zsh
         content: |-
@@ -383,18 +617,45 @@
               yq shell-completion zsh > "${fpath[1]}/_yq"
           fi
 
-
       - name: fnm.zsh
         content: |-
           # SOURCE: https://github.com/Schniz/fnm
-          if [ -n "$(which fnm)" ]; then
-              eval "$(fnm env)"
-              if [ "$(fnm ls | grep -i 16.11.1 | wc -l | awk '{print $1}')" = "0" ]; then
-                fnm install {{NODE_VERSION_TO_INSTALL}} || true
-                fnm use {{NODE_VERSION_TO_INSTALL}} || true
-                fnm default {{NODE_VERSION_TO_INSTALL}} || true
-                fnm current
-              fi
+          # FROM ONE OF THE OH-MY-ZSH maintainers https://github.com/mcornella/dotfiles/blob/main/zshenv
+          # brew --prefix fnm
+
+          local OPT_HOMEBREW="/opt/homebrew"
+          if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
+              eval "$($OPT_HOMEBREW/bin/brew shellenv)"
+          fi
+
+          if [[ -s "$HOMEBREW_PREFIX"/opt/fnm/bin/fnm ]]; then
+            eval "$(${HOMEBREW_PREFIX}/opt/fnm/bin/fnm env --use-on-cd)"
+          fi
+
+          test -d "$HOME/.fnm" && {
+            export PATH=~/.fnm:$PATH
+            # export PATH="$PATH:$HOME/.fnm"
+            eval "$(fnm env --use-on-cd)"
+            test -f "$HOME/.zsh/completions/_fnm" \
+            || fnm completions --shell zsh > "$HOME/.zsh/completions/_fnm"
+            fpath+=~/.config/zsh/completions/_fnm
+          }
+
+          # only run this on login / interactive shells
+          if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+
+            if [ -n "$(command which fnm)" ]; then
+                eval "$(fnm env --use-on-cd)"
+                if [ "$(fnm ls | grep -i {{NODE_VERSION_TO_INSTALL}} | wc -l)" = "0" ]; then
+                  fnm install {{NODE_VERSION_TO_INSTALL}} || true
+                  fnm use {{NODE_VERSION_TO_INSTALL}} || true
+                  fnm default {{NODE_VERSION_TO_INSTALL}} || true
+                  fnm current || true
+                  npm install -g pure-prompt || true
+                  npm install -g pretty-time-zsh || true
+                fi
+            fi
+
           fi
 
 
@@ -462,7 +723,7 @@
 
       - name: fzf.zsh
         content: |
-          [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh
+          test -f "$HOME/.fzf.zsh" && . "$HOME/.fzf.zsh"
 
           export FZF_TMUX_OPTS="-d 15"
 
@@ -522,15 +783,6 @@
           #  rather than waiting until the shell exits.
           unsetopt INC_APPEND_HISTORY
 
-      - name: rbenv.zsh
-        content: |
-          if [ -e ~/.rbenv ]; then
-            export PATH="~/.rbenv/shims:$PATH"
-          fi
-          if [[ -x $(which -p rbenv) ]]; then
-            eval "$(rbenv init -)"
-          fi
-
       - name: man.zsh
         content: |
           get_man_exorts() {
@@ -544,9 +796,13 @@
 
       - name: path.zsh
         content: |
-          if [ -d "$HOME/bin" ]; then
+          # if [ -d "$HOME/bin" ]; then
+          #   export PATH=$HOME/bin:$PATH
+          # fi
+
+          test -d "$HOME/bin" && {
             export PATH=$HOME/bin:$PATH
-          fi
+          }
 
       - name: cheat.zsh
         content: |
@@ -821,7 +1077,7 @@
       - name: unzip.zsh
         content: |
           # darktop config (8/10/2020)
-          export PATH="/usr/local/opt/unzip/bin:$PATH"
+          export PATH="$( brew --prefix unzip)/bin:$PATH"
 
           unzip_nuke() {
             unzip \*.zip && rm *.zip
@@ -980,7 +1236,7 @@
               rm -fv square.txt || true
               touch square.txt
               current_dir=$(PWD)
-              # ffmpeg -i "${filename}" -vcodec h264 -acodec mp2 "mp4-$(basename -- "${filename}")"
+
               [ "$(ls *.MOV | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*MOV*; do echo ffmpeg-mov-to-mp4 $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)"); done >> square.txt
               [ "$(ls *.mov | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*mov*; do echo ffmpeg-mov-to-mp4 $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)"); done >> square.txt
               cat square.txt
@@ -1148,10 +1404,23 @@
 
 
       - name: pyenv.zsh
-        content: |
-          if [ -e ~/.pyenv ]; then
+        content: |-
+
+          local OPT_HOMEBREW="/opt/homebrew"
+          if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
+              eval "$($OPT_HOMEBREW/bin/brew shellenv)"
+          fi
+
+          if [[ -s "$HOMEBREW_PREFIX"/opt/pyenv/libexec/pyenv ]]; then
+            eval "$(${HOMEBREW_PREFIX}/opt/pyenv/libexec/pyenv init --path)"
+            eval "$(${HOMEBREW_PREFIX}/opt/pyenv/libexec/pyenv init -)"
+            fpath=(${HOMEBREW_PREFIX}/opt/pyenv/completions $fpath)
+            pyenv virtualenvwrapper_lazy
+
+          elif [[ -s "$HOME/.pyenv/bin/pyenv" ]]; then
             export PYENV_ROOT=~/.pyenv
             export PATH="$PYENV_ROOT/bin:$PATH"
+            eval "$(pyenv init --path)"
             eval "$(pyenv init -)"
             pyenv virtualenvwrapper_lazy
           fi
@@ -1159,33 +1428,34 @@
           enable_compile_flags() {
             # SOURCE: https://github.com/jiansoung/issues-list/issues/13
             # Fixes: zipimport.ZipImportError: can't decompress data; zlib not available
-            export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
-            export PATH="/usr/local/opt/bzip2/bin:$PATH"
-            export PATH="/usr/local/opt/ncurses/bin:$PATH"
-            export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+            export LOCAL_HOMEBREW_PREFIX="$(brew --prefix)"
+            export PATH="${LOCAL_HOMEBREW_PREFIX}/opt/tcl-tk/bin:$PATH"
+            export PATH="${LOCAL_HOMEBREW_PREFIX}/opt/bzip2/bin:$PATH"
+            export PATH="${LOCAL_HOMEBREW_PREFIX}/opt/ncurses/bin:$PATH"
+            export PATH="${LOCAL_HOMEBREW_PREFIX}/opt/openssl@1.1/bin:$PATH"
             # SOURCE: https://github.com/jiansoung/issues-list/issues/13
             # Fixes: zipimport.ZipImportError: can't decompress data; zlib not available
             export CFLAGS="${CFLAGS} -I$(brew --prefix tcl-tk)/include"
-            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/tcl-tk/lib"
-            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/tcl-tk/include"
-            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib"
-            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/zlib/include"
-            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/sqlite/lib"
-            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/sqlite/include"
-            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/libffi/lib"
-            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/libffi/include"
-            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/bzip2/lib"
-            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/bzip2/include"
-            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/ncurses/lib"
-            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/ncurses/include"
-            export LDFLAGS="${LDFLAGS} -L/usr/local/opt/openssl@1.1/lib"
-            export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/openssl@1.1/include"
-            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig"
-            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/sqlite/lib/pkgconfig"
-            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/tcl-tk/lib/pkgconfig"
-            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/libffi/lib/pkgconfig"
-            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/ncurses/lib/pkgconfig"
-            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/openssl@1.1/lib/pkgconfig"
+            export LDFLAGS="${LDFLAGS} -L${LOCAL_HOMEBREW_PREFIX}/opt/tcl-tk/lib"
+            export CPPFLAGS="${CPPFLAGS} -I${LOCAL_HOMEBREW_PREFIX}/opt/tcl-tk/include"
+            export LDFLAGS="${LDFLAGS} -L${LOCAL_HOMEBREW_PREFIX}/opt/zlib/lib"
+            export CPPFLAGS="${CPPFLAGS} -I${LOCAL_HOMEBREW_PREFIX}/opt/zlib/include"
+            export LDFLAGS="${LDFLAGS} -L${LOCAL_HOMEBREW_PREFIX}/opt/sqlite/lib"
+            export CPPFLAGS="${CPPFLAGS} -I${LOCAL_HOMEBREW_PREFIX}/opt/sqlite/include"
+            export LDFLAGS="${LDFLAGS} -L${LOCAL_HOMEBREW_PREFIX}/opt/libffi/lib"
+            export CPPFLAGS="${CPPFLAGS} -I${LOCAL_HOMEBREW_PREFIX}/opt/libffi/include"
+            export LDFLAGS="${LDFLAGS} -L${LOCAL_HOMEBREW_PREFIX}/opt/bzip2/lib"
+            export CPPFLAGS="${CPPFLAGS} -I${LOCAL_HOMEBREW_PREFIX}/opt/bzip2/include"
+            export LDFLAGS="${LDFLAGS} -L${LOCAL_HOMEBREW_PREFIX}/opt/ncurses/lib"
+            export CPPFLAGS="${CPPFLAGS} -I${LOCAL_HOMEBREW_PREFIX}/opt/ncurses/include"
+            export LDFLAGS="${LDFLAGS} -L${LOCAL_HOMEBREW_PREFIX}/opt/openssl@1.1/lib"
+            export CPPFLAGS="${CPPFLAGS} -I${LOCAL_HOMEBREW_PREFIX}/opt/openssl@1.1/include"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} ${LOCAL_HOMEBREW_PREFIX}/opt/zlib/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} ${LOCAL_HOMEBREW_PREFIX}/opt/sqlite/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} ${LOCAL_HOMEBREW_PREFIX}/opt/tcl-tk/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} ${LOCAL_HOMEBREW_PREFIX}/opt/libffi/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} ${LOCAL_HOMEBREW_PREFIX}/opt/ncurses/lib/pkgconfig"
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} ${LOCAL_HOMEBREW_PREFIX}/opt/openssl@1.1/lib/pkgconfig"
             export PYTHON_CONFIGURE_OPTS="--with-tcltk-includes='-I$(brew --prefix tcl-tk)/include' --with-tcltk-libs='-L$(brew --prefix tcl-tk)/lib -ltcl8.6 -ltk8.6'"
             export PROFILE_TASK='-m test.regrtest --pgo \
                   test_array \
@@ -1223,27 +1493,57 @@
                   test_unicode \
             '
           }
+
           print_compile_flags() {
-            # echo "export LDFLAGS=\"${LDFLAGS} -L/usr/local/opt/zlib/lib\""
-            # echo "export CPPFLAGS=\"${CPPFLAGS} -I/usr/local/opt/zlib/include\""
-            # echo "export PKG_CONFIG_PATH=\"${PKG_CONFIG_PATH} /usr/local/opt/openssl@1.1/lib/pkgconfig\""
+            enable_compile_flags
+
             echo "----------------------"
             echo "Verify pyenv compile env vars"
             echo "----------------------"
             echo "LDFLAGS: ${LDFLAGS}"
             echo "CPPFLAGS: ${CPPFLAGS}"
             echo "PKG_CONFIG_PATH: ${PKG_CONFIG_PATH}"
+            echo "PYTHON VERSION TO COMPILE: ${_PY_VER_MAJOR}.${_PY_VER_MINOR}.${_PY_VER_MICRO}"
             echo "----------------------"
+          }
+
+          verify_keg_folders_exists() {
+            stat "$(brew --prefix)/opt/tcl-tk/lib" && \
+            stat "$(brew --prefix)/opt/zlib/lib" && \
+            stat "$(brew --prefix)/opt/sqlite/lib" && \
+            stat "$(brew --prefix)/opt/libffi/lib" && \
+            stat "$(brew --prefix)/opt/bzip2/lib" && \
+            stat "$(brew --prefix)/opt/ncurses/lib" && \
+            stat "$(brew --prefix)/opt/openssl@1.1/lib" && \
+            stat "$(brew --prefix)/opt/tcl-tk/include" && \
+            stat "$(brew --prefix)/opt/zlib/include" && \
+            stat "$(brew --prefix)/opt/sqlite/include" && \
+            stat "$(brew --prefix)/opt/libffi/include" && \
+            stat "$(brew --prefix)/opt/bzip2/include" && \
+            stat "$(brew --prefix)/opt/ncurses/include" && \
+            stat "$(brew --prefix)/opt/openssl@1.1/include" && \
+            stat "$(brew --prefix)/opt/zlib/lib/pkgconfig" && \
+            stat "$(brew --prefix)/opt/sqlite/lib/pkgconfig" && \
+            stat "$(brew --prefix)/opt/tcl-tk/lib/pkgconfig" && \
+            stat "$(brew --prefix)/opt/libffi/lib/pkgconfig" && \
+            stat "$(brew --prefix)/opt/ncurses/lib/pkgconfig" && \
+            stat "$(brew --prefix)/opt/openssl@1.1/lib/pkgconfig"
+
           }
 
           function compile_python() {
               if [ ! -d "${PYENV_ROOT}/versions/${_PY_VER_MAJOR}.${_PY_VER_MINOR}.${_PY_VER_MICRO}" ]; then
               # Control will enter here if $DIRECTORY exists.
-              env PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --enable-ipv6 --with-dtrace --enable-loadable-sqlite-extensions --with-openssl=/usr/local/opt/openssl@1.1" pyenv install -v ${_PY_VER_MAJOR}.${_PY_VER_MINOR}.${_PY_VER_MICRO}
+              env PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --enable-ipv6 --with-dtrace --enable-loadable-sqlite-extensions --with-openssl=${LOCAL_HOMEBREW_PREFIX}/opt/openssl@1.1" pyenv install -v ${_PY_VER_MAJOR}.${_PY_VER_MINOR}.${_PY_VER_MICRO}
               else
               echo " [python-compile](compile_python) python version ${_PY_VER_MAJOR}.${_PY_VER_MINOR}.${_PY_VER_MICRO} already installed, skipping"
               fi
           }
+
+          python_interperter(){
+            python3 -c "import sys;print(sys.executable)"
+          }
+
 
           opencv-deps() {
             pip install scipy pillow
@@ -1319,19 +1619,6 @@
               cat loop.txt
           }
 
-          # ffmpeg-generate-ig-square() {
-          #     export font_location='/Volumes/Macintosh HD/System/Library/Fonts/Helvetica.ttc'
-          #     export watermark_text=${1}
-          #     rm -fv square.txt
-          #     touch square.txt
-          #     [ "$(ls *.jpg | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*jpg*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1 drawtext=\"fontfile=$font_location:text='${watermark_text}':fontcolor=white:fontsize=14:box=1:boxcolor=black@0.5:boxborderw=5:x=(w-text_w)-10:y=(h-text_h)-10\"" -c:a aac -q:a 128k "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-          #     [ "$(ls *.jpeg | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*jpeg*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1 drawtext=\"fontfile=$font_location:text='${watermark_text}':fontcolor=white:fontsize=14:box=1:boxcolor=black@0.5:boxborderw=5:x=(w-text_w)-10:y=(h-text_h)-10\"" -c:a aac -q:a 128k "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-          #     [ "$(ls *.png | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*png*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1 drawtext=\"fontfile=$font_location:text='${watermark_text}':fontcolor=white:fontsize=14:box=1:boxcolor=black@0.5:boxborderw=5:x=(w-text_w)-10:y=(h-text_h)-10\"" -c:a aac -q:a 128k "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-          #     cat square.txt
-          #     bash square.txt
-          #     rm square.txt
-          # }
-
           ffmpeg-generate-ig-square() {
               rm -fv square.txt
               touch square.txt
@@ -1349,10 +1636,6 @@
               rm -fv square.txt
               touch square.txt
               [ "$(ls *.mp4 | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*mp4*; do echo ffmpeg -hide_banner -loglevel warning -i "${filename}" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1" "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-              # [ "$(ls *.jpeg | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*jpeg*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1" "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-              # [ "$(ls *.png | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*png*; do echo ffmpeg -hide_banner -loglevel warning -i "$filename" -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:-1:-1:color=white,setdar=1:1" "ig-square-1080x1080-$(basename -- "${filename}")"; done >> square.txt
-              # gsed -i "s,\-i ,\-i ',g" square.txt
-              # gsed -i "s, \-vf ,' \-vf ',g" square.txt
               cat square.txt
               bash square.txt
               rm square.txt
@@ -1379,7 +1662,7 @@
               rm -fv square.txt || true
               touch square.txt
               current_dir=$(PWD)
-              # ffmpeg -i "${filename}" -vcodec h264 -acodec mp2 "mp4-$(basename -- "${filename}")"
+
               [ "$(ls *.MOV | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*MOV*; do echo ffmpeg-mov-to-mp4 $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)"); done >> square.txt
               [ "$(ls *.mov | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*mov*; do echo ffmpeg-mov-to-mp4 $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)"); done >> square.txt
               cat square.txt
@@ -1395,7 +1678,7 @@
               rm -fv square.txt || true
               touch square.txt
               current_dir=$(PWD)
-              # ffmpeg -i "${filename}" -vcodec h264 -acodec mp2 "mp4-$(basename -- "${filename}")"
+
               [ "$(ls *.mp4 | tr " " '\r' | wc -l | awk '{print $1}')" -gt "0" ] && for filename in ./*mp4*; do echo ffmpeg-speed-up -f $(python3 -c "import pathlib;p=pathlib.Path('${filename}');print(p)").mp4; done >> square.txt
               cat square.txt
               bash square.txt
@@ -1526,50 +1809,6 @@
               IFS="$OIFS"
           }
 
-
-
-
-
-
-          # ffmpeg-loop-one() {
-
-          #     # NOTE: https://unix.stackexchange.com/questions/9496/looping-through-files-with-spaces-in-the-names
-          #     # SOURCE: https://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
-
-          #     OIFS="$IFS"
-          #     IFS=$'\n'
-
-          #     # https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
-          #     # set -euox pipefail
-          #     # set -e
-
-
-          #     local input_file="${1}"
-          #     local full_path_img_input_file="$(pwd)/${input_file}"
-
-          #     filename=$(basename -- "$input_file")
-          #     extension="${filename##*.}"
-          #     filename="${filename%.*}"
-
-          #     # local full_path_output_file="meme_${filename}.mp4"
-
-          #     export full_path_output_file="[L]${filename}.${extension}"
-
-          #     check_if_we_need_to_loop "${full_path_img_input_file}"
-
-          #     if [ "$loop_video_flag" = true ] ; then
-          #         echo -e " ${YELLOW}[ffmpeg-loop-one]${NOCOLOR} loop_video_flag=${loop_video_flag}, looping .... ${YELLOW}cmd: ffmpeg-loop -f $input_file -c $filename.${extension}${NOCOLOR}"
-          #         ffmpeg-loop -f $input_file -c $filename.${extension}
-          #         local input_file="loop-$filename.${extension}"
-          #         local full_path_input_file="${input_file}.${extension}"
-          #         echo -e " ${YELLOW}[ffmpeg-loop-one] verify variable${NOCOLOR} ${GREEN}full_path_input_file=${full_path_input_file}${NOCOLOR}"
-          #         echo -e " ${YELLOW}[ffmpeg-loop-one] running${NOCOLOR} ${GREEN}ls -lta $input_file${NOCOLOR}\n"
-          #         ls -lta $input_file
-          #     fi
-
-          #     IFS="$OIFS"
-          # }
-
           ffmpeg-loop-batch() {
               OIFS="$IFS"
               IFS=$'\n'
@@ -1696,7 +1935,7 @@
               ffmpeg-tools -c dl-story --user machonutz || true
               # ffmpeg-tools -c dl-story --user kirtfloydtrini || true
               # ffmpeg-tools -c dl-story --user kirillagain || true
-              ffmpeg-tools -c dl-story --user hoe_wives_vibes__ || true
+              # ffmpeg-tools -c dl-story --user hoe_wives_vibes__ || true
               ffmpeg-tools -c dl-story --user theraunchyfemale2 || true
               ffmpeg-tools -c dl-story --user main_hoe_memes || true
               ffmpeg-tools -c dl-story --user mistress_carnage_cosplay || true
@@ -1726,12 +1965,6 @@
               echo ""
           }
 
-          # dl-mp3(){
-          #     echo "running dl-mp3 \"${1}\" ..."
-          #     /usr/local/bin/youtube-dl -o "$(uuidgen).%(ext)s" --extract-audio --audio-format mp3 "${1}"
-          #     echo ""
-          # }
-
           dl-mp3(){
               echo "running dl-mp3 \"${1}\" ..."
               /usr/local/bin/youtube-dl --extract-audio --audio-format mp3 "${1}"
@@ -1757,65 +1990,6 @@
               done
               echo -e "\nThe mp3 is downloaded."
           }
-
-
-          # dl-all(){
-          #     # youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=nqYRgEfmxBg"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=axSlMfTaiJQ"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=u9KJ-oJ_gU0"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=w4Y_HtKSpT0"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=eJEKHdvntPI"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=lEIqjoO0-Bs"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=u1yVCeXYya4"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=ZghGHHBO_nU"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=008UXgfNhrw"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=iLBBRuVDOo4"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=87bcPisyTHs"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=KTkW636B8xg"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=7dwuzqF6huc"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=8pHELrsqGgU"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=ENwIVw2h3SQ"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=d-3U5RwqY88"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=M7Gze4kqF04"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=0Wi8Fv0AJA4"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=rzJikUFVxes"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=P0VCoEFEAN4"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=upkYQqbrjSc"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=unbIrGJyOIo"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=yzy28p9l5dI"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=6JdEbokTHdw"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=t9lJcKoMI2g"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=IKc4QLiCG8c"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=DDp6F_Baf5I"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=GhQjODemQYc"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=wuO4_P_8p-Q"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=mIsnIt1p978"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=_oSRvcdlgSI"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=safkWMNJdDg"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=NNiTxUEnmKI"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=jAI9Jdmv7J8"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=73_DOquGBD4"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=qLnoYEAoJ-M"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=ZcmoBlURJB4"
-
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=Apj42OI3lQE"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=LcFcOi15Xkc"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=jopEOfTEuxw"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=KwsvqVmFV6Y"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=a-Lp2uC_1lg"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=eX3ZSlKdsrM"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=qZULyhfQmCg"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=QmuDsh2vPp8"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=73ugSYtZSyw"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=1G30NIIU7CU"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=fDujDj1CxIs"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=fCuabiYeWN0"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=2ouGtW_5d6A"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=04yLYIpcPh0"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=_Zf1JVmwuao"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=Tf7QWxpzI60"
-          #     youtube-dl-mp3-orig-name-until "https://www.youtube.com/watch?v=3WShMzwT-nM"
-          # }
 
           # SOURCE: https://github.com/gko/dotfiles/blob/6f63f4a5ffdfbded718bd1eee8723e02ec2a5335/aliases/youtube-dl.sh
           youtube-dl-aliases () {
@@ -1865,12 +2039,6 @@
               --output "./%(playlist_title)s/%(playlist_index)s_%(title)s.%(ext)s" \
               --yes-playlist '
           }
-
-          # my-youtube-dl-aliases () {
-
-          # 	alias yt-dl-thumb='youtube-dl -v -f best -n --ignore-errors --restrict-filenames --write-thumbnail --no-mtime --embed-thumbnail '
-
-          # }
 
           yt-dl-thumb () {
             echo " [running] youtube-dl -v -f best -n --ignore-errors --restrict-filenames --write-thumbnail --no-mtime --embed-thumbnail --recode-video mp4 --cookies=~/Downloads/yt-cookies.txt ${1}"
@@ -1923,10 +2091,6 @@
             ffmpeg-tools -c prepare-from-square -f "$(PWD)" -r
             find . -name "white.jpg" -exec rm -rfv {} \;
           }
-
-          # youtube-dl-aliases
-          # youtube-dl -v -f best -n --ignore-errors --restrict-filenames --write-thumbnail --no-mtime --embed-thumbnail --cookies=~/Downloads/yt-cookies.txt --recode-video mp4
-
 
 
 
@@ -2022,7 +2186,7 @@
 
     bossjones__oh__my__zsh__zshrc_local: |-
       export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
-      export RBENV_ROOT=~/.rbenv
+      # export RBENV_ROOT=~/.rbenv
       export RBENV_VERSION={{rbenv.default_ruby}}
       export VIRTUAL_ENV_DISABLE_PROMPT=1
       export ZSH_PYENV_LAZY_VIRTUALENV=1
@@ -2092,16 +2256,28 @@
       # zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)*==34=34}:${(s.:.)LS_COLORS}")';
 
 
-      if [ -n "$(which direnv)" ]; then
+      if [[ -n "$(command which direnv)" ]]; then
           eval "$(direnv hook zsh)"
       fi
 
-      [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+      # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+      test -f "$HOME/.fzf.zsh" && . "$HOME/.fzf.zsh"
 
 
       # remove dupes from $PATH using a zsh builtin
       # https://til.hashrocket.com/posts/7evpdebn7g-remove-duplicates-in-zsh-path
-      typeset -aU path;
+      # typeset -aU path;
+
+      # SOURCE: https://github.com/mcornella/dotfiles/blob/main/zshenv
+      # remove duplicate entries from PATH
+      [ -n "$ZSH_VERSION" ] && {
+        typeset -U path
+        fpath+=("$HOME/.zsh/completions")
+      }
+
+      # export PATH for other sessions
+      export PATH
+      # SOURCE: https://github.com/mcornella/dotfiles/blob/main/zshenv - end
 
       # # Load iTerm shell integrations if found.
       # test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
@@ -2136,6 +2312,8 @@
         - .bin
         - bin
         - .local/bin
+        - .oh-my-zsh/custom/plugins
+        - .zsh/completion
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
@@ -2173,8 +2351,12 @@
     - name: Install Fonts
       shell: ~/powerlinefonts/install.sh chdir=~/powerlinefonts
       # when: fontCloned is success
+      check_mode: no
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
+      ignore_errors: yes
+      changed_when: false
+      failed_when: false
       when: (fontCloned is success) and not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
 
     - name: 'brew tap homebrew/cask-fonts'
@@ -2192,6 +2374,11 @@
         state: present
       with_items:
         - font-fira-code
+        - font-fira-code-nerd-font
+        - font-hack-nerd-font
+        - font-inconsolata-nerd-font
+        - font-meslo-lg-nerd-font
+        - font-sauce-code-pro-nerd-font
       # brew don't work from root user on macOS
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
@@ -2202,30 +2389,156 @@
         name: '{{ item }}'
         state: latest
       with_items:
-        - direnv
         - asdf
-        - peco
+        - atomicparsley
+        - cmake
         - coreutils
+        - direnv
+        - doxygen
+        - eigen
+        - ffmpeg
         - findutils
-        - gnu-tar
-        - gnu-sed
-        - gawk
-        - gnutls
-        - gnu-indent
-        - gnu-getopt
-        - grep
-        - reattach-to-user-namespace
         - fpp
+        - fzf
+        - gawk
+        - gnu-getopt
+        - gnu-indent
+        - gnu-sed
+        - gnu-tar
+        - gnutls
+        - graphicsmagick
+        - grep
+        - hdf5
+        - icu4c
+        - imagemagick
+        - jpeg
+        - jq
+        - lesspipe
+        - libav
+        - libffi
+        - libmagic
+        - libomp
+        - libpng
+        - libtiff
+        - libxslt
+        - moreutils
+        - nmap
+        - openblas
+        - openexr
+        - openmpi
+        - openssl
+        - peco
+        - unzip
+        - asdf
+        - perl
+        - pkg-config
+        - pyenv
+        - pyenv-virtualenv
+        - pyenv-virtualenvwrapper
+        - rbenv
+        - readline
+        - reattach-to-user-namespace
+        - sdl2
+        - sdl2_mixer
+        - sqlite3
+        - tbb
+        - tcl-tk
+        - tesseract
+        - the_silver_searcher
+        - tmux
+        - tree
         - urlview
+        - vim
+        - wget
+        - xz
+        - zlib
+        - zsh
+        # - python@3.8
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: not (bossjones__oh__my__zsh__user == 'root' and ansible_os_family == 'Darwin')
+
+
+    - name: Clone unixorn git-extra-commands
+      git:
+        repo: https://github.com/unixorn/git-extra-commands.git
+        dest: "~/.oh-my-zsh/custom/plugins/git-extra-commands"
+        version: "main"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_git_extra_commands
+
+      # mkdir -p "$HOME/.zsh"
+      # git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
+    - name: Clone pure
+      git:
+        repo: https://github.com/sindresorhus/pure.git
+        dest: "~/.zsh/pure"
+        version: "main"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_pure
+
+    - name: Clone zsh-peco-history
+      git:
+        repo: https://github.com/jimeh/zsh-peco-history.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-peco-history"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_peco_history
+
+    - name: Clone chrissicool zsh-256color
+      git:
+        repo: https://github.com/chrissicool/zsh-256color.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-256color"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_256color
+
+    # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    - name: Clone zsh-users zsh-syntax-highlighting
+      git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_syntax_highlighting
+
+      # git clone https://github.com/popstas/zsh-command-time.git ~/.oh-my-zsh/custom/plugins/command-time
+    # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    - name: Clone zsh-users zsh-command-time
+      git:
+        repo: https://github.com/popstas/zsh-command-time.git
+        dest: "~/.oh-my-zsh/custom/plugins/zsh-command-time"
+        version: "master"
+        force: yes
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      register: bossjones__oh__my__zsh__register_zsh_command_time
+
+    # - name: Clone asdf
+    #   git:
+    #     repo: https://github.com/asdf-vm/asdf.git
+    #     dest: "~/.asdf"
+    #     version: "{{ ASDF_VERSION }}"
+    #     force: yes
+    #   become: yes
+    #   become_user: "{{ bossjones__oh__my__zsh__user }}"
+    #   register: bossjones__oh__my__zsh__register_asdf
 
     - name: Clone fzf
       git:
         repo: https://github.com/junegunn/fzf.git
         dest: "~/.fzf"
-        version: "0.22.0"
+        version: "{{ FZF_VERSION }}"
         force: yes
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
@@ -2233,8 +2546,12 @@
 
     - name: Install fzf
       shell: ./install --all
+      check_mode: no
       args:
         chdir: "~/.fzf"
+      ignore_errors: yes
+      changed_when: false
+      failed_when: false
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
@@ -2243,8 +2560,11 @@
         curl -L 'https://raw.githubusercontent.com/jan-warchol/dotfiles/master/bin/fzf-drafts' > ~/bin/fzf-drafts;
         chmod +x ~/bin/fzf-drafts;
       args:
-        executable: /bin/bash
+        executable: /bin/zsh
+      ignore_errors: yes
       changed_when: false
+      failed_when: false
+      check_mode: no
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
 
@@ -2253,7 +2573,7 @@
       shell: |
         compaudit | wc -l
       args:
-        executable: /usr/local/bin/zsh
+        executable: "{{ bossjones__oh__my__zsh__path_to_shell }}"
       register: compaudit_word_count
       # changed_when: false
       become: yes
@@ -2261,6 +2581,7 @@
       ignore_errors: yes
       changed_when: false
       failed_when: false
+      check_mode: no
 
     - name: compaudit | fix
       shell: |
@@ -2268,10 +2589,11 @@
           compaudit | xargs chown "{{ bossjones__oh__my__zsh__user }}"
           rm ~/.zcompdump*
       args:
-        executable: /usr/local/bin/zsh
+        executable: "{{ bossjones__oh__my__zsh__path_to_shell }}"
       ignore_errors: yes
       changed_when: false
       failed_when: false
+      check_mode: no
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: (compaudit_word_count|bool) and compaudit_word_count.stdout not "0"
@@ -2284,8 +2606,8 @@
         group: "{{ bossjones__oh__my__zsh__group }}"
         recurse: yes
       loop:
-        - /usr/local/share/zsh/site-functions
-        - /usr/local/share/zsh
+        - /opt/homebrew/share/zsh/site-functions
+        - /opt/homebrew/share/zsh
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: ansible_facts['os_family'] == 'Darwin'

@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+
+BIN_NAME=$(basename "$0")
+COMMAND_NAME=$1
+SUB_COMMAND_NAME=$2
+
+sub_help () {
+  echo "Usage: $BIN_NAME <command>"
+  echo
+  echo "Commands:"
+  echo "   clean                  Clean up caches (brew, npm, gem, rvm)"
+  echo "   dock                   Apply macOS Dock settings"
+  echo "   edit                   Open dotfiles in IDE ($DOTFILES_IDE) and Git GUI ($DOTFILES_GIT_GUI)"
+  echo "   help                   This help message"
+  echo "   macos                  Apply macOS system defaults"
+  echo "   test                   Run tests"
+  echo "   update                 Update packages and pkg managers (OS, brew, npm, gem)"
+  echo "   create_links           Update packages and pkg managers (OS, brew, npm, gem)"
+  echo "   install_tmux_upstream  Install tmux settings using the default ones provided by https://github.com/gpakosz/.tmux"
+  echo "   install_nested_tmux  Install best tmux settings using  https://github.com/samoshkin/tmux-config/"
+  echo "   install_bash_it_themes  Install custom bash_it themes"
+  echo "   install_direnvrc  Install direnvrc"
+  echo "   iterm_color_schemes  Install https://github.com/mbadolato/iTerm2-Color-Schemes"
+  echo "   enable_local_bash_completion  Run source ~/.dotfiles/.bash_completion.d/*"
+  echo "   create_i2csshrc  Symlink ~/.i2csshrc"
+}
+
+sub_edit () {
+  sh -c "$DOTFILES_IDE $DOTFILES_DIR"
+  sh -c "$DOTFILES_GIT_GUI $DOTFILES_DIR"
+}
+
+sub_test () {
+  bats "$DOTFILES_DIR"/test/*.bats
+}
+
+sub_update () {
+  sudo softwareupdate -i -a
+  brew update
+  brew upgrade
+  npm install npm -g
+  npm update -g
+  gem update --system
+  gem update
+}
+
+sub_clean () {
+  brew cleanup
+  brew cask cleanup
+  npm cache clean
+  gem cleanup
+  rvm cleanup all
+}
+
+sub_macos () {
+  for DEFAULTS_FILE in "${DOTFILES_DIR}"/macos/defaults*.sh; do
+    echo "Applying ${DEFAULTS_FILE}" && . "${DEFAULTS_FILE}"
+  done
+  echo "Done. Some changes may require a logout/restart to take effect."
+}
+
+sub_dock () {
+  . "${DOTFILES_DIR}/macos/dock.sh" && echo "Dock reloaded."
+}
+
+# Make sure to keep this in sync with the available public commands
+
+sub_completion () {
+  echo "clean dock edit help macos test update"
+}
+
+sub_install_tmux_upstream() {
+  cd ${HOME}
+  rm -rfv ~/.tmux
+  git clone https://github.com/gpakosz/.tmux.git
+  ln -svf .tmux/.tmux.conf ~
+  cp -fv .tmux/.tmux.conf.local .
+}
+
+# SOURCE: https://github.com/samoshkin/tmux-config/
+# SOURCE: https://medium.freecodecamp.org/tmux-in-practice-local-and-nested-remote-tmux-sessions-4f7ba5db8795
+sub_install_nested_tmux() {
+  cd $HOME
+  git clone https://github.com/samoshkin/tmux-config.git || (cd ~/tmux-config ; git pull)
+  cd $HOME
+  ./tmux-config/install.sh
+}
+
+sub_install_bash_it_themes() {
+  [ -d ~/.bash_it/themes/kube/ ] || mkdir -p ~/.bash_it/themes/kube/
+  ln -sfv "$DOTFILES_DIR/runcom/.bash_it/themes/kube/kube.theme.bash" ~/.bash_it/themes/kube/kube.theme.bash
+}
+
+sub_install_direnvrc() {
+  ln -sfv "$DOTFILES_DIR/runcom/.direnvrc" ~
+}
+
+sub_brew_bundle() {
+  cd $HOME
+  brew bundle dump --force --describe
+}
+
+sub_iterm_color_schemes() {
+  source "$DOTFILES_DIR/install/iterm2-colorschemes-install.sh"
+}
+
+sub_create_links () {
+  echo "Create symlinks for everything in ~/"
+
+  # Bunch of symlinks
+
+  ln -sfv "$DOTFILES_DIR/runcom/.bash_profile" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.inputrc" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.gemrc" ~
+  ln -sfv "$DOTFILES_DIR/git/.gitconfig" ~
+  ln -sfv "$DOTFILES_DIR/git/.gitignore_global" ~
+
+  # Secondary round
+
+  ln -sfv "$DOTFILES_DIR/runcom/.irbrc" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.rspec" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.pryrc" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.pdbrc" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.pdbrc.py" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.ptpython_config.py" ~/.ptpython/config.py
+  ln -sfv "$DOTFILES_DIR/runcom/.pythonrc" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.agignore" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.10-powerline-symbols.conf" ~/.config/fontconfig/conf.d/10-powerline-symbols.conf
+
+  ln -sfv "$DOTFILES_DIR/runcom/.tm-theme" ~
+  # ln -sfv "$DOTFILES_DIR/runcom/.tmux.conf" ~/.tmux/.tmux.conf
+  # ln -sfv "$DOTFILES_DIR/runcom/.tmux.conf.local" ~
+  ln -sfv "$DOTFILES_DIR/runcom/.tmuxinator" ~
+}
+
+sub_create_i2csshrc () {
+  echo "Create .i2csshrc symlink @ ~/.i2csshrc"
+  ln -sfv "$DOTFILES_DIR/runcom/.i2csshrc" ~
+
+}
+
+sub_enable_local_bash_completion () {
+  if [ -d "~/.dotfiles/.bash_completion.d/" ]; then
+
+    for i in $(ls ~/.dotfiles/.bash_completion.d/ | xargs -n 1 basename); do
+      source ~/.dotfiles/.bash_completion.d/$i
+    done
+  fi
+}
+
+case $COMMAND_NAME in
+  "" | "-h" | "--help")
+    sub_help
+    ;;
+  *)
+    shift
+    sub_${COMMAND_NAME} $@
+    if [ $? = 127 ]; then
+      echo "'$COMMAND_NAME' is not a known command or has errors." >&2
+      sub_help
+      exit 1
+    fi
+    ;;
+esac
