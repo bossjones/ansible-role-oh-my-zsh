@@ -270,8 +270,20 @@
           fi
       - name: asdf.zsh
         content: |-
-          if [ -d "$HOME/.asdf" ]; then
-            . $HOME/.asdf/asdf.sh
+          # if [ -d "$HOME/.asdf" ]; then
+          #   . $HOME/.asdf/asdf.sh
+          # fi
+
+          # Don't initialize pyenv if it is already initialized.
+          # See: https://github.com/pyenv/pyenv/issues/264#issuecomment-358490657
+          if [ -n "$ASDF_LOADING" ]; then
+              true
+          else
+              if which asdf > /dev/null 2>&1; then
+                  export ASDF_LOADING="true"
+                  . $HOME/.asdf/asdf.sh
+                  unset ASDF_LOADING
+              fi
           fi
 
       - name: kubeconfig.zsh
@@ -304,13 +316,22 @@
           export PATH=$GOPATH/bin:$PATH
           alias cdgo='CDPATH=.:$GOPATH/src/github.com:$GOPATH/src/golang.org:$GOPATH/src'
 
-          if [ -d ~/.goenv ]; then
-            export GOENV_ROOT="$HOME/.goenv"
-            export PATH="$GOENV_ROOT/bin:$PATH"
-            eval "$(goenv init -)"
-            export PATH="$GOROOT/bin:$PATH"
-            export PATH="$PATH:$GOPATH/bin"
+          # Don't initialize pyenv if it is already initialized.
+          # See: https://github.com/pyenv/pyenv/issues/264#issuecomment-358490657
+          if [ -n "$GOENV_LOADING" ]; then
+              true
+          else
+              if which goenv > /dev/null 2>&1; then
+                  export GOENV_LOADING="true"
+                  export GOENV_ROOT="$HOME/.goenv"
+                  export PATH="$GOENV_ROOT/bin:$PATH"
+                  eval "$(goenv init -)"
+                  export PATH="$GOROOT/bin:$PATH"
+                  export PATH="$PATH:$GOPATH/bin"
+                  unset GOENV_LOADING
+              fi
           fi
+
 
       - name: workon.zsh
         content: |-
@@ -454,13 +475,30 @@
 
       - name: pyenv.zsh
         content: |
-          if [ -e ~/.pyenv ]; then
-            export PYENV_ROOT=~/.pyenv
-            export PATH="$PYENV_ROOT/bin:$PATH"
-            eval "$(pyenv init --path)"
-            eval "$(pyenv init -)"
-            . $(pyenv root)/completions/pyenv.zsh
-            pyenv virtualenvwrapper_lazy
+          # if [ -e ~/.pyenv ]; then
+          #   export PYENV_ROOT=~/.pyenv
+          #   export PATH="$PYENV_ROOT/bin:$PATH"
+          #   eval "$(pyenv init --path)"
+          #   eval "$(pyenv init -)"
+          #   . $(pyenv root)/completions/pyenv.zsh
+          #   pyenv virtualenvwrapper_lazy
+          # fi
+
+          # Don't initialize pyenv if it is already initialized.
+          # See: https://github.com/pyenv/pyenv/issues/264#issuecomment-358490657
+          if [ -n "$PYENV_LOADING" ]; then
+              true
+          else
+              if which pyenv > /dev/null 2>&1; then
+                  export PYENV_LOADING="true"
+                  export PYENV_ROOT=~/.pyenv
+                  export PATH="$PYENV_ROOT/bin:$PATH"
+                  eval "$(pyenv init --path)"
+                  eval "$(pyenv virtualenv-init -)"
+                  . $(pyenv root)/completions/pyenv.zsh
+                  pyenv virtualenvwrapper_lazy
+                  unset PYENV_LOADING
+              fi
           fi
 
       - name: updatedb.zsh
