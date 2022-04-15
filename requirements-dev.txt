@@ -46,7 +46,7 @@ isort==5.6.4
     # via
     #   -r requirements-dev.in
     #   pylint
-jinja2==2.11.2
+jinja2==2.11.3
     # via
     #   ansible-base
     #   bumplus
