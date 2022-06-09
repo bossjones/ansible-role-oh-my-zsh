@@ -31,7 +31,7 @@ ZSH_THEME=""
 {% endif %}
 
 export SHELL="{{bossjones__oh__my__zsh__path_to_shell}}"
-export GOPATH="{{bossjones__oh__my__zsh__gopath | default('~/go')}}"
+export GOPATH="{{bossjones__oh__my__zsh__gopath | default('$HOME/go')}}"
 export TERM="{{ bossjones__oh__my__zsh__term }}"
 export EDITOR="{{ bossjones__oh__my__zsh__editor }}"
 # set path using zsh lower case path var
