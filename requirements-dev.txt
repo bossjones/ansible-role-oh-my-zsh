@@ -4,9 +4,9 @@
 #
 #    pip-compile --output-file=requirements-dev.txt requirements-dev.in
 #
-ansible==2.10.4
+ansible==4.2.0
     # via ansible-lint
-ansible-base==2.10.4
+ansible-core==2.11.5
     # via ansible
 ansible-lint==4.3.7
     # via -r requirements-dev.in
@@ -33,7 +33,7 @@ colorama==0.4.4
 commonmark==0.9.1
     # via rich
 cryptography==3.3.1
-    # via ansible-base
+    # via ansible-core
 distlib==0.3.1
     # via virtualenv
 filelock==3.0.12
@@ -48,7 +48,7 @@ isort==5.6.4
     #   pylint
 jinja2==2.11.2
     # via
-    #   ansible-base
+    #   ansible-core
     #   bumplus
 lazy-object-proxy==1.4.3
     # via astroid
@@ -60,7 +60,7 @@ nodeenv==1.5.0
     # via pre-commit
 packaging==20.8
     # via
-    #   ansible-base
+    #   ansible-core
     #   pytest
 pathspec==0.8.1
     # via yamllint
@@ -88,10 +88,12 @@ pytoml==0.1.21
     # via bumplus
 pyyaml==5.3.1
     # via
-    #   ansible-base
+    #   ansible-core
     #   ansible-lint
     #   pre-commit
     #   yamllint
+resolvelib==0.5.4
+    # via ansible-core
 rich==9.4.0
     # via ansible-lint
 ruamel.yaml==0.16.12
