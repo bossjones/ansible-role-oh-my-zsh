@@ -13,9 +13,6 @@
 - hosts: localhost
   become: yes
   become_method: sudo
-  # environment:
-  #   # NVM_LAZY_LOAD: yes
-  #   NODE_VERSION_TO_INSTALL: 16.13.1
   vars:
     bossjones__oh__my__zsh__pyenv_version: 2.2.3
     bossjones__oh__my__zsh__theme: "pure"
@@ -210,10 +207,17 @@
         export BROWSER='open'
       fi
 
+      _ARCH=$(uname -m)
+      if [[ "${_ARCH}" = "arm64" ]]; then
+          _MY_OPT_HOMEBREW=/opt/homebrew
+      else
+          _MY_OPT_HOMEBREW=/usr/local
+      fi
+
       # FIXME: bossjones added this section out of order ( I think it's probably important to have homebrew initialized before anything else )
       # SOURCE: https://github.com/Gipetto/dot-files/blob/ed422b7c16c0d82b2c7f901c25c945afe13d570a/zsh/zprofile
 
-      local OPT_HOMEBREW="/opt/homebrew"
+      local OPT_HOMEBREW="${_MY_OPT_HOMEBREW}"
       if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
           eval "$($OPT_HOMEBREW/bin/brew shellenv)"
       fi
@@ -481,7 +485,16 @@
       - name: rbenv.zsh
         content: |
 
-          export OPT_HOMEBREW="/opt/homebrew"
+
+          _ARCH=$(uname -m)
+          if [[ "${_ARCH}" = "arm64" ]]; then
+              _MY_OPT_HOMEBREW=/opt/homebrew
+          else
+              _MY_OPT_HOMEBREW=/usr/local
+          fi
+
+          export OPT_HOMEBREW="${_MY_OPT_HOMEBREW}"
+          # export OPT_HOMEBREW="/opt/homebrew"
           if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
               eval "$($OPT_HOMEBREW/bin/brew shellenv)"
           fi
@@ -630,7 +643,15 @@
           # FROM ONE OF THE OH-MY-ZSH maintainers https://github.com/mcornella/dotfiles/blob/main/zshenv
           # brew --prefix fnm
 
-          local OPT_HOMEBREW="/opt/homebrew"
+
+          _ARCH=$(uname -m)
+          if [[ "${_ARCH}" = "arm64" ]]; then
+              _MY_OPT_HOMEBREW=/opt/homebrew
+          else
+              _MY_OPT_HOMEBREW=/usr/local
+          fi
+
+          local OPT_HOMEBREW="${_MY_OPT_HOMEBREW}"
           if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
               eval "$($OPT_HOMEBREW/bin/brew shellenv)"
           fi
@@ -1413,7 +1434,17 @@
       - name: pyenv.zsh
         content: |-
 
-          local OPT_HOMEBREW="/opt/homebrew"
+
+
+          _ARCH=$(uname -m)
+          if [[ "${_ARCH}" = "arm64" ]]; then
+              _MY_OPT_HOMEBREW=/opt/homebrew
+          else
+              _MY_OPT_HOMEBREW=/usr/local
+          fi
+
+          local OPT_HOMEBREW="${_MY_OPT_HOMEBREW}"
+          # local OPT_HOMEBREW="/opt/homebrew"
           if [[ -s "$OPT_HOMEBREW"/bin/brew ]]; then
               eval "$($OPT_HOMEBREW/bin/brew shellenv)"
           fi
@@ -2605,7 +2636,7 @@
       become_user: "{{ bossjones__oh__my__zsh__user }}"
       when: (compaudit_word_count|bool) and compaudit_word_count.stdout not "0"
 
-    - name: ensure directories are owned correctly for zsh completion to work
+    - name: ARM ensure directories are owned correctly for zsh completion to work
       file:
         dest: "{{ item }}"
         state: directory
@@ -2617,7 +2648,21 @@
         - /opt/homebrew/share/zsh
       become: yes
       become_user: "{{ bossjones__oh__my__zsh__user }}"
-      when: ansible_facts['os_family'] == 'Darwin'
+      when: ansible_facts['os_family'] == 'Darwin' and "arm" in ansible_architecture
+
+    - name: AMD ensure directories are owned correctly for zsh completion to work
+      file:
+        dest: "{{ item }}"
+        state: directory
+        owner: "{{ bossjones__oh__my__zsh__user }}"
+        group: "{{ bossjones__oh__my__zsh__group }}"
+        recurse: yes
+      loop:
+        - /usr/local/share/zsh/site-functions
+        - /usr/local/share/zsh
+      become: yes
+      become_user: "{{ bossjones__oh__my__zsh__user }}"
+      when: ansible_facts['os_family'] == 'Darwin' and "amd" in ansible_architecture
 
     - name: "ensure ~{{ bossjones__oh__my__zsh__user }}/bin/ exists"
       file:
