@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# SOURCE: https://kb.vmware.com/s/article/1017838
+
+ls -lta '/Library/Application Support/VMware/VMware Fusion'
+ls -lta '/Library/Application Support/VMware/Usbarb.rules'
+ls -lta '/Library/Application Support/VMware Fusion'
+ls -lta '/Library/Preferences/VMware Fusion'
+ls -lta '/Users/malcolm/Library/Application Support/VMware Fusion'
+ls -lta '/Users/malcolm/Library/Caches/com.vmware.fusion'
+ls -lta '/Users/malcolm/Library/Preferences/VMware Fusion'
+ls -lta '/Users/malcolm/Library/Preferences/com.vmware.fusion.LSSharedFileList.plist'
+ls -lta '/Users/malcolm/Library/Preferences/com.vmware.fusion.LSSharedFileList.plist.lockfile'
+ls -lta '/Users/malcolm/Library/Preferences/com.vmware.fusion.plist'
+ls -lta '/Users/malcolm/Library/Preferences/com.vmware.fusion.plist.lockfile'
+ls -lta '/Users/malcolm/Library/Preferences/com.vmware.fusionDaemon.plist'
+ls -lta '/Users/malcolm/Library/Preferences/com.vmware.fusionDaemon.plist.lockfile'
+ls -lta '/Users/malcolm/Library/Preferences/com.vmware.fusionStartMenu.plist'
+ls -lta '/Users/malcolm/Library/Preferences/com.vmware.fusionStartMenu.plist.lockfile'
+
+
+# sudo rm -rfv '/Library/Application Support/VMware/VMware Fusion'
+# sudo rm -rfv '/Library/Application Support/VMware/Usbarb.rules'
+# sudo rm -rfv '/Library/Application Support/VMware Fusion'
+# sudo rm -rfv '/Library/Preferences/VMware Fusion'
+# sudo rm -rfv '/Users/malcolm/Library/Application Support/VMware Fusion'
+# sudo rm -rfv '/Users/malcolm/Library/Caches/com.vmware.fusion'
+# sudo rm -rfv '/Users/malcolm/Library/Preferences/VMware Fusion'
+# sudo rm -rfv '/Users/malcolm/Library/Preferences/com.vmware.fusion.LSSharedFileList.plist'
+# sudo rm -rfv '/Users/malcolm/Library/Preferences/com.vmware.fusion.LSSharedFileList.plist.lockfile'
+# sudo rm -rfv '/Users/malcolm/Library/Preferences/com.vmware.fusion.plist'
+# sudo rm -rfv '/Users/malcolm/Library/Preferences/com.vmware.fusion.plist.lockfile'
+# sudo rm -rfv '/Users/malcolm/Library/Preferences/com.vmware.fusionDaemon.plist'
+# sudo rm -rfv '/Users/malcolm/Library/Preferences/com.vmware.fusionDaemon.plist.lockfile'
+# sudo rm -rfv '/Users/malcolm/Library/Preferences/com.vmware.fusionStartMenu.plist'
+# sudo rm -rfv '/Users/malcolm/Library/Preferences/com.vmware.fusionStartMenu.plist.lockfile'

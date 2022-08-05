@@ -45,14 +45,19 @@ fi
 if [[ $unamestr == "Darwin" ]]; then
     _USER=$(whoami)
     _GROUP=staff
+    _ARCH=$(uname -m)
+    if [[ "${_ARCH}" = "arm64" ]]; then
+        _PATH_TO_ZSH_INTERPERTER=/opt/homebrew/bin/zsh
+    else
+        _PATH_TO_ZSH_INTERPERTER=/usr/local/bin/zsh
+    fi
+
 
     # If we set checkonly then run check, else run full suite
     if [[ "${CHECK_ONLY}" = "1" ]]; then
-        # ansible-playbook -vvvv playbook_macos_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__group=${_GROUP}" --check
-        ansible-playbook -vvvv -i "localhost," -c local --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__group=${_GROUP}" playbook_macos_pure.yml --check
+        ansible-playbook -vvvv -i "localhost," -c local --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__group=${_GROUP} bossjones__oh__my__zsh__path_to_shell=${_PATH_TO_ZSH_INTERPERTER}" playbook_macos_pure.yml --check
     else
-        # ansible-playbook -vvvv playbook_macos_pure.yml --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__group=${_GROUP}" --check
-        ansible-playbook -vvvv -i "localhost," -c local --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__group=${_GROUP}" playbook_macos_pure.yml
+        ansible-playbook -vvvv -i "localhost," -c local --extra-vars="bossjones__oh__my__zsh__user=${_USER} bossjones__oh__my__zsh__group=${_GROUP} bossjones__oh__my__zsh__path_to_shell=${_PATH_TO_ZSH_INTERPERTER}" playbook_macos_pure.yml
     fi
 elif [[ $unamestr == "Linux" && -f $(which apt-get) ]]; then
     _USER=$(whoami)
