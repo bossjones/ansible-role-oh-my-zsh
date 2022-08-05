@@ -1,5 +1,12 @@
 # USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=powerlevel"
-# USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=pure"
+###########################################################################
+# ON APPLE M1 DEVICES YOU NEED TO RUN THE FOLLOWING
+###########################################################################
+# USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=pure bossjones__oh__my__zsh__path_to_shell=/opt/homebrew/bin/zsh"
+###########################################################################
+# ON APPLE INTEL DEVICES YOU NEED TO RUN THE FOLLOWING
+###########################################################################
+# USAGE: sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=pure bossjones__oh__my__zsh__path_to_shell=/usr/local/bin/zsh"
 # sudo ansible-playbook --ask-become-pass --check -i "localhost," -c local playbook_ubuntu_pure.yml --extra-vars="bossjones__oh__my__zsh__user=$(whoami) bossjones__oh__my__zsh__theme=pure"
 ---
 
@@ -92,7 +99,7 @@
     bossjones__oh__my__zsh__enable_zprofile: "yes"
     bossjones__oh__my__zsh__enable_zshenv: "yes"
     bossjones__oh__my__zsh__change_default_shell: false
-    bossjones__oh__my__zsh__path_to_shell: /opt/homebrew/bin/zsh
+    # bossjones__oh__my__zsh__path_to_shell: /opt/homebrew/bin/zsh
     bossjones__oh__my__zsh__antigen_bundles_extras:
       # Solarized dircolors plugin for zsh
       - joel-porquet/zsh-dircolors-solarized
